@@ -1,5 +1,12 @@
 import { createApp } from 'vue'
-import './style.css'
+import 'bootstrap'
+import 'bootstrap/dist/css/bootstrap.min.css'
+import './styles/global.css'
+import ElementPlus from "element-plus";
+import pl from "element-plus/dist/locale/pl.mjs";
+import "element-plus/dist/index.css";
 import App from './App.vue'
 
-createApp(App).mount('#app')
+const app = createApp(App)
+app.use(ElementPlus, { locale: pl })
+app.mount('#app')

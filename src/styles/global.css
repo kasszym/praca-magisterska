@@ -1,0 +1,30 @@
+:root {
+  --main-color: #123C82;
+  --dark-green: #28483B;
+  --navy: #0B1E40;
+  --black: #1F2937;
+  --dark-grey:  #6B7280;
+  --grey: #E5E7EB;
+  --light-blue: #F7F9FC;
+
+  --font-inter: "Inter", sans-serif;
+  --font-roboto: "Roboto", sans-serif;
+  --fs-xxs: 12px;
+  --fs-xs: 13px;
+  --fs-s: 14px;
+  --fs-base: 16px;
+  --fs-l: 18px;
+  --fs-xl: 20px;
+
+  --app-width: 1200px;
+
+}
+
+html, body {
+  font-family: var(--font-inter);
+  font-size: var(--fs-base);
+  color: var(--black);
+  background: var(--light-blue);
+  margin: 0;
+  padding: 0;
+}
