@@ -17,7 +17,17 @@
   --fs-xl: 20px;
 
   --app-width: 1200px;
+  --border-radius: 14px;
 
+}
+
+.gap-2-5 {
+  row-gap: 12px;
+  column-gap: 12px;
+}
+.g-between {
+  --bs-gutter-x: 16px;
+  --bs-gutter-y: 16px;
 }
 
 html, body {
@@ -25,6 +35,7 @@ html, body {
   font-size: var(--fs-base);
   color: var(--black);
   background: var(--light-blue);
+  line-height: 1.2;
   margin: 0;
   padding: 0;
 }

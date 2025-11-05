@@ -6,7 +6,7 @@ import TheSeparator from "./common/TheSeparator.vue";
   <header class="bg-white">
     <div
       class="container-fluid d-flex align-items-center justify-content-between"
-      style="max-width: var(--app-width); height: 72px; padding: 0 16px"
+      style="max-width: var(--app-width); height: 72px; padding: 0"
     >
       <div class="d-flex align-items-center">
         <img

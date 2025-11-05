@@ -8,15 +8,13 @@ const props = defineProps({
 </script>
 <template>
   <div
-    class="section-card"
-    :style="{ padding: padding }"
+    class="card border bg-white"
+    :style="{
+      padding: padding,
+      borderColor: 'var(--grey)',
+      borderRadius: 'var(--border-radius)',
+    }"
   >
     <slot name="content" />
   </div>
 </template>
-<style scoped>
-.section-card {
-  border: 1px solid var(--grey);
-  border-radius: 8px;
-}
-</style>
