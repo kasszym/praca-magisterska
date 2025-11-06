@@ -4,6 +4,7 @@ import IntroComponent from "./components/MainPageComponents/IntroComponent.vue";
 import CarRanges from "./components/CarRange.vue/CarRanges.vue";
 import PromoBanner from "./components/PromoBanner.vue";
 import InfoComponent from "./components/InfoComponent/InfoComponent.vue";
+import OutroComponent from "./components/OutroComponent.vue";
 </script>
 
 <template>
@@ -17,6 +18,7 @@ import InfoComponent from "./components/InfoComponent/InfoComponent.vue";
       <CarRanges />
       <PromoBanner />
       <InfoComponent />
+      <OutroComponent />
     </main>
   </div>
 </template>

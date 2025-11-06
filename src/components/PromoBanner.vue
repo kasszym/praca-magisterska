@@ -16,7 +16,7 @@ import ButtonComponent from "./common/ButtonComponent.vue";
       title="Umów się na jazdę próbną"
       width="256px"
       background-color="#fff"
-      color="var(--blue)"
+      color="var(--main-color)"
       class="me-2"
       font-size="var(--fs-s)"
     />
@@ -25,7 +25,7 @@ import ButtonComponent from "./common/ButtonComponent.vue";
 
 <style scoped>
 .promo-banner {
-  background: var(--blue);
+  background: var(--main-color);
   border-radius: var(--border-radius);
   height: 120px;
 }
