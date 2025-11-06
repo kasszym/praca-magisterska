@@ -5,7 +5,7 @@ import ButtonComponent from "../common/ButtonComponent.vue";
 <template>
   <SectionCard>
     <template #content>
-      <div class="row g-0 align-items-stretch">
+      <div class="row g-2 align-items-stretch">
         <div
           class="col-12 col-lg-auto d-flex content-col"
           style="max-width: 526px"
@@ -70,8 +70,17 @@ import ButtonComponent from "../common/ButtonComponent.vue";
 .image-wrap {
   width: 100%;
   max-width: 582px;
-  max-height: 364px;
-  border-radius: var(--border-radius);
   overflow: hidden;
+}
+.image-wrap img {
+  border-radius: var(--border-radius);
+}
+@media (max-width: 1000px) {
+  .content-col {
+    max-width: 100% !important;
+  }
+  .image-wrap {
+    margin: auto;
+  }
 }
 </style>

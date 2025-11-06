@@ -38,7 +38,7 @@ const filteredCars = computed(() => {
 
       <div
         v-if="filteredCars.length"
-        class="row gx-5 gy-4"
+        class="row gx-5 gy-4 justify-content-center"
       >
         <div
           v-for="(car, index) in filteredCars"

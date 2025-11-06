@@ -12,14 +12,16 @@ import Footer from "./components/Footer.vue";
   <div>
     <Header />
     <main
-      class="container app-container px-0 d-flex flex-column"
-      style="gap: 40px; margin: 32px auto 18px auto"
+      class="container-fluid px-3"
+      style="margin: 32px auto 18px auto"
     >
-      <IntroComponent />
-      <CarRanges />
-      <PromoBanner />
-      <InfoComponent />
-      <OutroComponent />
+      <div class="app-container mx-auto d-flex flex-column gap-4 gap-md-5">
+        <IntroComponent />
+        <CarRanges />
+        <PromoBanner />
+        <InfoComponent />
+        <OutroComponent />
+      </div>
     </main>
     <Footer />
   </div>

@@ -49,7 +49,7 @@ const afterLeave = (el) => {
   >
     <button
       type="button"
-      class="w-100 d-flex justify-content-between align-items-center px-3 py-3 pb-3 rounded-3 border-0 bg-transparent focus-shadow-none"
+      class="w-100 d-flex justify-content-between align-items-center px-3 py-3 pb-3 rounded-3 border-0 bg-transparent focus-shadow-none gap-3"
       @click="toggle"
     >
       <span
@@ -58,27 +58,28 @@ const afterLeave = (el) => {
       >
         {{ title }}
       </span>
-
-      <svg
-        width="12"
-        height="7"
-        viewBox="0 0 12 7"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        :style="{
-          transition: 'transform 200ms ease',
-          transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-          transformOrigin: 'center',
-        }"
-      >
-        <path
-          d="M1 1L6 6L11 1"
-          stroke="var(--black100)"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        />
-      </svg>
+      <span class="flex-shrink-0 d-flex align-items-center">
+        <svg
+          width="12"
+          height="7"
+          viewBox="0 0 12 7"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          :style="{
+            transition: 'transform 200ms ease',
+            transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+            transformOrigin: 'center',
+          }"
+        >
+          <path
+            d="M1 1L6 6L11 1"
+            stroke="var(--black100)"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </span>
     </button>
 
     <transition

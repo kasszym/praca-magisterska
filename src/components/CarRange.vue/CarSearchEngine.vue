@@ -25,14 +25,11 @@ function onSubmit(e) {
 </script>
 
 <template>
-  <SectionCard
-    padding="0 21px"
-    style="height: 72px; display: flex; justify-content: center"
-  >
+  <SectionCard>
     <template #content>
       <form
         @submit="onSubmit"
-        class="d-flex justify-content-between align-items-center w-100"
+        class="filters-form d-flex justify-content-between align-items-center w-100"
         style="gap: 16px"
       >
         <div class="filters row g-3 align-items-center flex-nowrap">
@@ -96,19 +93,26 @@ function onSubmit(e) {
           </div>
         </div>
 
-        <ButtonComponent
-          @handle-click="onSubmit"
-          title="Filtruj"
-          class="me-3"
-          width="135px"
-          background-color="var(--dark-green)"
-        />
+        <div class="btn-wrap">
+          <ButtonComponent
+            @handle-click="onSubmit"
+            title="Filtruj"
+            class="me-3"
+            width="135px"
+            background-color="var(--dark-green)"
+          />
+        </div>
       </form>
     </template>
   </SectionCard>
 </template>
 
 <style>
+.SectionCard {
+  height: 72px;
+  display: flex;
+  justify-content: center;
+}
 .filters.row {
   --bs-gutter-x: 20px !important;
 }
@@ -177,5 +181,39 @@ input::placeholder {
 .input[type="number"] {
   -moz-appearance: textfield;
   appearance: textfield;
+}
+@media (max-width: 1000px) {
+  .SectionCard {
+    height: 100%;
+  }
+  .filters-form {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  .filters {
+    flex-wrap: wrap !important;
+  }
+  .field {
+    width: 100%;
+  }
+  .el-select {
+    width: 100% !important;
+  }
+  .range-group {
+    width: 100%;
+  }
+  .input {
+    width: 100%;
+  }
+  .btn-wrap {
+    width: 100%;
+  }
+  .btn-wrap > * {
+    width: 100% !important;
+  }
+  .label {
+    width: 60px;
+  }
 }
 </style>

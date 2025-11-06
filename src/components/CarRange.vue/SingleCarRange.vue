@@ -15,7 +15,7 @@ const getCarImage = (img) =>
 
 <template>
   <div
-    class="card"
+    class="card mx-auto w-100"
     style="
       max-width: 368px;
       border: 1px solid var(--grey);
