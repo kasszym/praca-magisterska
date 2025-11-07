@@ -26,8 +26,8 @@ defineExpose({ open, close });
     :header="car.name"
   >
     <template #content>
-      <div style="display: flex; gap: 36px">
-        <div style="width: 660px"><CarGallery :images="car.images" /></div>
+      <div class="car-modal">
+        <div class="car-gallery"><CarGallery :images="car.images" /></div>
         <div class="d-flex flex-column gap-3">
           <SectionCard padding="16px 14px">
             <template #content>
@@ -65,4 +65,20 @@ defineExpose({ open, close });
     </template>
   </Modal>
 </template>
-<style scoped></style>
+<style scoped>
+.car-modal {
+  display: flex;
+  gap: 36px;
+}
+.car-gallery {
+  width: 660px;
+}
+@media (max-width: 1200px) {
+  .car-modal {
+    flex-direction: column;
+  }
+  .car-gallery {
+    width: 100%;
+  }
+}
+</style>

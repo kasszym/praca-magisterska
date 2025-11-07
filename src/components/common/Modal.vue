@@ -20,10 +20,7 @@ const visible = computed({
 });
 </script>
 <template>
-  <el-dialog
-    v-model="visible"
-    width="1120"
-  >
+  <el-dialog v-model="visible">
     <template #header
       ><span
         style="color: var(--navy); font-size: var(--fs-l); font-weight: 700"
@@ -46,6 +43,7 @@ const visible = computed({
   --el-dialog-border-radius: none;
   --el-dialog-padding-primary: 0;
   --el-dialog-margin-top: 5vh;
+  --el-dialog-width: 1200px;
 }
 .el-dialog__header {
   padding: 20px 24px;
@@ -53,5 +51,11 @@ const visible = computed({
 .el-dialog__footer {
   display: block;
   padding: 28px 20px 38px;
+}
+@media (max-width: 1200px) {
+  .el-dialog {
+    --el-dialog-width: 100%;
+    --el-dialog-margin-top: 0;
+  }
 }
 </style>

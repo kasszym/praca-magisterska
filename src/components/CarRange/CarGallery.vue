@@ -33,8 +33,8 @@ const filteredImages = computed(() =>
 <template>
   <div class="d-flex flex-column gap-3">
     <div
-      class="position-relative overflow-hidden"
-      style="height: 372px; border-radius: 8px"
+      class="position-relative overflow-hidden main-image"
+      style="border-radius: 8px"
       @keydown.left.prevent="prev"
       @keydown.right.prevent="next"
     >
@@ -48,8 +48,7 @@ const filteredImages = computed(() =>
       />
     </div>
     <div
-      class="d-flex flex-wrap"
-      style="gap: 30px"
+      class="d-flex flex-wrap images-wrap"
     >
       <button
         v-for="t in filteredImages"
@@ -62,11 +61,31 @@ const filteredImages = computed(() =>
         <img
           :src="getCarImage(t.img)"
           alt="Miniatura"
-          class="d-block"
-          style="width: 200px; height: 120px; object-fit: cover"
+          class="d-block thumb-image"
           loading="lazy"
         />
       </button>
     </div>
   </div>
 </template>
+<style scoped>
+.main-image {
+  height: 372px;
+}
+.thumb-image {
+  width: 200px;
+  height: 120px;
+  object-fit: cover;
+}
+.images-wrap{
+  gap: 30px
+}
+@media (max-width: 1200px) {
+  .main-image {
+    height: auto;
+  }
+  .images-wrap {
+    justify-content: space-between;
+  }
+}
+</style>
