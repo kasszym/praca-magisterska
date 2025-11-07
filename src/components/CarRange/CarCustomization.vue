@@ -82,7 +82,8 @@ const formatPrice = (value) => value.toLocaleString("pl-PL");
       <ButtonComponent
         title="Znajdź punkt sprzedaży"
         class="w-100 mt-2"
-        background-color="var(--dark-green)"
+        background-color="var(--green)"
+        background-color-hover="var(--dark-green)"
         height="40px"
       />
     </div>

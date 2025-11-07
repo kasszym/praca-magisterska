@@ -25,7 +25,8 @@ import TheSeparator from "./common/TheSeparator.vue";
         <ButtonComponent
           width="189px"
           title="Zaplanuj jazdę testową"
-          background-color="var(--dark-green)"
+          background-color="var(--green)"
+          background-color-hover="var(--dark-green)"
         />
       </div>
     </div>

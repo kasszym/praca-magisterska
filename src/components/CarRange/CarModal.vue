@@ -57,6 +57,9 @@ defineExpose({ open, close });
         @handle-click="close"
         :font-weight="400"
         border="1px solid var(--grey)"
+        background-color-hover="#fff"
+        color-hover="var(--navy)"
+        border-hover="1px solid var(--dark-grey)"
       />
       <ButtonComponent
         title="Znajdź dealera"

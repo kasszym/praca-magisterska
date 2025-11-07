@@ -22,8 +22,10 @@ const filteredCars = computed(() => {
     if (type && car.type !== type) return false;
     if (drive && car.drive !== drive) return false;
 
-    if (priceMin != null && car.price < Number(priceMin)) return false;
-    if (priceMax != null && car.price > Number(priceMax)) return false;
+    if (priceMin != null && priceMin != "" && car.price < Number(priceMin))
+      return false;
+    if (priceMax != null && priceMax != "" && car.price > Number(priceMax))
+      return false;
 
     return true;
   });
