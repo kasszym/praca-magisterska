@@ -1,6 +1,6 @@
 # Vue 3 + Vite - Voltura
 
-# #Stack
+## Stack
 Vue 3 (^3.5.22) <br />
 Vite (^7.1.7) <br />
 Bootstrap 5 (^5.3.8) <br />
