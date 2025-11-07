@@ -11,22 +11,33 @@ const props = defineProps({
 const version = ref(
   props.car.selectedVersion ?? props.car.versions?.[0]?.title ?? ""
 );
-const selectedPrice = computed(() => {
+const basePrice = computed(() => {
   const v = props.car.versions?.find((x) => x.title === version.value);
   return v?.price ?? 0;
 });
+const selectedAddonTitles = ref([]);
+const selectedAddons = computed(
+  () =>
+    props.car.additional?.filter((a) =>
+      selectedAddonTitles.value.includes(a.title)
+    ) ?? []
+);
+const addonsTotal = computed(() =>
+  selectedAddons.value.reduce((sum, a) => sum + (a.price ?? 0), 0)
+);
+const totalPrice = computed(() => basePrice.value + addonsTotal.value);
 const color = ref(props.car.colors?.[0] ?? "");
-const addon = ref(null);
+
 const formatPrice = (value) => value.toLocaleString("pl-PL");
 const savetoLocalStorage = () => {
   const payload = {
     name: props.car.name,
     version: version.value,
     color: color.value,
-    addon: addon.value,
-    price: selectedPrice.value,
+    addons: selectedAddons.value,
+    price: totalPrice.value,
   };
-  localStorage.setItem(props.car.name, JSON.stringify(payload));
+  localStorage.setItem("selectedCar", JSON.stringify(payload));
 };
 defineExpose({ open, close, savetoLocalStorage });
 </script>
@@ -72,18 +83,18 @@ defineExpose({ open, close, savetoLocalStorage });
     </div>
     <div class="d-flex flex-column gap-2">
       <span class="car-customization-label">Dodatki</span>
-      <el-radio-group
-        v-model="addon"
+      <el-checkbox-group
+        v-model="selectedAddonTitles"
         class="addon-group"
       >
-        <el-radio-button
+        <el-checkbox-button
           v-for="a in props.car.additional"
-          :key="a"
-          :label="a"
+          :key="a.title"
+          :label="a.title"
         >
-          {{ a }}
-        </el-radio-button>
-      </el-radio-group>
+          {{ a.title }}
+        </el-checkbox-button>
+      </el-checkbox-group>
     </div>
     <div class="d-flex flex-column gap-2">
       <div class="d-flex flex-column">
@@ -92,7 +103,7 @@ defineExpose({ open, close, savetoLocalStorage });
           class="fw-bold fs-4"
           style="color: var(--navy)"
         >
-          {{ formatPrice(selectedPrice) }} zł
+          {{ formatPrice(totalPrice) }} zł
         </span>
       </div>
 
@@ -123,12 +134,27 @@ defineExpose({ open, close, savetoLocalStorage });
   background: #fff;
   border: 1px solid var(--grey) !important;
   border-radius: 8px !important;
+  font-weight: 400;
 }
 .el-radio-button.is-active
   .el-radio-button__original-radio:not(:disabled)
   + .el-radio-button__inner {
   background-color: var(--main-color);
   border: 1px solid var(--main-color) !important;
+  font-weight: 700;
+}
+.el-checkbox-button .el-checkbox-button__inner {
+  height: 32px;
+  font-size: var(--fs-xs);
+  color: var(--navy);
+  background: #fff;
+  border: 1px solid var(--grey) !important;
+  border-radius: 8px !important;
+  width: 100%;
+}
+.el-checkbox-button.is-checked .el-checkbox-button__inner {
+  background: var(--main-color);
+  border: 1px solid var(--main-color) !important;;
   font-weight: 700;
 }
 .color-dot {

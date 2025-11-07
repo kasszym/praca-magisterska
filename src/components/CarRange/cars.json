@@ -10,7 +10,10 @@
       { "title": "Performance", "price": 149999 }
     ],
     "colors": ["var(--black)", "var(--grey)", "var(--green)"],
-    "additional": ["Koła zimowe", "Akcesoria"],
+    "additional": [
+      { "title": "Koła zimowe", "price": 5000 },
+      { "title": "Akcesoria", "price": 50000 }
+    ],
     "acceleration_0_100_s": 5.8,
     "max_speed_kmh": 165,
     "charging": 120,
@@ -32,7 +35,10 @@
       { "title": "Performance", "price": 249999 }
     ],
     "colors": ["var(--black)", "var(--grey)", "var(--green)"],
-    "additional": ["Koła zimowe", "Akcesoria"],
+    "additional": [
+      { "title": "Koła zimowe", "price": 5000 },
+      { "title": "Akcesoria", "price": 50000 }
+    ],
     "price": 123999,
     "acceleration_0_100_s": 5.8,
     "max_speed_kmh": 165,
@@ -55,7 +61,10 @@
       { "title": "Performance", "price": 349999 }
     ],
     "colors": ["var(--black)", "var(--grey)", "var(--green)"],
-    "additional": ["Koła zimowe", "Akcesoria"],
+    "additional": [
+      { "title": "Koła zimowe", "price": 5000 },
+      { "title": "Akcesoria", "price": 50000 }
+    ],
     "price": 229999,
     "acceleration_0_100_s": 5.8,
     "max_speed_kmh": 165,
