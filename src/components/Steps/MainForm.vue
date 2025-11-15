@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, watchEffect } from "vue";
+import { ref, computed, watchEffect, onMounted } from "vue";
 import { useValidator } from "../../composables/validator";
 
 const ruleFormRef = ref(null);
@@ -131,6 +131,31 @@ const showInvoiceEmailInput = computed(
 const showCorrespondenceAddress = computed(
   () => form.value.correspondenceAddressOption === "different"
 );
+
+function markHasValue(e) {
+  const target = e && e.target ? e.target : e;
+  const content = target.closest && target.closest('.el-form-item__content') ? target.closest('.el-form-item__content') : target.parentElement && target.parentElement.closest('.el-form-item__content');
+  if (!content) return;
+  if (e && e.type === 'focus') {
+    content.classList.add('focused');
+  } else if (e && e.type === 'blur') {
+    content.classList.remove('focused');
+  }
+
+  if (target.value && String(target.value).length > 0) content.classList.add('has-value');
+  else content.classList.remove('has-value');
+}
+
+onMounted(() => {
+  // initialize existing values (if any)
+  const inputs = document.querySelectorAll('.step-two-content .el-input__inner');
+  inputs.forEach((inp) => {
+    try {
+      const content = inp.closest('.el-form-item__content');
+      if (content && inp.value && inp.value.length > 0) content.classList.add('has-value');
+    } catch (e) {}
+  });
+});
 </script>
 
 <template>
@@ -139,127 +164,107 @@ const showCorrespondenceAddress = computed(
       ref="ruleFormRef"
       :model="form"
       :rules="rules"
-      label-width="180px"
+      label-width="0"
       class="step-two-form"
     >
       <div class="form-section">
         <h3 class="section-title">Dane osobowe</h3>
         <el-form-item
-          label="Imię"
           prop="firstName"
         >
-          <el-input
-            v-model="form.firstName"
-            placeholder="Imię"
-          />
+            <label class="form-label">Imię</label>
+            <el-input
+              v-model="form.firstName"
+              @input="markHasValue"
+              @focus="markHasValue"
+              @blur="markHasValue"
+            />
         </el-form-item>
 
         <el-form-item
-          label="Nazwisko"
           prop="lastName"
         >
-          <el-input
-            v-model="form.lastName"
-            placeholder="Nazwisko"
-          />
+            <label class="form-label">Nazwisko</label>
+            <el-input
+              v-model="form.lastName"
+              @input="markHasValue"
+              @focus="markHasValue"
+              @blur="markHasValue"
+            />
         </el-form-item>
 
         <el-form-item
-          label="PESEL"
           prop="pesel"
         >
-          <el-input
-            v-model="form.pesel"
-            placeholder="PESEL"
-            maxlength="11"
-            @input="form.pesel = form.pesel.replace(/\D/g, '')"
-          />
+            <label class="form-label">PESEL</label>
+            <el-input
+              v-model="form.pesel"
+              maxlength="11"
+              @input="(e)=>{ form.pesel = e.target.value.replace(/\D/g, ''); markHasValue(e) }"
+              @focus="markHasValue"
+              @blur="markHasValue"
+            />
         </el-form-item>
       </div>
 
       <div class="form-section">
         <h3 class="section-title">Adres zamieszkania</h3>
         <el-form-item
-          label="Ulica"
           prop="street"
         >
-          <el-input
-            v-model="form.street"
-            placeholder="Ulica"
-          />
+            <label class="form-label">Ulica</label>
+            <el-input v-model="form.street" @input="markHasValue" @focus="markHasValue" @blur="markHasValue" />
         </el-form-item>
 
         <el-form-item
-          label="Numer domu"
           prop="houseNumber"
         >
-          <el-input
-            v-model="form.houseNumber"
-            placeholder="Numer domu"
-          />
+            <label class="form-label">Numer domu</label>
+            <el-input v-model="form.houseNumber" @input="markHasValue" @focus="markHasValue" @blur="markHasValue" />
         </el-form-item>
 
         <el-form-item
-          label="Numer mieszkania"
           prop="apartmentNumber"
         >
-          <el-input
-            v-model="form.apartmentNumber"
-            placeholder="Numer mieszkania"
-          />
+            <label class="form-label">Numer mieszkania</label>
+            <el-input v-model="form.apartmentNumber" @input="markHasValue" @focus="markHasValue" @blur="markHasValue" />
         </el-form-item>
 
         <el-form-item
-          label="Kod pocztowy"
           prop="postCode"
         >
-          <el-input
-            v-model="form.postCode"
-            placeholder="00-000"
-            maxlength="6"
-          />
+            <label class="form-label">00-000</label>
+            <el-input v-model="form.postCode" maxlength="6" @input="markHasValue" @focus="markHasValue" @blur="markHasValue" />
         </el-form-item>
 
         <el-form-item
-          label="Miejscowość"
           prop="city"
         >
-          <el-input
-            v-model="form.city"
-            placeholder="Miejscowość"
-          />
+            <label class="form-label">Miejscowość</label>
+            <el-input v-model="form.city" @input="markHasValue" @focus="markHasValue" @blur="markHasValue" />
         </el-form-item>
       </div>
 
       <div class="form-section">
         <h3 class="section-title">Kontakt</h3>
         <el-form-item
-          label="E-mail"
           prop="email"
         >
-          <el-input
-            v-model="form.email"
-            type="email"
-            placeholder="E-mail"
-          />
+            <label class="form-label">E-mail</label>
+            <el-input v-model="form.email" type="email" @input="markHasValue" @focus="markHasValue" @blur="markHasValue" />
         </el-form-item>
 
         <el-form-item
-          label="Telefon komórkowy"
           prop="phone"
         >
-          <el-input
-            v-model="form.phone"
-            placeholder="Telefon komórkowy"
-            @input="form.phone = form.phone.replace(/\D/g, '')"
-          />
+            <label class="form-label">Telefon komórkowy</label>
+            <el-input v-model="form.phone" @input="(e)=>{ form.phone = e.target.value.replace(/\D/g, ''); markHasValue(e) }" @focus="markHasValue" @blur="markHasValue" />
         </el-form-item>
       </div>
 
       <div class="form-section">
         <h3 class="section-title">E-mail do faktury</h3>
         <el-form-item
-          label="E-mail do faktury"
           prop="invoiceEmailOption"
         >
           <el-radio-group v-model="form.invoiceEmailOption">
@@ -270,21 +275,16 @@ const showCorrespondenceAddress = computed(
 
         <el-form-item
           v-if="showInvoiceEmailInput"
-          label="E-mail do faktury"
           prop="invoiceEmail"
         >
-          <el-input
-            v-model="form.invoiceEmail"
-            type="email"
-            placeholder="E-mail do faktury"
-          />
+            <label class="form-label">E-mail do faktury</label>
+            <el-input v-model="form.invoiceEmail" type="email" @input="markHasValue" @focus="markHasValue" @blur="markHasValue" />
         </el-form-item>
       </div>
 
       <div class="form-section">
         <h3 class="section-title">Adres korespondencyjny</h3>
         <el-form-item
-          label="Adres korespondencyjny"
           prop="correspondenceAddressOption"
         >
           <el-radio-group v-model="form.correspondenceAddressOption">
@@ -295,54 +295,38 @@ const showCorrespondenceAddress = computed(
 
         <template v-if="showCorrespondenceAddress">
           <el-form-item
-            label="Ulica"
             prop="correspondenceStreet"
           >
-            <el-input
-              v-model="form.correspondenceStreet"
-              placeholder="Ulica"
-            />
+            <label class="form-label">Ulica</label>
+            <el-input v-model="form.correspondenceStreet" @input="markHasValue" @focus="markHasValue" @blur="markHasValue" />
           </el-form-item>
 
           <el-form-item
-            label="Numer domu"
             prop="correspondenceHouseNumber"
           >
-            <el-input
-              v-model="form.correspondenceHouseNumber"
-              placeholder="Numer domu"
-            />
+            <label class="form-label">Numer domu</label>
+            <el-input v-model="form.correspondenceHouseNumber" @input="markHasValue" @focus="markHasValue" @blur="markHasValue" />
           </el-form-item>
 
           <el-form-item
-            label="Numer mieszkania"
             prop="correspondenceApartmentNumber"
           >
-            <el-input
-              v-model="form.correspondenceApartmentNumber"
-              placeholder="Numer mieszkania"
-            />
+            <label class="form-label">Numer mieszkania</label>
+            <el-input v-model="form.correspondenceApartmentNumber" @input="markHasValue" @focus="markHasValue" @blur="markHasValue" />
           </el-form-item>
 
           <el-form-item
-            label="Kod pocztowy"
             prop="correspondencePostCode"
           >
-            <el-input
-              v-model="form.correspondencePostCode"
-              placeholder="00-000"
-              maxlength="6"
-            />
+            <label class="form-label">Kod pocztowy</label>
+            <el-input v-model="form.correspondencePostCode" maxlength="6" @input="markHasValue" @focus="markHasValue" @blur="markHasValue" />
           </el-form-item>
 
           <el-form-item
-            label="Miejscowość"
             prop="correspondenceCity"
           >
-            <el-input
-              v-model="form.correspondenceCity"
-              placeholder="Miejscowość"
-            />
+            <label class="form-label">Miejscowość</label>
+            <el-input v-model="form.correspondenceCity" @input="markHasValue" @focus="markHasValue" @blur="markHasValue" />
           </el-form-item>
         </template>
       </div>
@@ -360,10 +344,104 @@ const showCorrespondenceAddress = computed(
 }
 
 .section-title {
-  font-size: var(--fs-l);
-  color: var(--navy);
+  font-size: var(--fs-base);
+  color: var(--black);
   margin-bottom: 20px;
   font-weight: 600;
+}
+
+.StepTwo {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.StepTwo__form {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.StepTwo__form-title {
+  text-align: left;
+  margin-bottom: .625rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--black);
+}
+
+.form-label {
+  position: absolute;
+  z-index: 1000;
+  top: 50%;
+  left: 1.25rem;
+  transform: translateY(-50%);
+  pointer-events: none;
+  display: flex;
+  font-size: var(--fs-s);
+  color: var(--dark-grey);
+}
+
+:deep(.StepTwo__content--containers .el-form-item__content .el-input__inner) {
+  text-transform: uppercase;
+}
+
+:deep(.el-input__inner) {
+  font-size: var(--fs-s) !important;
+}
+
+:deep(.el-input) {
+  height: calc(3rem - 4px);
+}
+
+:deep(.el-input__inner) {
+  padding-top: 0.5rem;
+}
+
+:deep(.el-input__wrapper) {
+  padding: 1.25rem;
+}
+
+:deep(.el-form-item.is-success) :deep(.el-input__wrapper) {
+  border: 2px solid var(--black);
+}
+
+:deep(.el-form-item__content) {
+  position: relative;
+}
+
+:deep(.el-form-item__content .required-icon) {
+  margin-left: 0.1875rem;
+  color: var(--dark-red);
+  font-size: 0.8rem;
+  align-self: flex-start;
+}
+
+:deep(.el-form-item__content.focused) .required-icon {
+  display: none;
+}
+
+:deep(.el-form-item__content.focused) .form-label {
+  transform: scale(0.7) translateY(-50%);
+  transform-origin: left;
+  left: 1.25rem;
+  top: 0.3125rem;
+  color: var(--dark-grey);
+  transition: all .1s linear;
+}
+
+:deep(.el-form-item__content.has-value) .required-icon {
+  display: none;
+}
+
+:deep(.el-form-item__content.has-value) .form-label {
+  transform: scale(0.7) translateY(-50%);
+  transform-origin: left;
+  left: 1.25rem;
+  top: 0.3125rem;
+  color: var(--dark-grey);
+  transition: all .1s linear;
 }
 
 :deep(.el-form-item__label) {
@@ -400,6 +478,21 @@ const showCorrespondenceAddress = computed(
 :deep(.el-radio__input.is-checked .el-radio__inner) {
   background-color: var(--main-color);
   border-color: var(--main-color);
+}
+
+:deep(.el-input__inner) {
+  position: relative;
+}
+
+:deep(.el-form-item.is-required) :deep(.el-input__inner)::after {
+  content: "*";
+  color: var(--dark-red);
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 12px;
+  pointer-events: none;
 }
 
 @media (max-width: 768px) {
