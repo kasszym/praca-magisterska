@@ -1,6 +1,6 @@
 [
   {
-    "name": "Voltura ZX 2025",
+    "name": "Aureon ZX 2025",
     "drivetrain": "AWD",
     "range": 400,
     "selectedVersion": "Podstawowa",
@@ -12,7 +12,7 @@
     "colors": [
       { "value": "var(--black)", "name": "Czarny" },
       { "value": "var(--grey)", "name": "Szary" },
-      { "value": "var(--green)", "name": "Zielony" }
+      { "value": "var(--pink)", "name": "Zielony" }
     ],
     "additional": [
       { "title": "Koła zimowe", "price": 5000 },
@@ -29,7 +29,7 @@
     "images": ["image1.png", "image2.png", "image3.png", "image4.png"]
   },
   {
-    "name": "Voltura PX 2025",
+    "name": "Aureon PX 2025",
     "drivetrain": "AWD",
     "range": 500,
     "selectedVersion": "Podstawowa",
@@ -41,7 +41,7 @@
     "colors": [
       { "value": "var(--black)", "name": "Czarny" },
       { "value": "var(--grey)", "name": "Szary" },
-      { "value": "var(--green)", "name": "Zielony" }
+      { "value": "var(--pink)", "name": "Zielony" }
     ],
     "additional": [
       { "title": "Koła zimowe", "price": 5000 },
@@ -59,7 +59,7 @@
     "images": ["image1.png", "image2.png", "image3.png", "image4.png"]
   },
   {
-    "name": "Voltura SX 2025",
+    "name": "Aureon SX 2025",
     "drivetrain": "AWD",
     "range": 300,
     "selectedVersion": "Podstawowa",
@@ -71,7 +71,7 @@
     "colors": [
       { "value": "var(--black)", "name": "Czarny" },
       { "value": "var(--grey)", "name": "Szary" },
-      { "value": "var(--green)", "name": "Zielony" }
+      { "value": "var(--pink)", "name": "Zielony" }
     ],
     "additional": [
       { "title": "Koła zimowe", "price": 5000 },

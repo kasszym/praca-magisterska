@@ -6,9 +6,11 @@ import InfoComponent from "../InfoComponent/InfoComponent.vue";
 import OutroComponent from "../OutroComponent.vue";
 </script>
 <template>
-  <IntroComponent />
-  <CarRanges />
-  <PromoBanner />
-  <InfoComponent />
-  <OutroComponent />
+  <div class="app-container mx-auto d-flex flex-column gap-4 gap-md-5">
+    <IntroComponent />
+    <CarRanges />
+    <PromoBanner />
+    <InfoComponent />
+    <OutroComponent />
+  </div>
 </template>

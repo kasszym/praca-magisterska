@@ -144,8 +144,8 @@ defineExpose({ open, close, savetoLocalStorage });
       <ButtonComponent
         title="Znajdź punkt sprzedaży"
         class="w-100 mt-2"
-        background-color="var(--green)"
-        background-color-hover="var(--dark-green)"
+        background-color="var(--pink)"
+        background-color-hover="var(--dark-pink)"
         height="40px"
         @handle-click="savetoLocalStorage"
       />

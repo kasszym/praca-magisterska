@@ -1,4 +1,4 @@
-# Vue 3 + Vite - Voltura
+# Vue 3 + Vite - Aureon
 
 ## Stack
 Vue 3 (^3.5.22) <br />
@@ -11,4 +11,4 @@ corepack enable <br />
 yarn install <br />
 yarn dev 
 
-# [Live Demo](https://kasszym.github.io/voltura/)
+# [Live Demo](https://kasszym.github.io/aureon/)

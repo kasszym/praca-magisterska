@@ -719,6 +719,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"aureon@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "aureon@workspace:."
+  dependencies:
+    "@element-plus/icons-vue": "npm:^2.3.2"
+    "@popperjs/core": "npm:^2.11.8"
+    "@vitejs/plugin-vue": "npm:^6.0.1"
+    bootstrap: "npm:^5.3.8"
+    bootstrap-icons: "npm:^1.13.1"
+    element-plus: "npm:^2.11.7"
+    vite: "npm:^7.1.7"
+    vue: "npm:^3.5.22"
+  languageName: unknown
+  linkType: soft
+
 "balanced-match@npm:^1.0.0":
   version: 1.0.2
   resolution: "balanced-match@npm:1.0.2"
@@ -1758,21 +1773,6 @@ __metadata:
   checksum: 10c0/cef4d4b4a84e663e09b858964af36e916892ac8540068df42a05ced637ceeae5e9ef71c72d54f3cfc1f3c254af16634230e221b6e2327c2a66d794bb49203262
   languageName: node
   linkType: hard
-
-"voltura@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "voltura@workspace:."
-  dependencies:
-    "@element-plus/icons-vue": "npm:^2.3.2"
-    "@popperjs/core": "npm:^2.11.8"
-    "@vitejs/plugin-vue": "npm:^6.0.1"
-    bootstrap: "npm:^5.3.8"
-    bootstrap-icons: "npm:^1.13.1"
-    element-plus: "npm:^2.11.7"
-    vite: "npm:^7.1.7"
-    vue: "npm:^3.5.22"
-  languageName: unknown
-  linkType: soft
 
 "vue-demi@npm:*":
   version: 0.14.10

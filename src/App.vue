@@ -26,14 +26,12 @@ const tabs = {
       class="container-fluid px-3"
       style="margin: 32px auto 18px auto"
     >
-      <div class="app-container mx-auto d-flex flex-column gap-4 gap-md-5">
-        <Steps
-          :active="activeStep"
-          @update="handleStepUpdate"
-        >
-          <template #default> <component :is="tabs[activeStep]" /></template>
-        </Steps>
-      </div>
+      <Steps
+        :active="activeStep"
+        @update="handleStepUpdate"
+      >
+        <template #default> <component :is="tabs[activeStep]" /></template>
+      </Steps>
     </main>
     <Footer />
   </div>

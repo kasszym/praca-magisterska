@@ -70,7 +70,7 @@ const props = defineProps({
             <div
               :class="
                 props.active >= step.id
-                  ? 'TheSteps__mobile-container TheSteps__mobile-container-green'
+                  ? 'TheSteps__mobile-container TheSteps__mobile-container-pink'
                   : 'TheSteps__mobile-container TheSteps__mobile-container-grey'
               "
               @click="$emit('update', step.id)"
@@ -143,21 +143,21 @@ const props = defineProps({
 
 .TheSteps__step--checked .TheSteps__box {
   color: white;
-  border: 0.1rem solid var(--dark-green);
-  background-color: var(--dark-green);
+  border: 0.1rem solid var(--dark-pink);
+  background-color: var(--dark-pink);
 }
 
 .TheSteps__step--checked .TheSteps__title {
-  color: var(--dark-green);
+  color: var(--dark-pink);
 }
 
 .TheSteps__step--active .TheSteps__box {
-  color: var(--navy);
-  border: 0.1rem solid var(--navy);
+  color: var(--main-color);
+  border: 0.1rem solid var(--main-color);
 }
 
 .TheSteps__step--active .TheSteps__title {
-  color: var(--navy);
+  color: var(--main-color);
 }
 .TheSteps__content {
   margin-top: 3rem;

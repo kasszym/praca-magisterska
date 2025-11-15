@@ -105,8 +105,8 @@ function onSubmit(e) {
             title="Filtruj"
             class="me-3"
             width="135px"
-            background-color="var(--green)"
-            background-color-hover="var(--dark-green)"
+            background-color="var(--pink)"
+            background-color-hover="var(--dark-pink)"
           />
         </div>
       </form>

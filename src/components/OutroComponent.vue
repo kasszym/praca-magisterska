@@ -1,7 +1,7 @@
 <template>
   <div
     class="position-relative overflow-hidden rounded-3 d-flex align-items-center justify-content-center text-center text-white"
-    style="height: 295px; background-color: var(--main-color)"
+    style="height: 295px; background-color: var(--pink)"
   >
     <img
       src="../assets/outro-image.png"
@@ -11,7 +11,7 @@
     />
 
     <span class="position-relative z-1 fw-bold fs-2 px-3">
-      Postaw na innowację. Postaw na Voltura.
+      Postaw na innowację. Postaw na Aureon.
     </span>
   </div>
 </template>

@@ -13,11 +13,11 @@ import ButtonComponent from "../common/ButtonComponent.vue";
           <div class="d-flex flex-column gap-2-5 flex-grow-1 h-100">
             <span class="headline">Moc spotyka efektywność</span>
             <span class="subhead">
-              Odkryj nową linię Voltura e-Line – zaprojektowaną z myślą o
+              Odkryj nową linię Aureon e-Line – zaprojektowaną z myślą o
               mieście i długich trasach
             </span>
             <span class="bodycopy">
-              Voltura e-Line to zupełnie nowa generacja samochodów
+              Aureon e-Line to zupełnie nowa generacja samochodów
               elektrycznych, łączących dynamiczne osiągi z wyjątkową
               energooszczędnością. <br />
               Zaprojektowana w oparciu o najnowsze technologie, oferuje nie
@@ -26,7 +26,7 @@ import ButtonComponent from "../common/ButtonComponent.vue";
               każda podróż staje się bezpieczniejsza i bardziej intuicyjna.
               <br />
               Elegancka sylwetka i dopracowane detale nadwozia podkreślają
-              charakter premium marki Voltura.
+              charakter premium marki Aureon.
             </span>
 
             <div class="mt-auto">

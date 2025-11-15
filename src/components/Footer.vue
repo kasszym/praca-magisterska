@@ -10,7 +10,7 @@ import TheSeparator from "./common/TheSeparator.vue";
         style="max-width: var(--app-width); height: 80px"
       >
         <span style="color: var(--dark-grey); font-size: var(--fs-s)"
-          >© 2025 Voltura Motors</span
+          >© 2025 Aureon Motors</span
         >
       </div>
     </div>

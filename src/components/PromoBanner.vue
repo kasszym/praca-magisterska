@@ -10,7 +10,7 @@ import ButtonComponent from "./common/ButtonComponent.vue";
       class="fw-bold text-center text-sm-start"
       style="font-size: 22px;"
     >
-      Poczuj przyszłość jazdy z Voltura.
+      Poczuj przyszłość jazdy z Aureon.
     </span>
 
     <ButtonComponent
