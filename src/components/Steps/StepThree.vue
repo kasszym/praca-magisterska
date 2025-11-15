@@ -1,5 +1,6 @@
 <script setup>
 import Summary from "./Summary.vue";
+import Delivery from "./Delivery.vue";
 import Card from "../common/SectionCard.vue";
 </script>
 
@@ -7,12 +8,7 @@ import Card from "../common/SectionCard.vue";
   <div class="step-three-container">
     <Card>
       <template #content>
-        <div class="step-three-content">
-          <div class="step-three-placeholder">
-            <h3>Step Three Content</h3>
-            <p>Content for step three will go here</p>
-          </div>
-        </div>
+        <Delivery/>
       </template>
     </Card>
 
@@ -32,22 +28,7 @@ import Card from "../common/SectionCard.vue";
   align-items: start;
 }
 
-.step-three-placeholder {
-  padding: 24px;
-  background: white;
-  border-radius: var(--border-radius);
-}
 
-.step-three-placeholder h3 {
-  font-size: var(--fs-xl);
-  color: var(--navy);
-  margin-bottom: 16px;
-}
-
-.step-three-placeholder p {
-  color: var(--dark-grey);
-  font-size: var(--fs-s);
-}
 
 .step-three-summary {
   min-width: 0;
