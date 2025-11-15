@@ -43,10 +43,21 @@ const submit = () => {
 };
 const previousDelivery = ref(deliveryMethod.value);
 
-const verificationMethod = ref("online"); 
+const verificationMethod = ref("online");
 const verificationOptions = [
-  { id: "online", label: "Weryfikacja online", price: "0 zł" },
-  { id: "courier", label: "Weryfikacja u kuriera", price: "20 zł" },
+  {
+    id: "online",
+    label: "Weryfikacja online",
+    price: "0 zł",
+    description: "Potwierdź swoją tożsamość za pomocą przelewu bankowego.",
+  },
+  {
+    id: "courier",
+    label: "Weryfikacja u kuriera",
+    price: "20 zł",
+    description:
+      "Zamów kuriera, który przywiezie umowę do podpisu oraz potwierdzi Twoją tożsamość.",
+  },
 ];
 
 const shownDeliveryOptions = () => {
@@ -64,19 +75,18 @@ const selectVerification = (id) => {
     deliveryMethod.value = previousDelivery.value || "inpost";
   }
 };
-
 </script>
 
 <template>
   <div class="Delivery">
-    <h3>Dostawa umowy i płatność</h3>
-    <span
+    <p style="font-size: var(--fs-xxl); font-weight: 600">
+      Dostawa umowy i płatność
+    </p>
+    <p style="font-size: var(--fs-l); font-weight: 600">Potwierdź dane</p>
+    <span style="font-size: var(--fs-base)"
       >Wybierz, jak chcesz potwierdzić swoje dane. Możesz dokonać weryfikacji
       online lub u kuriera. Wybierz sposób weryfikacji i wysłania umowy.
     </span>
-    <div>
-      here
-    </div>
     <div class="verification-row">
       <div
         v-for="v in verificationOptions"
@@ -91,10 +101,15 @@ const selectVerification = (id) => {
         <div class="verification-left">
           <div class="verification-label">{{ v.label }}</div>
           <div class="verification-price">{{ v.price }}</div>
+          <div class="verification-description">
+            {{ v.description }}
+          </div>
         </div>
       </div>
     </div>
-
+    <p style="font-size: var(--fs-l); font-weight: 600; margin-top: 24px;"
+      >Wybierz sposób dostawy umowy</p
+    >
     <div class="delivery-cards">
       <div
         v-for="opt in shownDeliveryOptions()"
@@ -134,21 +149,23 @@ const selectVerification = (id) => {
 .verification-row {
   display: flex;
   gap: 12px;
-  margin-top: 12px;
+  margin-top: 16px;
 }
 .verification-card {
-  padding: 12px;
+  padding: 14px 18px;
   border: 1px solid var(--grey);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   cursor: pointer;
-  min-width: 200px;
+  min-width: 0;
+  flex: 1 1 0;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: #fff;
 }
 .verification-card.selected {
-  border-color: var(--main-color);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  border: 2px solid var(--dark-pink);
+  box-shadow: 0 4px 12px 3px var(--pink);
 }
 .verification-left {
   display: flex;
@@ -157,31 +174,34 @@ const selectVerification = (id) => {
 }
 .verification-label {
   font-weight: 600;
+  color: var(--navy);
 }
 .verification-price {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--dark-grey);
 }
 
 .delivery-cards {
   display: flex;
   gap: 12px;
-  margin-top: 12px;
+  margin-top: 16px;
+  flex-direction: column;
 }
 .delivery-card {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 12px;
+  padding: 14px 18px;
   border: 1px solid var(--grey);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   cursor: pointer;
-  min-width: 200px;
+  min-width: 240px;
+  background: #fff;
 }
 .delivery-card.selected {
-  border-color: var(--main-color);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  border: 2px solid var(--dark-pink);
+  box-shadow: 0 4px 12px 3px var(--pink);
 }
 .delivery-left {
   display: flex;
@@ -196,23 +216,27 @@ const selectVerification = (id) => {
   flex-direction: column;
 }
 .delivery-label {
-  font-weight: 600;
+  font-weight: 700;
+  color: var(--navy);
 }
 .delivery-eta {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--dark-grey);
 }
 .delivery-price {
   font-weight: 700;
-  color: var(--navy);
+  color: var(--main-color);
 }
 
-@media (max-width: 768px) {
-  .delivery-cards {
-    flex-direction: column;
-  }
+@media (max-width: 1024px) {
+  .delivery-cards,
   .verification-row {
     flex-direction: column;
+  }
+  .delivery-card,
+  .verification-card {
+    width: 100%;
+    min-width: auto;
   }
 }
 </style>

@@ -6,11 +6,7 @@ import Card from "../common/SectionCard.vue";
 
 <template>
   <div class="step-three-container">
-    <Card>
-      <template #content>
-        <Delivery/>
-      </template>
-    </Card>
+    <Delivery />
 
     <Card class="step-three-summary">
       <template #content>
@@ -27,8 +23,6 @@ import Card from "../common/SectionCard.vue";
   gap: 24px;
   align-items: start;
 }
-
-
 
 .step-three-summary {
   min-width: 0;
