@@ -267,9 +267,9 @@ onMounted(() => {
         <el-form-item
           prop="invoiceEmailOption"
         >
-          <el-radio-group v-model="form.invoiceEmailOption">
-            <el-radio label="same">Taki sam jak adres e-mail</el-radio>
-            <el-radio label="different">Inny</el-radio>
+          <el-radio-group v-model="form.invoiceEmailOption" class="version-group">
+            <el-radio-button label="same">Taki sam jak adres e-mail</el-radio-button>
+            <el-radio-button label="different">Inny</el-radio-button>
           </el-radio-group>
         </el-form-item>
 
@@ -287,9 +287,9 @@ onMounted(() => {
         <el-form-item
           prop="correspondenceAddressOption"
         >
-          <el-radio-group v-model="form.correspondenceAddressOption">
-            <el-radio label="same">Taki sam jak zamieszkania</el-radio>
-            <el-radio label="different">Inny</el-radio>
+          <el-radio-group v-model="form.correspondenceAddressOption" class="version-group">
+            <el-radio-button label="same">Taki sam jak zamieszkania</el-radio-button>
+            <el-radio-button label="different">Inny</el-radio-button>
           </el-radio-group>
         </el-form-item>
 

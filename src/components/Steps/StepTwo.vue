@@ -1,16 +1,24 @@
 <script setup>
 import Card from "../common/SectionCard.vue";
+import Agreements from "./Agreements.vue";
 import Summary from "./Summary.vue";
 import MainForm from "./MainForm.vue";
 </script>
 
 <template>
   <div class="step-two-container">
-    <Card>
-      <template #content>
-        <MainForm />
-      </template>
-    </Card>
+    <div style="display: flex; flex-direction: column; gap: 24px">
+      <Card>
+        <template #content>
+          <MainForm />
+        </template>
+      </Card>
+      <Card>
+        <template #content>
+          <Agreements/>
+        </template>
+      </Card>
+    </div>
     <Card class="step-two-summary">
       <template #content>
         <Summary />
@@ -45,5 +53,4 @@ import MainForm from "./MainForm.vue";
     top: auto;
   }
 }
-
 </style>
