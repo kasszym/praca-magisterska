@@ -1,7 +1,8 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
 import ButtonComponent from "../common/ButtonComponent.vue";
 import { ElMessage } from "element-plus";
+import { useSummary } from "../../composables/useSummary";
 
 const props = defineProps({
   car: {
@@ -9,6 +10,9 @@ const props = defineProps({
     required: true,
   },
 });
+
+const { setSelectedCar } = useSummary();
+
 const version = ref(
   props.car.selectedVersion ?? props.car.versions?.[0]?.title ?? ""
 );
@@ -30,6 +34,30 @@ const totalPrice = computed(() => basePrice.value + addonsTotal.value);
 const color = ref(props.car.colors?.[0].name ?? "");
 
 const formatPrice = (value) => value.toLocaleString("pl-PL");
+
+const saveToSummary = () => {
+  if (version.value && color.value) {
+    const payload = {
+      name: props.car.name,
+      version: version.value,
+      color: color.value,
+      addons: selectedAddons.value,
+      price: totalPrice.value,
+    };
+    setSelectedCar(payload);
+  }
+};
+
+// Save on mount if there are default values
+onMounted(() => {
+  saveToSummary();
+});
+
+// Auto-save to summary when values change
+watch([version, color, selectedAddonTitles, totalPrice], () => {
+  saveToSummary();
+});
+
 const savetoLocalStorage = () => {
   const payload = {
     name: props.car.name,
@@ -38,7 +66,7 @@ const savetoLocalStorage = () => {
     addons: selectedAddons.value,
     price: totalPrice.value,
   };
-  localStorage.setItem("selectedCar", JSON.stringify(payload));
+  setSelectedCar(payload);
   ElMessage({
     message: "Zapisano zmiany.",
     type: "success",
