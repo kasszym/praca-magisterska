@@ -1,0 +1,84 @@
+.form-label {
+  position: absolute;
+  z-index: 1000;
+  top: 50%;
+  left: 1.25rem;
+  transform: translateY(-50%);
+  pointer-events: none;
+  display: flex;
+  font-size: var(--fs-s);
+  color: var(--dark-grey);
+}
+
+.el-input {
+  height: calc(3rem - 4px);
+}
+
+.el-input__inner {
+  padding-top: 4px !important;
+  padding-left: 7px !important;
+  font-size: var(--fs-s) !important;
+  position: relative;
+}
+
+.el-input__wrapper {
+  padding: 1.25rem 1.25rem 1.25rem 0;
+  border-radius: 8px;
+  border: 1px solid var(--grey);
+  box-shadow: none;
+}
+
+.el-input__wrapper:hover {
+  border-color: var(--main-color);
+}
+
+.el-input__wrapper.is-focus {
+  border-color: var(--main-color);
+  box-shadow: none !important;
+}
+.el-form-item__content {
+  position: relative;
+}
+
+.el-form-item__content .required-icon {
+  margin-left: 0.1875rem;
+  color: var(--dark-red);
+  font-size: 0.8rem;
+  align-self: flex-start;
+}
+
+.el-form-item__content.focused .required-icon,
+.el-form-item__content.has-value .required-icon {
+  display: none;
+}
+
+.el-form-item__content.focused .form-label,
+.el-form-item__content.has-value .form-label {
+  transform: scale(0.7) translateY(-50%);
+  transform-origin: left;
+  left: 1.25rem;
+  top: 0.3125rem;
+  color: var(--dark-grey);
+  transition: all .1s linear;
+}
+
+.el-form-item__label {
+  color: var(--dark-grey);
+  font-size: var(--fs-s);
+  font-weight: 500;
+}
+
+.el-form-item.is-required .el-input__inner::after {
+  content: "*";
+  color: var(--dark-red);
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 12px;
+  pointer-events: none;
+}
+
+.el-form-item.is-success .el-input__wrapper {
+  border: 2px solid var(--black);
+}

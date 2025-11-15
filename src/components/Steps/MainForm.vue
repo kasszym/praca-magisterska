@@ -147,7 +147,6 @@ function markHasValue(e) {
 }
 
 onMounted(() => {
-  // initialize existing values (if any)
   const inputs = document.querySelectorAll('.step-two-content .el-input__inner');
   inputs.forEach((inp) => {
     try {
@@ -383,88 +382,6 @@ onMounted(() => {
   color: var(--dark-grey);
 }
 
-:deep(.StepTwo__content--containers .el-form-item__content .el-input__inner) {
-  text-transform: uppercase;
-}
-
-:deep(.el-input__inner) {
-  font-size: var(--fs-s) !important;
-}
-
-:deep(.el-input) {
-  height: calc(3rem - 4px);
-}
-
-:deep(.el-input__inner) {
-  padding-top: 0.5rem;
-}
-
-:deep(.el-input__wrapper) {
-  padding: 1.25rem;
-}
-
-:deep(.el-form-item.is-success) :deep(.el-input__wrapper) {
-  border: 2px solid var(--black);
-}
-
-:deep(.el-form-item__content) {
-  position: relative;
-}
-
-:deep(.el-form-item__content .required-icon) {
-  margin-left: 0.1875rem;
-  color: var(--dark-red);
-  font-size: 0.8rem;
-  align-self: flex-start;
-}
-
-:deep(.el-form-item__content.focused) .required-icon {
-  display: none;
-}
-
-:deep(.el-form-item__content.focused) .form-label {
-  transform: scale(0.7) translateY(-50%);
-  transform-origin: left;
-  left: 1.25rem;
-  top: 0.3125rem;
-  color: var(--dark-grey);
-  transition: all .1s linear;
-}
-
-:deep(.el-form-item__content.has-value) .required-icon {
-  display: none;
-}
-
-:deep(.el-form-item__content.has-value) .form-label {
-  transform: scale(0.7) translateY(-50%);
-  transform-origin: left;
-  left: 1.25rem;
-  top: 0.3125rem;
-  color: var(--dark-grey);
-  transition: all .1s linear;
-}
-
-:deep(.el-form-item__label) {
-  color: var(--dark-grey);
-  font-size: var(--fs-s);
-  font-weight: 500;
-}
-
-:deep(.el-input__wrapper) {
-  border-radius: 8px;
-  border: 1px solid var(--grey);
-  box-shadow: none;
-}
-
-:deep(.el-input__wrapper:hover) {
-  border-color: var(--navy);
-}
-
-:deep(.el-input__wrapper.is-focus) {
-  border-color: var(--navy);
-  box-shadow: none;
-}
-
 :deep(.el-radio) {
   margin-right: 24px;
   margin-bottom: 12px;
@@ -478,21 +395,6 @@ onMounted(() => {
 :deep(.el-radio__input.is-checked .el-radio__inner) {
   background-color: var(--main-color);
   border-color: var(--main-color);
-}
-
-:deep(.el-input__inner) {
-  position: relative;
-}
-
-:deep(.el-form-item.is-required) :deep(.el-input__inner)::after {
-  content: "*";
-  color: var(--dark-red);
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 12px;
-  pointer-events: none;
 }
 
 @media (max-width: 768px) {

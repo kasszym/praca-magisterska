@@ -1,61 +1,82 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import TheSeparator from "../common/TheSeparator.vue";
 const emit = defineEmits(["login", "toggle"]);
 
-const email = ref("");
-const password = ref("");
+const formRef = ref(null);
+const form = ref({ email: "", password: "" });
+
+const rules = ref({
+  email: [
+    { required: true, message: "E-mail jest wymagany", trigger: "blur" },
+    { type: "email", message: "Nieprawidłowy format e-mail", trigger: "blur" }
+  ],
+  password: [{ required: true, message: "Hasło jest wymagane", trigger: "blur" }]
+});
+
+function markHasValue(e) {
+  const target = e && e.target ? e.target : e;
+  const content = target.closest && target.closest('.el-form-item__content') ? target.closest('.el-form-item__content') : target.parentElement && target.parentElement.closest('.el-form-item__content');
+  if (!content) return;
+  if (e && e.type === 'focus') {
+    content.classList.add('focused');
+  } else if (e && e.type === 'blur') {
+    content.classList.remove('focused');
+  }
+
+  if (target.value && String(target.value).length > 0) content.classList.add('has-value');
+  else content.classList.remove('has-value');
+}
 
 const submit = () => {
-  emit("login", { email: email.value, password: password.value });
+  formRef.value.validate((valid) => {
+    if (valid) {
+      emit('login', { email: form.value.email, password: form.value.password });
+    }
+  });
 };
+
+onMounted(() => {
+  const inputs = document.querySelectorAll('.Login .el-input__inner');
+  inputs.forEach((inp) => {
+    try {
+      const content = inp.closest('.el-form-item__content');
+      if (content && inp.value && inp.value.length > 0) content.classList.add('has-value');
+    } catch (e) {}
+  });
+});
 </script>
 
 <template>
   <div class="Login">
-    <div style="display: flex; flex-direction: column; gap: 12px">
-      <input
-        v-model="email"
-        placeholder="E-mail"
-        class="modal-input"
-      />
-      <input
-        v-model="password"
-        type="password"
-        placeholder="Hasło"
-        class="modal-input"
-      />
+    <el-form ref="formRef" :model="form" :rules="rules" label-width="0">
+      <el-form-item prop="email">
+        <label class="form-label">E-mail</label>
+        <el-input v-model="form.email" @input="markHasValue" @focus="markHasValue" @blur="markHasValue" />
+      </el-form-item>
+
+      <el-form-item prop="password">
+        <label class="form-label">Hasło</label>
+        <el-input v-model="form.password" type="password" @input="markHasValue" @focus="markHasValue" @blur="markHasValue" />
+      </el-form-item>
+
       <TheSeparator style="margin: 1rem 0 !important" />
+
       <div>
         <button class="oauth-btn">
-          <img
-            src="../../assets/google.png"
-            style="width: 20px; height: 20px"
-            alt="Google Logo"
-          />
+          <img src="../../assets/google.png" style="width: 20px; height: 20px" alt="Google Logo" />
           <span>Kontynuuj z <strong>Google</strong></span>
         </button>
       </div>
-      <div>
-        <button
-          @click="submit"
-          class="primary-btn"
-        >
-          Zaloguj się
-        </button>
+
+      <div style="margin-top:12px;">
+        <button @click="submit" class="primary-btn">Zaloguj się</button>
       </div>
-      <div style="text-align: center; margin-top: 8px">
-        <button
-          class="link-btn"
-          @click="$emit('toggle', 'register')"
-        >
-          Nie masz konta?
-          <span style="text-decoration: underline; font-weight: 600"
-            >Zarejestruj się</span
-          >
-        </button>
+
+      <div style="text-align:center; margin-top:8px;">
+        <button class="link-btn" @click="$emit('toggle', 'register')">Nie masz konta? <span style="text-decoration: underline; font-weight: 600">Zarejestruj się</span></button>
       </div>
-    </div>
+    </el-form>
   </div>
 </template>
 
@@ -67,13 +88,13 @@ const submit = () => {
   max-width: 40rem;
   margin: auto;
 }
-.modal-input {
+.modal-input{
   padding: 10px 12px;
   border: 1px solid var(--grey100);
   border-radius: 8px;
   width: 100%;
 }
-.oauth-btn {
+.oauth-btn{
   display: flex;
   align-items: center;
   gap: 8px;
@@ -85,7 +106,7 @@ const submit = () => {
   width: 100%;
   justify-content: center;
 }
-.primary-btn {
+.primary-btn{
   padding: 10px 14px;
   background: var(--main-color);
   color: #fff;
@@ -94,7 +115,7 @@ const submit = () => {
   cursor: pointer;
   width: 100%;
 }
-.link-btn {
+.link-btn{
   background: transparent;
   border: none;
   color: var(--main-color);
