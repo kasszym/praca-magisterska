@@ -1,6 +1,28 @@
 <script setup>
 import ButtonComponent from "./common/ButtonComponent.vue";
 import TheSeparator from "./common/TheSeparator.vue";
+import Modal from './common/Modal.vue';
+import Registration from './common/Registration.vue';
+import Login from './common/Login.vue';
+import { ref } from 'vue';
+
+const isModalOpen = ref(false);
+const view = ref('register');
+const modalHeader = ref('Zarejestruj się');
+
+const handleRegister = (payload) => {
+  console.log('register payload', payload);
+  isModalOpen.value = false;
+};
+const handleLogin = (payload) => {
+  console.log('login payload', payload);
+  isModalOpen.value = false;
+};
+
+const handleToggle = (target) => {
+  view.value = target;
+  modalHeader.value = target === 'register' ? 'Zarejestruj się' : 'Zaloguj się';
+};
 </script>
 <template>
   <header class="bg-white">
@@ -46,13 +68,42 @@ import TheSeparator from "./common/TheSeparator.vue";
         </div>
         <ButtonComponent
           width="189px"
-          title="Zaplanuj jazdę testową"
+          title="Logowanie i rejestracja"
           background-color="var(--pink)"
           background-color-hover="var(--dark-pink)"
+          @handle-click="isModalOpen = true"
         />
+        <Modal v-model:isOpen="isModalOpen" :header="modalHeader">
+          <template #content>
+            <Registration v-if="view === 'register'" @register="handleRegister" @toggle="handleToggle" />
+            <Login v-else @login="handleLogin" @toggle="handleToggle" />
+          </template>
+        </Modal>
       </div>
     </div>
 
     <TheSeparator />
   </header>
 </template>
+
+<style scoped>
+.modal-input{
+  padding: 10px 12px;
+  border: 1px solid var(--grey100);
+  border-radius: 8px;
+  width: 100%;
+}
+.oauth-btn{
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--grey100);
+  background: #fff;
+  cursor: pointer;
+}
+.link-btn{
+  background: transparent;
+  border: none;
+  color: var(--main-color);
+  cursor: pointer;
+}
+</style>
