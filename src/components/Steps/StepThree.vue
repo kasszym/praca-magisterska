@@ -1,18 +1,26 @@
 <script setup>
 import Summary from "./Summary.vue";
+import Card from "../common/SectionCard.vue";
 </script>
 
 <template>
   <div class="step-three-container">
-    <div class="step-three-content">
-      <div class="step-three-placeholder">
-        <h3>Step Three Content</h3>
-        <p>Content for step three will go here</p>
-      </div>
-    </div>
-    <div class="step-three-summary">
-      <Summary />
-    </div>
+    <Card>
+      <template #content>
+        <div class="step-three-content">
+          <div class="step-three-placeholder">
+            <h3>Step Three Content</h3>
+            <p>Content for step three will go here</p>
+          </div>
+        </div>
+      </template>
+    </Card>
+
+    <Card class="step-three-summary">
+      <template #content>
+        <Summary />
+      </template>
+    </Card>
   </div>
 </template>
 
@@ -22,10 +30,6 @@ import Summary from "./Summary.vue";
   grid-template-columns: 1fr 400px;
   gap: 24px;
   align-items: start;
-}
-
-.step-three-content {
-  min-width: 0;
 }
 
 .step-three-placeholder {
@@ -47,6 +51,9 @@ import Summary from "./Summary.vue";
 
 .step-three-summary {
   min-width: 0;
+  position: sticky;
+  top: 1.5rem;
+  align-self: start;
 }
 
 @media (max-width: 1024px) {
@@ -56,6 +63,8 @@ import Summary from "./Summary.vue";
 
   .step-three-summary {
     order: -1;
+    position: static;
+    top: auto;
   }
 }
 </style>

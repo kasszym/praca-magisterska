@@ -51,16 +51,7 @@ const { selectedCar, formatPrice } = useSummary();
 </template>
 
 <style scoped>
-.summary-container {
-  position: sticky;
-  top: 20px;
-  background: white;
-  border-radius: var(--border-radius);
-  padding: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  max-height: calc(100vh - 40px);
-  overflow-y: auto;
-}
+
 
 .summary-title {
   font-size: var(--fs-xl);
