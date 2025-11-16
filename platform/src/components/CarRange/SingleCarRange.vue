@@ -16,20 +16,6 @@ const formatPrice = (value) => {
 const extractImageString = (img) => {
   if (!img) return "";
   if (typeof img === "string") return img;
-  if (typeof img === "object") {
-    return (
-      img.path ||
-      img.url ||
-      img.filename ||
-      img.name ||
-      img.src ||
-      img.file ||
-      img.main_image ||
-      img.title ||
-      ""
-    );
-  }
-  return "";
 };
 
 import API from "../../config/api";
@@ -55,7 +41,7 @@ const getCarImage = () => {
 
 const carModalRef = ref();
 const openDialog = () => carModalRef.value?.open();
-const selectedVersion = ref(props.car.versions?.[0]?.id ?? "");
+const selectedVersion = computed(() => props.car.versions?.[0]?.id ?? "");
 
 const selectedPrice = computed(() => {
   const v = props.car.versions?.find((x) => x.id === selectedVersion.value);

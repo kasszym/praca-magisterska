@@ -3,7 +3,7 @@ import { ref, computed, onMounted, watch } from "vue";
 import SingleCarRange from "./SingleCarRange.vue";
 import CarSearchEngine from "./CarSearchEngine.vue";
 import { useCar } from "../../composables/car";
-const { getAll, carsList } = useCar();
+const { getAll, carsList, isLoadingCars } = useCar();
 
 const filters = ref({
   type: "",
@@ -66,7 +66,7 @@ onMounted(async () => {
 });
 </script>
 <template>
-  <div>
+  <div v-loading="isLoadingCars">
     <h2 class="fs-3 fw-bold text-navy mb-3">Gama naszych samochodów</h2>
 
     <div class="d-flex flex-column gap-3">
