@@ -81,10 +81,11 @@ defineExpose({ open, close, savetoLocalStorage });
       >
         <el-radio-button
           v-for="v in props.car.versions"
-          :key="v.title"
-          :label="v.title"
+          :key="v.id"
+          :value="v.id"
+          :label="v.titile"
         >
-          {{ v.title }}
+          {{ v.titile }}
         </el-radio-button>
       </el-radio-group>
     </div>
@@ -98,7 +99,7 @@ defineExpose({ open, close, savetoLocalStorage });
           v-for="(c, index) in props.car.colors"
           :key="index"
           :label="c.name"
-          :value="c.name"
+          :value="c.id"
           class="color-swatch"
         >
           <span
@@ -118,9 +119,10 @@ defineExpose({ open, close, savetoLocalStorage });
         class="addon-group"
       >
         <el-checkbox-button
-          v-for="a in props.car.additional"
+          v-for="a in props.car.additionals"
           :key="a.title"
           :label="a.title"
+          :value="a.id"
         >
           {{ a.title }}
         </el-checkbox-button>

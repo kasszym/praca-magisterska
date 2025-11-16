@@ -62,7 +62,6 @@ function onSubmit(e) {
             v-loading="isLoadingDrives"
           >
             <label class="label m-0">Napęd</label>
-
             <el-select
               v-model="chosenDrive"
               placeholder="Wybierz"
@@ -73,7 +72,7 @@ function onSubmit(e) {
               <el-option
                 v-for="d in drivesList || []"
                 :key="d.id"
-                :label="d.name"
+                :label="d.titile"
                 :value="d.id"
               />
             </el-select>

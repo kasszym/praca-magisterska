@@ -10,15 +10,44 @@ const props = defineProps({
   },
 });
 const formatPrice = (value) => value.toLocaleString("pl-PL");
-const getCarImage = () =>
-  new URL(`../../assets/${props.car.main_image}`, import.meta.url).href;
+const extractImageString = (img) => {
+  if (!img) return "";
+  if (typeof img === "string") return img;
+  if (typeof img === "object") {
+    return (
+      img.path || img.url || img.filename || img.name || img.src || img.file || img.main_image || img.title || ""
+    );
+  }
+  return "";
+};
+
+import API from "../../config/api";
+
+const getCarImage = () => {
+  const img = extractImageString(props.car?.main_image || "");
+  if (!img) return "";
+  if (/^(https?:)?\/\//.test(img)) return img;
+  if (img.includes("/storage/")) {
+    try {
+      const origin = String(API.defaults.baseURL).replace(/\/api\/?$/, "");
+      return img.startsWith("/") ? origin + img : origin + "/" + img;
+    } catch (e) {
+      return img;
+    }
+  }
+  try {
+    return new URL(`../../assets/${img}`, import.meta.url).href;
+  } catch (e) {
+    return img;
+  }
+};
 
 const carModalRef = ref();
 const openDialog = () => carModalRef.value?.open();
-const selectedVersion = ref(props.car.versions?.[0]?.title ?? "");
+const selectedVersion = ref(props.car.versions?.[0]?.id ?? "");
 
 const selectedPrice = computed(() => {
-  const v = props.car.versions?.find((x) => x.title === selectedVersion.value);
+  const v = props.car.versions?.find((x) => x.id === selectedVersion.value);
   return v?.price ?? 0;
 });
 </script>

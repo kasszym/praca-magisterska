@@ -8,6 +8,25 @@ const isLoadingTypes = ref(false);
 const isLoadingDrives = ref(false);
 const isLoadingCars = ref(false);
 
+const pickImageString = (img: any) => {
+  if (!img) return "";
+  if (typeof img === "string") return img;
+  if (typeof img === "object") {
+    return (
+      img.path || img.url || img.filename || img.name || img.src || img.file || img.main_image || img.title || ""
+    );
+  }
+  return "";
+};
+
+const normalizeCar = (car: any) => {
+  const images = Array.isArray(car.images) ? car.images.map(pickImageString).filter(Boolean) : [];
+  const main_image = pickImageString(car.main_image);
+
+  const finalImages = images.length ? images : main_image ? [main_image] : [];
+  return { ...car, images: finalImages, main_image };
+};
+
 export const useCar = (): {
   isLoadingTypes: Ref<boolean>;
   isLoadingDrives: Ref<boolean>;
@@ -22,7 +41,7 @@ export const useCar = (): {
     try {
       isLoadingCars.value = true;
       const res = await API.get("/cars");
-      carsList.value = res.data;
+      carsList.value = Array.isArray(res.data) ? res.data.map(normalizeCar) : [];
     } catch (err) {
       console.error(err);
     } finally {
@@ -38,9 +57,9 @@ export const useCar = (): {
 
       const [t, d, c] = await Promise.all([API.get("/types"), API.get("/drives"), API.get("/cars")]);
 
-      typesList.value = t.data;
-      drivesList.value = d.data;
-      carsList.value = c.data;
+  typesList.value = t.data;
+  drivesList.value = d.data;
+  carsList.value = Array.isArray(c.data) ? c.data.map(normalizeCar) : [];
     } catch (err) {
       console.error(err);
     } finally {
