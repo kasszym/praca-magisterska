@@ -1,8 +1,9 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import SingleCarRange from "./SingleCarRange.vue";
 import CarSearchEngine from "./CarSearchEngine.vue";
-import carsData from "./cars.json";
+import { useCar } from "../../composables/car";
+const { getAll, carsList } = useCar();
 
 const filters = ref({
   type: "",
@@ -11,12 +12,24 @@ const filters = ref({
   priceMax: null,
 });
 
+const isLoading = ref(false);
+
+watch(
+  carsList,
+  (val) => {
+    if (val == null) {
+      console.warn("carsList is null or undefined after fetch");
+    }
+  },
+  { immediate: true }
+);
+
 function applyFilter(payload) {
   filters.value = payload;
 }
 
 const getCarPrice = (car) => {
-  const chosen = car.selectedVersion ?? car.versions?.[0]?.title;
+  const chosen = car.versions?.[0]?.title;
   const v = car.versions?.find((x) => x.title === chosen);
   return v?.price ?? 0;
 };
@@ -24,9 +37,11 @@ const getCarPrice = (car) => {
 const filteredCars = computed(() => {
   const { type, drive, priceMin, priceMax } = filters.value;
 
-  return carsData.filter((car) => {
-    if (type && car.type !== type) return false;
-    if (drive && car.drive !== drive) return false;
+  const list = Array.isArray(carsList.value) ? carsList.value : [];
+
+  return list.filter((car) => {
+    if (type && String(car.fk_type) !== String(type)) return false;
+    if (drive && String(car.fk_drive) !== String(drive)) return false;
 
     const price = getCarPrice(car);
 
@@ -37,6 +52,17 @@ const filteredCars = computed(() => {
 
     return true;
   });
+});
+
+onMounted(async () => {
+  isLoading.value = true;
+  try {
+    await getAll();
+  } catch (err) {
+    console.error(err);
+  } finally {
+    isLoading.value = false;
+  }
 });
 </script>
 <template>

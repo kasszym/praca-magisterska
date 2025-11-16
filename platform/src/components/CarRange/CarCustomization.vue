@@ -13,9 +13,7 @@ const props = defineProps({
 
 const { setSelectedCar } = useSummary();
 
-const version = ref(
-  props.car.selectedVersion ?? props.car.versions?.[0]?.title ?? ""
-);
+const version = ref(props.car.versions?.[0]?.title);
 const basePrice = computed(() => {
   const v = props.car.versions?.find((x) => x.title === version.value);
   return v?.price ?? 0;
@@ -48,12 +46,10 @@ const saveToSummary = () => {
   }
 };
 
-// Save on mount if there are default values
 onMounted(() => {
   saveToSummary();
 });
 
-// Auto-save to summary when values change
 watch([version, color, selectedAddonTitles, totalPrice], () => {
   saveToSummary();
 });

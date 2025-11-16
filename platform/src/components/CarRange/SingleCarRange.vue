@@ -15,9 +15,7 @@ const getCarImage = () =>
 
 const carModalRef = ref();
 const openDialog = () => carModalRef.value?.open();
-const selectedVersion = ref(
-  props.car.selectedVersion ?? props.car.versions?.[0]?.title ?? ""
-);
+const selectedVersion = ref(props.car.versions?.[0]?.title ?? "");
 
 const selectedPrice = computed(() => {
   const v = props.car.versions?.find((x) => x.title === selectedVersion.value);

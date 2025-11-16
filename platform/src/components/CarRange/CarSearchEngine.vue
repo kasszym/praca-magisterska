@@ -4,7 +4,7 @@ import SectionCard from "../common/SectionCard.vue";
 import ButtonComponent from "../common/ButtonComponent.vue";
 import { useCar } from "../../composables/car";
 
-const { typesList, drivesList, getTypes, isLoadingTypes, isLoadingDrives } =
+const { typesList, drivesList, isLoadingTypes, isLoadingDrives } =
   useCar();
 
 const chosenType = ref(null);
@@ -24,9 +24,6 @@ function onSubmit(e) {
   });
 }
 
-onMounted(async () => {
-  await getTypes();
-});
 </script>
 
 <template>
