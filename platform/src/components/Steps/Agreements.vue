@@ -1,6 +1,9 @@
 <script setup>
-import { ref, reactive, computed, watch, onMounted } from "vue";
-import agreementsData from "./agreements.js";
+import { ref, reactive, computed, onMounted } from "vue";
+import { useAgreements } from "../../composables/agreements";
+
+const { isLoadingAgreementsList, getAgreementsList, agreementsList } =
+  useAgreements();
 
 const emits = defineEmits([
   "getFormValues",
@@ -8,8 +11,6 @@ const emits = defineEmits([
   "endValidation",
   "handleClick",
 ]);
-
-const agreementsList = computed(() => agreementsData);
 
 const showAnnouncements = ref(true);
 const agreementsForm = reactive({
@@ -110,7 +111,8 @@ const setLastClickedElement = (element) => {
   lastClickedElement.value = element;
 };
 
-onMounted(() => {
+onMounted(async () => {
+  await getAgreementsList();
   handleCheckAllChange(true);
 });
 </script>
@@ -148,7 +150,9 @@ onMounted(() => {
           }
         "
       />
-      <span class="Agreements__actions-title">Akceptuję i zaznaczam wszystkie zgody</span>
+      <span class="Agreements__actions-title"
+        >Akceptuję i zaznaczam wszystkie zgody</span
+      >
     </div>
     <div class="TheSeparator" />
     <transition name="fade">
@@ -250,7 +254,7 @@ onMounted(() => {
   display: flex;
   gap: 12px;
   align-items: center;
-  margin: 1rem 0
+  margin: 1rem 0;
 }
 .Agreements__actions-title {
   font-size: var(--fs-s);
