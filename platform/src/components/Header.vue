@@ -73,7 +73,7 @@ const handleToggle = (target) => {
           background-color-hover="var(--dark-pink)"
           @handle-click="isModalOpen = true"
         />
-        <Modal v-model:isOpen="isModalOpen" :header="modalHeader">
+        <Modal v-model:isOpen="isModalOpen" :header="modalHeader" width="600px">
           <template #content>
             <Registration v-if="view === 'register'" @register="handleRegister" @toggle="handleToggle" />
             <Login v-else @login="handleLogin" @toggle="handleToggle" />

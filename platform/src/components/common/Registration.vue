@@ -5,7 +5,15 @@ import ButtonComponent from "./ButtonComponent.vue";
 const emit = defineEmits(["register", "toggle"]);
 
 const formRef = ref(null);
-const form = ref({ name: "", email: "", password: "" });
+const form = ref({ name: "", email: "", password: "", confirmPassword: "" });
+
+const validateConfirmPassword = (rule, value, callback) => {
+  if (value !== form.value.password) {
+    callback(new Error("Hasła nie są identyczne"));
+  } else {
+    callback();
+  }
+};
 
 const rules = ref({
   name: [{ required: true, message: "Imię i nazwisko jest wymagane", trigger: "blur" }],
@@ -14,6 +22,10 @@ const rules = ref({
     { type: "email", message: "Nieprawidłowy format e-mail", trigger: "blur" },
   ],
   password: [{ required: true, message: "Hasło jest wymagane", trigger: "blur" }],
+  confirmPassword: [
+    { required: true, message: "Powtórzenie hasła jest wymagane", trigger: "blur" },
+    { validator: validateConfirmPassword, trigger: "blur" },
+  ],
 });
 
 function markHasValue(e) {
@@ -65,6 +77,11 @@ onMounted(() => {
       <el-form-item prop="password">
         <label class="form-label">Hasło</label>
         <el-input v-model="form.password" type="password" @input="markHasValue" @focus="markHasValue" @blur="markHasValue" />
+      </el-form-item>
+
+      <el-form-item prop="confirmPassword">
+        <label class="form-label">Powtóz hasło</label>
+        <el-input v-model="form.confirmPassword" type="password" @input="markHasValue" @focus="markHasValue" @blur="markHasValue" />
       </el-form-item>
 
       <TheSeparator style="margin: 1rem 0 !important;"/>

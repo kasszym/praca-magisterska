@@ -11,6 +11,10 @@ const props = defineProps({
     type: Boolean,
     required: true,
   },
+  width: {
+    type: [String, Number],
+    default: "1120px",
+  },
 });
 const emit = defineEmits(["update:isOpen"]);
 
@@ -20,7 +24,7 @@ const visible = computed({
 });
 </script>
 <template>
-  <el-dialog v-model="visible">
+  <el-dialog v-model="visible" :width="width">
     <template #header
       ><span
         style="color: var(--navy); font-size: var(--fs-l); font-weight: 700"
@@ -43,7 +47,6 @@ const visible = computed({
   --el-dialog-border-radius: none;
   --el-dialog-padding-primary: 0;
   --el-dialog-margin-top: 5vh;
-  --el-dialog-width: 1120px;
 }
 .el-dialog__header {
   padding: 20px 24px;
@@ -54,7 +57,7 @@ const visible = computed({
 }
 @media (max-width: 1120px) {
   .el-dialog {
-    --el-dialog-width: 100%;
+    width: 100% !important;
     --el-dialog-margin-top: 0;
   }
 }
