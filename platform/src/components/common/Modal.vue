@@ -36,8 +36,8 @@ const visible = computed({
     <div class="py-3 px-4">
       <slot name="content" />
     </div>
-    <TheSeparator />
-    <template #footer>
+    <TheSeparator v-if="$slots.footer" />
+    <template v-if="$slots.footer" #footer>
       <slot name="footer" />
     </template>
   </el-dialog>

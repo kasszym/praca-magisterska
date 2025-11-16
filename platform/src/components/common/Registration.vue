@@ -1,5 +1,4 @@
 <script setup>
-import TheSeparator from "../common/TheSeparator.vue";
 import { ref, onMounted } from "vue";
 import ButtonComponent from "./ButtonComponent.vue";
 const emit = defineEmits(["register", "toggle"]);
@@ -64,41 +63,52 @@ onMounted(() => {
 <template>
   <div class="registration">
     <el-form ref="formRef" :model="form" :rules="rules" label-width="0">
-      <el-form-item prop="name">
-        <label class="form-label">Imię i nazwisko</label>
-        <el-input v-model="form.name" @input="markHasValue" @focus="markHasValue" @blur="markHasValue" />
-      </el-form-item>
+      <div class="form-fields">
+        <el-form-item prop="name">
+          <label class="form-label">Imię i nazwisko</label>
+          <el-input v-model="form.name" @input="markHasValue" @focus="markHasValue" @blur="markHasValue" />
+        </el-form-item>
 
-      <el-form-item prop="email">
-        <label class="form-label">E-mail</label>
-        <el-input v-model="form.email" type="email" @input="markHasValue" @focus="markHasValue" @blur="markHasValue" />
-      </el-form-item>
+        <el-form-item prop="email">
+          <label class="form-label">E-mail</label>
+          <el-input v-model="form.email" type="email" @input="markHasValue" @focus="markHasValue" @blur="markHasValue" />
+        </el-form-item>
 
-      <el-form-item prop="password">
-        <label class="form-label">Hasło</label>
-        <el-input v-model="form.password" type="password" @input="markHasValue" @focus="markHasValue" @blur="markHasValue" />
-      </el-form-item>
+        <el-form-item prop="password">
+          <label class="form-label">Hasło</label>
+          <el-input v-model="form.password" type="password" @input="markHasValue" @focus="markHasValue" @blur="markHasValue" />
+        </el-form-item>
 
-      <el-form-item prop="confirmPassword">
-        <label class="form-label">Powtóz hasło</label>
-        <el-input v-model="form.confirmPassword" type="password" @input="markHasValue" @focus="markHasValue" @blur="markHasValue" />
-      </el-form-item>
+        <el-form-item prop="confirmPassword">
+          <label class="form-label">Powtóz hasło</label>
+          <el-input v-model="form.confirmPassword" type="password" @input="markHasValue" @focus="markHasValue" @blur="markHasValue" />
+        </el-form-item>
+      </div>
 
-      <TheSeparator style="margin: 1rem 0 !important;"/>
+      <div class="divider-container">
+        <div class="divider-line"></div>
+        <span class="divider-text">lub</span>
+        <div class="divider-line"></div>
+      </div>
 
-      <div>
-        <button class="oauth-btn">
-          <img src="../../assets/google.png" style="width: 20px; height: 20px" alt="Google Logo" />
-          <span>Kontynuuj z <span style="font-weight: 600">Google</span> </span>
+      <div class="oauth-section">
+        <button class="oauth-btn" type="button">
+          <img src="../../assets/google.png" alt="Google Logo" class="oauth-icon" />
+          <span>Kontynuuj z Google</span>
         </button>
       </div>
 
-      <div style="margin-top: 12px">
+      <div class="submit-section">
         <ButtonComponent width="100%" @handle-click="submit" title="Zarejestruj się" />
       </div>
 
-      <div style="text-align: center; margin-top: 8px">
-        <button class="link-btn" @click="$emit('toggle', 'login')">Czy masz już konto? Zaloguj się</button>
+      <div class="footer-section">
+        <p class="footer-text">
+          Czy masz już konto?
+          <button class="link-btn" @click="$emit('toggle', 'login')" type="button">
+            Zaloguj się
+          </button>
+        </p>
       </div>
     </el-form>
   </div>
@@ -108,27 +118,90 @@ onMounted(() => {
 .registration {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
   max-width: 40rem;
   margin: auto;
+  padding: 1rem 0;
 }
-.modal-input {
-  padding: 10px 12px;
-  border: 1px solid var(--grey100);
-  border-radius: 8px;
-  width: 100%;
+
+.form-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  margin-bottom: 2rem;
 }
+
+.divider-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 2.5rem 0;
+}
+
+.divider-line {
+  flex: 1;
+  height: 1px;
+  background: var(--grey);
+}
+
+.divider-text {
+  font-size: var(--fs-xs);
+  color: var(--dark-grey);
+  white-space: nowrap;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
+.oauth-section {
+  margin-bottom: 1.5rem;
+}
+
 .oauth-btn {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  border-radius: 8px;
-  border: 1px solid var(--grey100);
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1.5rem;
+  border-radius: 10px;
+  border: 1px solid var(--grey);
   background: #fff;
   cursor: pointer;
   width: 100%;
-  justify-content: center;
+  transition: all 0.2s ease;
+  font-size: var(--fs-s);
+  color: var(--black);
+  font-weight: 500;
+  font-family: var(--font-inter);
+}
+
+.oauth-btn:hover {
+  border-color: var(--grey100);
+  background: var(--light-blue);
+}
+
+.oauth-btn:active {
+  transform: scale(0.998);
+}
+
+.oauth-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.submit-section {
+  margin-bottom: 2rem;
+}
+
+.footer-section {
+  text-align: center;
+  padding-top: 1rem;
+}
+
+.footer-text {
+  margin: 0;
+  font-size: var(--fs-s);
+  color: var(--dark-grey);
+  font-family: var(--font-inter);
 }
 
 .link-btn {
@@ -136,5 +209,61 @@ onMounted(() => {
   border: none;
   color: var(--main-color);
   cursor: pointer;
+  font-size: var(--fs-s);
+  padding: 0;
+  margin-left: 0.25rem;
+  font-weight: 600;
+  transition: color 0.2s ease;
+  font-family: var(--font-inter);
+  text-decoration: none;
+}
+
+.link-btn:hover {
+  color: var(--main-hover-color);
+  text-decoration: underline;
+}
+
+/* Enhanced form item spacing */
+:deep(.el-form-item) {
+  margin-bottom: 0;
+}
+
+:deep(.el-form-item__content) {
+  transition: all 0.15s ease;
+}
+
+/* Cleaner input styling */
+:deep(.el-input__wrapper) {
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  border-radius: 10px;
+}
+
+:deep(.el-input__wrapper:hover) {
+  border-color: var(--grey100);
+}
+
+:deep(.el-input__wrapper.is-focus) {
+  border-color: var(--main-color);
+  box-shadow: 0 0 0 2px rgba(84, 8, 99, 0.08);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .registration {
+    padding: 0.5rem 0;
+  }
+
+  .form-fields {
+    gap: 1.5rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .divider-container {
+    margin: 2rem 0;
+  }
+
+  .submit-section {
+    margin-bottom: 1.5rem;
+  }
 }
 </style>
