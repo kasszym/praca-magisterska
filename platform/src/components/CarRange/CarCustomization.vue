@@ -1,7 +1,6 @@
 <script setup>
-import { ref, computed, watch, onMounted } from "vue";
+import { ref, computed } from "vue";
 import ButtonComponent from "../common/ButtonComponent.vue";
-import { ElMessage } from "element-plus";
 import { useSummary } from "../../composables/useSummary";
 
 const props = defineProps({
@@ -13,32 +12,35 @@ const props = defineProps({
 
 const { setSelectedCar } = useSummary();
 
-const version = ref(props.car.versions?.[0]?.title);
+const version = ref(props.car.versions?.[0]?.id ?? null);
 const basePrice = computed(() => {
-  const v = props.car.versions?.find((x) => x.title === version.value);
+  const versions = props.car.versions || [];
+  let v = versions.find((x) => x.id === version.value);
   return v?.price ?? 0;
 });
-const selectedAddonTitles = ref([]);
-const selectedAddons = computed(
-  () =>
-    props.car.additional?.filter((a) =>
-      selectedAddonTitles.value.includes(a.title)
-    ) ?? []
+const selectedAddonIds = ref([]);
+const selectedAddons = computed(() =>
+  (props.car.additionals || []).filter((a) => selectedAddonIds.value.map((id) => Number(id)).includes(Number(a.id)))
 );
 const addonsTotal = computed(() =>
   selectedAddons.value.reduce((sum, a) => sum + (a.price ?? 0), 0)
 );
 const totalPrice = computed(() => basePrice.value + addonsTotal.value);
-const color = ref(props.car.colors?.[0].name ?? "");
+const color = ref(props.car.colors?.[0]?.id ?? null);
 
-const formatPrice = (value) => value.toLocaleString("pl-PL");
+const formatPrice = (value) => {
+  const n = Number(value ?? 0) || 0;
+  return n.toLocaleString("pl-PL");
+};
 
 const saveToSummary = () => {
-  if (version.value && color.value) {
+  if (version.value != null && color.value != null) {
+    const versionLabel = props.car.versions?.find((x) => x.id === version.value)?.title || props.car.versions?.find((x) => x.id === version.value)?.titile || "";
+    const colorLabel = props.car.colors?.find((c) => c.id === color.value)?.name || "";
     const payload = {
       name: props.car.name,
-      version: version.value,
-      color: color.value,
+      version: versionLabel,
+      color: colorLabel,
       addons: selectedAddons.value,
       price: totalPrice.value,
     };
@@ -46,55 +48,26 @@ const saveToSummary = () => {
   }
 };
 
-onMounted(() => {
-  saveToSummary();
-});
-
-watch([version, color, selectedAddonTitles, totalPrice], () => {
-  saveToSummary();
-});
-
-const savetoLocalStorage = () => {
-  const payload = {
-    name: props.car.name,
-    version: version.value,
-    color: color.value,
-    addons: selectedAddons.value,
-    price: totalPrice.value,
-  };
-  setSelectedCar(payload);
-  ElMessage({
-    message: "Zapisano zmiany.",
-    type: "success",
-  });
-};
-defineExpose({ open, close, savetoLocalStorage });
+defineExpose({ open, close });
 </script>
 
 <template>
   <div class="d-flex flex-column gap-2">
     <div class="d-flex flex-column gap-2">
       <span class="car-customization-label">Wersja</span>
-      <el-radio-group
-        v-model="version"
-        class="version-group"
-      >
+      <el-radio-group v-model="version" class="version-group">
         <el-radio-button
           v-for="v in props.car.versions"
           :key="v.id"
           :value="v.id"
-          :label="v.titile"
         >
-          {{ v.titile }}
+          {{ v.title || v.titile || v.name }}
         </el-radio-button>
       </el-radio-group>
     </div>
     <div class="d-flex flex-column gap-2">
       <span class="car-customization-label">Kolor</span>
-      <el-radio-group
-        v-model="color"
-        class="color-swatches"
-      >
+      <el-radio-group v-model="color" class="color-swatches">
         <el-radio
           v-for="(c, index) in props.car.colors"
           :key="index"
@@ -114,13 +87,10 @@ defineExpose({ open, close, savetoLocalStorage });
     </div>
     <div class="d-flex flex-column gap-2">
       <span class="car-customization-label">Dodatki</span>
-      <el-checkbox-group
-        v-model="selectedAddonTitles"
-        class="addon-group"
-      >
+      <el-checkbox-group v-model="selectedAddonIds" class="addon-group">
         <el-checkbox-button
           v-for="a in props.car.additionals"
-          :key="a.title"
+          :key="a.id"
           :label="a.title"
           :value="a.id"
         >
@@ -131,10 +101,7 @@ defineExpose({ open, close, savetoLocalStorage });
     <div class="d-flex flex-column gap-2">
       <div class="d-flex flex-column">
         <span class="car-customization-label">Cena</span>
-        <span
-          class="fw-bold fs-4"
-          style="color: var(--navy)"
-        >
+        <span class="fw-bold fs-4" style="color: var(--navy)">
           {{ formatPrice(totalPrice) }} zł
         </span>
       </div>
@@ -145,7 +112,7 @@ defineExpose({ open, close, savetoLocalStorage });
         background-color="var(--pink)"
         background-color-hover="var(--dark-pink)"
         height="40px"
-        @handle-click="savetoLocalStorage"
+        @handle-click="saveToSummary"
       />
     </div>
   </div>

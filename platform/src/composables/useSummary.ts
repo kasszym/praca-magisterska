@@ -21,8 +21,9 @@ export const useSummary = () => {
     selectedCar.value = null;
   };
 
-  const formatPrice = (value: number) => {
-    return value.toLocaleString("pl-PL");
+  const formatPrice = (value: number | null | undefined) => {
+    const n = Number(value ?? 0) || 0;
+    return n.toLocaleString("pl-PL");
   };
 
   return {

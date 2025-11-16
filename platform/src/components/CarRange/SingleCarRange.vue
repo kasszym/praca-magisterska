@@ -9,13 +9,24 @@ const props = defineProps({
     required: true,
   },
 });
-const formatPrice = (value) => value.toLocaleString("pl-PL");
+const formatPrice = (value) => {
+  const n = Number(value ?? 0) || 0;
+  return n.toLocaleString("pl-PL");
+};
 const extractImageString = (img) => {
   if (!img) return "";
   if (typeof img === "string") return img;
   if (typeof img === "object") {
     return (
-      img.path || img.url || img.filename || img.name || img.src || img.file || img.main_image || img.title || ""
+      img.path ||
+      img.url ||
+      img.filename ||
+      img.name ||
+      img.src ||
+      img.file ||
+      img.main_image ||
+      img.title ||
+      ""
     );
   }
   return "";
@@ -93,7 +104,6 @@ const selectedPrice = computed(() => {
         <CarModal
           ref="carModalRef"
           :car="car"
-          v-model:selectedVersion="selectedVersion"
         />
       </div>
     </div>
