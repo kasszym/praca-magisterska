@@ -1,13 +1,14 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import SectionCard from "../common/SectionCard.vue";
 import ButtonComponent from "../common/ButtonComponent.vue";
+import { useCar } from "../../composables/car";
 
-const types = ["SUV", "Kombi", "opcja3"];
-const drives = ["Elektryczny", "Hybrydowy"];
+const { typesList, drivesList, getTypes, isLoadingTypes, isLoadingDrives } =
+  useCar();
 
-const chosenType = ref("");
-const chosenDrive = ref("");
+const chosenType = ref(null);
+const chosenDrive = ref(null);
 const priceMin = ref(null);
 const priceMax = ref(null);
 
@@ -22,6 +23,10 @@ function onSubmit(e) {
     priceMax: priceMax.value,
   });
 }
+
+onMounted(async () => {
+  await getTypes();
+});
 </script>
 
 <template>
@@ -33,7 +38,10 @@ function onSubmit(e) {
         style="gap: 16px"
       >
         <div class="filters row g-3 align-items-center flex-nowrap">
-          <div class="field col-auto d-flex align-items-center gap-2-5">
+          <div
+            class="field col-auto d-flex align-items-center gap-2-5"
+            v-loading="isLoadingTypes"
+          >
             <label class="label m-0">Typ</label>
 
             <el-select
@@ -44,15 +52,18 @@ function onSubmit(e) {
               popper-class="select-popper"
             >
               <el-option
-                v-for="t in types"
-                :key="t"
-                :label="t"
-                :value="t"
+                v-for="t in typesList || []"
+                :key="t.id"
+                :label="t.name"
+                :value="t.id"
               />
             </el-select>
           </div>
 
-          <div class="field col-auto d-flex align-items-center gap-2-5">
+          <div
+            class="field col-auto d-flex align-items-center gap-2-5"
+            v-loading="isLoadingDrives"
+          >
             <label class="label m-0">Napęd</label>
 
             <el-select
@@ -63,10 +74,10 @@ function onSubmit(e) {
               clearable
             >
               <el-option
-                v-for="t in drives"
-                :key="t"
-                :label="t"
-                :value="t"
+                v-for="d in drivesList || []"
+                :key="d.id"
+                :label="d.name"
+                :value="d.id"
               />
             </el-select>
           </div>
