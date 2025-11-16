@@ -10,12 +10,11 @@ const isModalOpen = ref(false);
 const view = ref('register');
 const modalHeader = ref('Zarejestruj się');
 
-const handleRegister = (payload) => {
-  console.log('register payload', payload);
+const handleRegister = (user) => {
   isModalOpen.value = false;
 };
-const handleLogin = (payload) => {
-  console.log('login payload', payload);
+
+const handleLogin = (user) => {
   isModalOpen.value = false;
 };
 

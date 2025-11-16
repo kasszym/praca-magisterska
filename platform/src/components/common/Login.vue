@@ -1,10 +1,14 @@
 <script setup>
 import { ref, onMounted } from "vue";
+import { ElMessage } from "element-plus";
 import ButtonComponent from "./ButtonComponent.vue";
+import API from "../../config/api";
+
 const emit = defineEmits(["login", "toggle"]);
 
 const formRef = ref(null);
 const form = ref({ email: "", password: "" });
+const isLoading = ref(false);
 
 const rules = ref({
   email: [
@@ -28,10 +32,42 @@ function markHasValue(e) {
   else content.classList.remove('has-value');
 }
 
-const submit = () => {
-  formRef.value.validate((valid) => {
+const submit = async () => {
+  formRef.value.validate(async (valid) => {
     if (valid) {
-      emit('login', { email: form.value.email, password: form.value.password });
+      isLoading.value = true;
+      try {
+        const response = await API.post("/login", {
+          email: form.value.email,
+          password: form.value.password,
+        });
+
+        localStorage.setItem("token", response.data.token);
+
+        ElMessage({
+          message: response.data.message || "Logowanie zakończone pomyślnie",
+          type: "success",
+          duration: 3000,
+        });
+
+        emit("login", response.data.user);
+      } catch (error) {
+        if (error.response?.data?.errors) {
+          const errors = error.response.data.errors;
+          Object.keys(errors).forEach((field) => {
+            if (formRef.value) {
+              formRef.value.setFields([
+                {
+                  prop: field,
+                  errors: Array.isArray(errors[field]) ? errors[field] : [errors[field]],
+                },
+              ]);
+            }
+          });
+        }
+      } finally {
+        isLoading.value = false;
+      }
     }
   });
 };
@@ -76,7 +112,11 @@ onMounted(() => {
       </div>
 
       <div class="submit-section">
-        <ButtonComponent width="100%" @handle-click="submit" title="Zaloguj się" />
+        <ButtonComponent 
+          width="100%" 
+          @handle-click="submit" 
+          :title="isLoading ? 'Logowanie...' : 'Zaloguj się'"
+        />
       </div>
 
       <div class="footer-section">

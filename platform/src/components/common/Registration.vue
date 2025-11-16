@@ -1,10 +1,14 @@
 <script setup>
 import { ref, onMounted } from "vue";
+import { ElMessage } from "element-plus";
 import ButtonComponent from "./ButtonComponent.vue";
+import API from "../../config/api";
+
 const emit = defineEmits(["register", "toggle"]);
 
 const formRef = ref(null);
 const form = ref({ name: "", email: "", password: "", confirmPassword: "" });
+const isLoading = ref(false);
 
 const validateConfirmPassword = (rule, value, callback) => {
   if (value !== form.value.password) {
@@ -41,10 +45,45 @@ function markHasValue(e) {
   else content.classList.remove('has-value');
 }
 
-const submit = () => {
-  formRef.value.validate((valid) => {
+const submit = async () => {
+  formRef.value.validate(async (valid) => {
     if (valid) {
-      emit('register', { name: form.value.name, email: form.value.email, password: form.value.password });
+      isLoading.value = true;
+      try {
+        const response = await API.post("/register", {
+          name: form.value.name,
+          email: form.value.email,
+          password: form.value.password,
+          password_confirmation: form.value.confirmPassword,
+        });
+
+        localStorage.setItem("token", response.data.token);
+        
+        ElMessage({
+          message: response.data.message || "Rejestracja zakończona pomyślnie",
+          type: "success",
+          duration: 3000,
+        });
+
+        emit("register", response.data.user);
+      } catch (error) {
+        if (error.response?.data?.errors) {
+          const errors = error.response.data.errors;
+          Object.keys(errors).forEach((field) => {
+            const fieldName = field === "password_confirmation" ? "confirmPassword" : field;
+            if (formRef.value) {
+              formRef.value.setFields([
+                {
+                  prop: fieldName,
+                  errors: Array.isArray(errors[field]) ? errors[field] : [errors[field]],
+                },
+              ]);
+            }
+          });
+        }
+      } finally {
+        isLoading.value = false;
+      }
     }
   });
 };
@@ -99,7 +138,11 @@ onMounted(() => {
       </div>
 
       <div class="submit-section">
-        <ButtonComponent width="100%" @handle-click="submit" title="Zarejestruj się" />
+        <ButtonComponent 
+          width="100%" 
+          @handle-click="submit" 
+          :title="isLoading ? 'Rejestrowanie...' : 'Zarejestruj się'"
+        />
       </div>
 
       <div class="footer-section">
