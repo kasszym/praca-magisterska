@@ -2,12 +2,20 @@
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\{AgreementController, InformationController, TypeController, DriveController, CarController};
+use App\Http\Controllers\Auth\AuthController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+// Public authentication routes
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+
+// Protected authentication routes
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user', [AuthController::class, 'user']);
+    Route::post('/logout', [AuthController::class, 'logout']);
 });
 
+// Public resource routes
 Route::get('/agreements', [AgreementController::class, 'index']);
 Route::get('/informations', [InformationController::class, 'index']);
 Route::get('/types', [TypeController::class, 'index']);
