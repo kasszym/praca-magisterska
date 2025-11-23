@@ -1,8 +1,16 @@
 <script setup>
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import ButtonComponent from "../common/ButtonComponent.vue";
+import { useSummary } from "../../composables/useSummary";
+import { useOrder } from "../../composables/order";
+import { useAuth } from "../../composables/auth";
+import { ElMessage } from "element-plus";
 
-const emits = defineEmits(["deliverySelected"]);
+const emits = defineEmits(["deliverySelected", "showLoginModal"]);
+
+const { selectedCar, personalData, setDeliveryInfo, setVerificationInfo } = useSummary();
+const { createOrder, isLoading } = useOrder();
+const { isAuthenticated } = useAuth();
 
 const deliveryMethod = ref("inpost");
 
@@ -11,21 +19,24 @@ const deliveryOptions = [
     id: "inpost",
     label: "Inpost",
     eta: "1-2 dni robocze",
-    price: "12,99 zł",
+    price: 12.99,
+    displayPrice: "12,99 zł",
     icon: "box",
   },
   {
     id: "fedex",
     label: "Kurier FedEx",
     eta: "1-2 dni robocze",
-    price: "19,99 zł",
+    price: 19.99,
+    displayPrice: "19,99 zł",
     icon: "truck",
   },
   {
     id: "poczta",
     label: "Poczta Polska",
     eta: "2-5 dni robocze",
-    price: "9,99 zł",
+    price: 9.99,
+    displayPrice: "9,99 zł",
     icon: "mail",
   },
 ];
@@ -34,31 +45,194 @@ const selectMethod = (id) => {
   deliveryMethod.value = id;
 };
 
-const submit = () => {
-  if (!deliveryMethod.value) {
-    alert("Wybierz metodę dostawy");
-    return;
-  }
-  emits("deliverySelected", deliveryMethod.value);
-};
-const previousDelivery = ref(deliveryMethod.value);
-
 const verificationMethod = ref("online");
 const verificationOptions = [
   {
     id: "online",
     label: "Weryfikacja online",
-    price: "0 zł",
+    price: 0,
+    displayPrice: "0 zł",
     description: "Potwierdź swoją tożsamość za pomocą przelewu bankowego.",
   },
   {
     id: "courier",
     label: "Weryfikacja u kuriera",
-    price: "20 zł",
+    price: 20,
+    displayPrice: "20 zł",
     description:
       "Zamów kuriera, który przywiezie umowę do podpisu oraz potwierdzi Twoją tożsamość.",
   },
 ];
+
+// Watch delivery method and update summary in real-time
+watch(deliveryMethod, (newMethod) => {
+  const selectedDelivery = deliveryOptions.find(opt => opt.id === newMethod);
+  if (selectedDelivery) {
+    setDeliveryInfo({
+      method: selectedDelivery.id,
+      label: selectedDelivery.label,
+      eta: selectedDelivery.eta,
+      price: selectedDelivery.price,
+    });
+  }
+}, { immediate: true });
+
+// Watch verification method and update summary in real-time
+watch(verificationMethod, (newMethod) => {
+  const selectedVerification = verificationOptions.find(opt => opt.id === newMethod);
+  if (selectedVerification) {
+    setVerificationInfo({
+      method: selectedVerification.id,
+      label: selectedVerification.label,
+      price: selectedVerification.price,
+    });
+  }
+}, { immediate: true });
+
+const submit = async () => {
+  if (!deliveryMethod.value) {
+    ElMessage({
+      message: "Wybierz metodę dostawy",
+      type: "warning",
+    });
+    return;
+  }
+  
+  // Check if user is authenticated
+  if (!isAuthenticated()) {
+    ElMessage({
+      message: "Musisz być zalogowany, aby złożyć zamówienie",
+      type: "warning",
+      duration: 3000,
+    });
+    // Emit event to parent to show login modal
+    emits("showLoginModal");
+    return;
+  }
+
+  // Validate that we have all required data
+  if (!selectedCar.value) {
+    ElMessage({
+      message: "Wybierz samochód przed złożeniem zamówienia",
+      type: "warning",
+    });
+    return;
+  }
+
+  if (!personalData.value) {
+    ElMessage({
+      message: "Uzupełnij dane osobowe przed złożeniem zamówienia",
+      type: "warning",
+    });
+    return;
+  }
+
+  // Get selected delivery and verification options (already saved to summary via watch)
+  const selectedDelivery = deliveryOptions.find(opt => opt.id === deliveryMethod.value);
+  const selectedVerification = verificationOptions.find(opt => opt.id === verificationMethod.value);
+
+  // Calculate final prices
+  const deliveryPrice = selectedDelivery?.price || 0;
+  const verificationPrice = selectedVerification?.price || 0;
+  const carPrice = selectedCar.value.price || 0;
+  const finalPrice = carPrice + deliveryPrice + verificationPrice;
+
+  // Prepare order data matching OrderController expectations
+  const orderData = {
+    // Car information
+    car_id: selectedCar.value.car_id,
+    car_name: selectedCar.value.name,
+    car_version: selectedCar.value.version,
+    color_id: selectedCar.value.color_id,
+    color_name: selectedCar.value.color,
+    addons: JSON.stringify(selectedCar.value.addons), // Convert to JSON string
+    addon_ids: selectedCar.value.addon_ids,
+    
+    // Personal data
+    first_name: personalData.value.firstName,
+    last_name: personalData.value.lastName,
+    pesel: personalData.value.pesel,
+    email: personalData.value.email,
+    phone: personalData.value.phone,
+    
+    // Residential address
+    street: personalData.value.street,
+    house_number: personalData.value.houseNumber,
+    apartment_number: personalData.value.apartmentNumber || null,
+    post_code: personalData.value.postCode,
+    city: personalData.value.city,
+    
+    // Invoice email
+    invoice_email_option: personalData.value.invoiceEmailOption,
+    invoice_email: personalData.value.invoiceEmailOption === 'different' 
+      ? personalData.value.invoiceEmail 
+      : personalData.value.email,
+    
+    // Correspondence address
+    correspondence_address_option: personalData.value.correspondenceAddressOption,
+    correspondence_street: personalData.value.correspondenceAddressOption === 'different' 
+      ? personalData.value.correspondenceStreet 
+      : personalData.value.street,
+    correspondence_house_number: personalData.value.correspondenceAddressOption === 'different' 
+      ? personalData.value.correspondenceHouseNumber 
+      : personalData.value.houseNumber,
+    correspondence_apartment_number: personalData.value.correspondenceAddressOption === 'different' 
+      ? (personalData.value.correspondenceApartmentNumber || null) 
+      : (personalData.value.apartmentNumber || null),
+    correspondence_post_code: personalData.value.correspondenceAddressOption === 'different' 
+      ? personalData.value.correspondencePostCode 
+      : personalData.value.postCode,
+    correspondence_city: personalData.value.correspondenceAddressOption === 'different' 
+      ? personalData.value.correspondenceCity 
+      : personalData.value.city,
+    
+    // Delivery and verification
+    delivery_method: deliveryMethod.value,
+    delivery_label: selectedDelivery?.label,
+    delivery_eta: selectedDelivery?.eta,
+    delivery_price: deliveryPrice,
+    verification_method: verificationMethod.value,
+    verification_label: selectedVerification?.label,
+    verification_price: verificationPrice,
+    
+    // Pricing
+    car_price: carPrice,
+    final_price: finalPrice,
+    
+    // Status
+    status: 'pending',
+  };
+
+  try {
+    const result = await createOrder(orderData);
+    
+    if (result) {
+      ElMessage({
+        message: "Zamówienie zostało złożone pomyślnie!",
+        type: "success",
+        duration: 3000,
+      });
+      
+      // TODO: Redirect to payment or order confirmation page
+      console.log("Order created:", result);
+      
+      // Emit event for parent component
+      emits("deliverySelected", {
+        delivery: selectedDelivery,
+        verification: selectedVerification,
+        order: result,
+      });
+    }
+  } catch (error) {
+    ElMessage({
+      message: error.message || "Wystąpił błąd podczas składania zamówienia",
+      type: "error",
+      duration: 3000,
+    });
+  }
+};
+
+const previousDelivery = ref(deliveryMethod.value);
 
 const shownDeliveryOptions = () => {
   return verificationMethod.value === "courier"
@@ -100,7 +274,7 @@ const selectVerification = (id) => {
       >
         <div class="verification-left">
           <div class="verification-label">{{ v.label }}</div>
-          <div class="verification-price">{{ v.price }}</div>
+          <div class="verification-price">{{ v.displayPrice }}</div>
           <div class="verification-description">
             {{ v.description }}
           </div>
@@ -132,14 +306,15 @@ const selectVerification = (id) => {
             <div class="delivery-eta">{{ opt.eta }}</div>
           </div>
         </div>
-        <div class="delivery-price">{{ opt.price }}</div>
+        <div class="delivery-price">{{ opt.displayPrice }}</div>
       </div>
     </div>
 
     <div style="margin-top: 16px">
       <ButtonComponent
-        title="Przejdź do płatności"
+        :title="isLoading ? 'Przetwarzanie...' : 'Przejdź do płatności'"
         @handle-click="submit"
+        :disabled="isLoading"
       />
     </div>
   </div>

@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\{AgreementController, InformationController, TypeController, DriveController, CarController};
+use App\Http\Controllers\{AgreementController, InformationController, TypeController, DriveController, CarController, OrderController};
 use App\Http\Controllers\Auth\AuthController;
 use Illuminate\Support\Facades\Route;
 
@@ -15,6 +15,11 @@ Route::post('/auth/google', [AuthController::class, 'googleAuth']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', [AuthController::class, 'user']);
     Route::post('/logout', [AuthController::class, 'logout']);
+
+    // Order routes
+    Route::post('/orders', [OrderController::class, 'store']);
+    Route::get('/orders', [OrderController::class, 'index']);
+    Route::get('/orders/{id}', [OrderController::class, 'show']);
 });
 
 // Public resource routes

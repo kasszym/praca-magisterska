@@ -33,6 +33,18 @@ const handleLogout = async () => {
   await logout();
   isLoggedIn.value = false;
 };
+
+// Expose method to open login modal
+const openLoginModal = () => {
+  view.value = 'login';
+  modalHeader.value = 'Zaloguj się';
+  isModalOpen.value = true;
+};
+
+// Expose method using defineExpose
+defineExpose({
+  openLoginModal
+});
 </script>
 <template>
   <header class="bg-white">

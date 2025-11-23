@@ -1,9 +1,11 @@
 <script setup>
-import { ref, computed, watchEffect, onMounted } from "vue";
+import { ref, computed, watchEffect, onMounted, watch } from "vue";
 import { useValidator } from "../../composables/validator";
+import { useSummary } from "../../composables/useSummary";
 
 const ruleFormRef = ref(null);
 const { peselValidator, postCodeValidator } = useValidator();
+const { setPersonalData } = useSummary();
 
 const form = ref({
   firstName: "",
@@ -131,6 +133,28 @@ const showInvoiceEmailInput = computed(
 const showCorrespondenceAddress = computed(
   () => form.value.correspondenceAddressOption === "different"
 );
+
+// Watch form changes and save to summary
+watch(
+  form,
+  (newForm) => {
+    setPersonalData({ ...newForm });
+  },
+  { deep: true }
+);
+
+// Expose validation method for parent component
+const validateForm = async () => {
+  if (!ruleFormRef.value) return false;
+  try {
+    await ruleFormRef.value.validate();
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+
+defineExpose({ validateForm });
 
 function markHasValue(e) {
   const target = e && e.target ? e.target : e;

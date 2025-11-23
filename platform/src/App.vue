@@ -8,10 +8,19 @@ import Steps from "./components/Steps/Steps.vue";
 import Footer from "./components/Footer.vue";
 
 const activeStep = ref(1);
+const headerRef = ref(null);
 
 const handleStepUpdate = (stepId) => {
   activeStep.value = stepId;
 };
+
+const handleShowLoginModal = () => {
+  // Trigger Header's modal
+  if (headerRef.value) {
+    headerRef.value.openLoginModal();
+  }
+};
+
 const tabs = {
   1: StepOne,
   2: StepTwo,
@@ -21,7 +30,7 @@ const tabs = {
 
 <template>
   <div>
-    <Header />
+    <Header ref="headerRef" />
     <main
       class="container-fluid px-3"
       style="margin: 32px auto 18px auto"
@@ -30,7 +39,12 @@ const tabs = {
         :active="activeStep"
         @update="handleStepUpdate"
       >
-        <template #default> <component :is="tabs[activeStep]" /></template>
+        <template #default>
+          <component 
+            :is="tabs[activeStep]" 
+            @showLoginModal="handleShowLoginModal"
+          />
+        </template>
       </Steps>
     </main>
     <Footer />

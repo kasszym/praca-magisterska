@@ -38,10 +38,18 @@ const saveToSummary = () => {
     const versionLabel = props.car.versions?.find((x) => x.id === version.value)?.title || props.car.versions?.find((x) => x.id === version.value)?.titile || "";
     const colorLabel = props.car.colors?.find((c) => c.id === color.value)?.name || "";
     const payload = {
+      car_id: props.car.id,
+      version_id: version.value,
+      color_id: color.value,
+      addon_ids: selectedAddonIds.value.map((id) => Number(id)),
       name: props.car.name,
       version: versionLabel,
       color: colorLabel,
-      addons: selectedAddons.value,
+      addons: selectedAddons.value.map((a) => ({
+        id: a.id,
+        title: a.title,
+        price: a.price ?? 0,
+      })),
       price: totalPrice.value,
     };
     setSelectedCar(payload);

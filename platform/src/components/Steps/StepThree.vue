@@ -2,11 +2,17 @@
 import Summary from "./Summary.vue";
 import Delivery from "./Delivery.vue";
 import Card from "../common/SectionCard.vue";
+
+const emit = defineEmits(["showLoginModal"]);
+
+const handleShowLoginModal = () => {
+  emit("showLoginModal");
+};
 </script>
 
 <template>
   <div class="step-three-container">
-    <Delivery />
+    <Delivery @showLoginModal="handleShowLoginModal" />
 
     <Card class="step-three-summary">
       <template #content>

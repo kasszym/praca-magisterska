@@ -1,7 +1,26 @@
 <script setup>
 import { useSummary } from "../../composables/useSummary";
+import { computed } from "vue";
 
-const { selectedCar, formatPrice } = useSummary();
+const { selectedCar, formatPrice, deliveryInfo, verificationInfo } = useSummary();
+
+const totalPrice = computed(() => {
+  if (!selectedCar.value) return 0;
+  
+  let total = selectedCar.value.price || 0;
+  
+  // Add delivery price if available
+  if (deliveryInfo.value?.price) {
+    total += deliveryInfo.value.price;
+  }
+  
+  // Add verification price if available
+  if (verificationInfo.value?.price) {
+    total += verificationInfo.value.price;
+  }
+  
+  return total;
+});
 </script>
 
 <template>
@@ -34,11 +53,41 @@ const { selectedCar, formatPrice } = useSummary();
         </div>
       </div>
 
+      <!-- Delivery Information Section -->
+      <div v-if="deliveryInfo" class="summary-section">
+        <h4 class="summary-section-title">Dostawa</h4>
+        <div class="summary-item">
+          <span class="summary-label">Sposób dostawy:</span>
+          <span class="summary-value">{{ deliveryInfo.label }}</span>
+        </div>
+        <div class="summary-item">
+          <span class="summary-label">Czas dostawy:</span>
+          <span class="summary-value">{{ deliveryInfo.eta }}</span>
+        </div>
+        <div class="summary-item">
+          <span class="summary-label">Koszt dostawy:</span>
+          <span class="summary-value">{{ formatPrice(deliveryInfo.price) }} zł</span>
+        </div>
+      </div>
+
+      <!-- Verification Information Section -->
+      <div v-if="verificationInfo" class="summary-section">
+        <h4 class="summary-section-title">Weryfikacja</h4>
+        <div class="summary-item">
+          <span class="summary-label">Sposób weryfikacji:</span>
+          <span class="summary-value">{{ verificationInfo.label }}</span>
+        </div>
+        <div class="summary-item">
+          <span class="summary-label">Koszt weryfikacji:</span>
+          <span class="summary-value">{{ formatPrice(verificationInfo.price) }} zł</span>
+        </div>
+      </div>
+
       <div class="summary-section summary-price">
         <div class="summary-item">
           <span class="summary-label">Cena całkowita:</span>
           <span class="summary-value summary-price-value">
-            {{ formatPrice(selectedCar.price) }} zł
+            {{ formatPrice(totalPrice) }} zł
           </span>
         </div>
       </div>
