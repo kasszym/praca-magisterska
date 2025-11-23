@@ -34,14 +34,12 @@ const handleLogout = async () => {
   isLoggedIn.value = false;
 };
 
-// Expose method to open login modal
 const openLoginModal = () => {
   view.value = 'login';
   modalHeader.value = 'Zaloguj się';
   isModalOpen.value = true;
 };
 
-// Expose method using defineExpose
 defineExpose({
   openLoginModal
 });
@@ -53,40 +51,26 @@ defineExpose({
         class="d-flex align-items-center justify-content-between mx-auto gap-3"
         style="max-width: var(--app-width); height: 72px"
       >
-        <div class="d-flex align-items-center">
-          <svg
-            width="41"
-            height="41"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            role="img"
-            aria-label="Aureon Motors car icon"
-            title="Aureon Motors"
-          >
-            <path
-              d="M3 13l1.5-4A2 2 0 0 1 6.4 7h11.2a2 2 0 0 1 1.9 1.2L21 13v5a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1v-1H7v1a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-5z"
-              fill="currentColor"
-            />
-            <circle
-              cx="7.5"
-              cy="15.5"
-              r="1.5"
-              fill="currentColor"
-            />
-            <circle
-              cx="16.5"
-              cy="15.5"
-              r="1.5"
-              fill="currentColor"
-            />
-          </svg>
-          <span
-            class="ms-2 fw-bold"
-            style="font-size: var(--fs-l); color: var(--navy)"
-          >
-            Aureon Motors
-          </span>
+        <div class="logo-container">
+          <div class="logo-icon">
+            <svg
+              width="28"
+              height="28"
+              viewBox="0 0 32 32"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              role="img"
+              aria-label="Aureon Motors"
+            >
+              <path
+                d="M6 16l2-5a2 2 0 0 1 1.9-1.3h12.2a2 2 0 0 1 1.9 1.3l2 5v6a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1v-1H10v1a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1v-6z"
+                fill="currentColor"
+              />
+              <circle cx="11" cy="19" r="1.5" fill="currentColor" />
+              <circle cx="21" cy="19" r="1.5" fill="currentColor" />
+            </svg>
+          </div>
+          <span class="logo-text">Aureon <span class="logo-light">Motors</span></span>
         </div>
         <ButtonComponent
           v-if="!isLoggedIn"
@@ -118,6 +102,47 @@ defineExpose({
 </template>
 
 <style scoped>
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.logo-container:hover {
+  opacity: 0.8;
+}
+
+.logo-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: var(--main-color);
+  border-radius: 10px;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.logo-container:hover .logo-icon {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 105, 180, 0.3);
+}
+
+.logo-text {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--navy);
+  letter-spacing: -0.5px;
+}
+
+.logo-light {
+  font-weight: 400;
+  color: var(--dark-grey);
+}
+
 .modal-input{
   padding: 10px 12px;
   border: 1px solid var(--grey100);
@@ -136,5 +161,11 @@ defineExpose({
   border: none;
   color: var(--main-color);
   cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .logo-text {
+    font-size: 18px;
+  }
 }
 </style>
