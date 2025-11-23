@@ -5,22 +5,33 @@ import Modal from './common/Modal.vue';
 import Registration from './common/Registration.vue';
 import Login from './common/Login.vue';
 import { ref } from 'vue';
+import { useAuth } from '../composables/auth';
+
+const { logout, isAuthenticated } = useAuth();
 
 const isModalOpen = ref(false);
 const view = ref('register');
 const modalHeader = ref('Zarejestruj się');
+const isLoggedIn = ref(isAuthenticated());
 
 const handleRegister = (user) => {
   isModalOpen.value = false;
+  isLoggedIn.value = true;
 };
 
 const handleLogin = (user) => {
   isModalOpen.value = false;
+  isLoggedIn.value = true;
 };
 
 const handleToggle = (target) => {
   view.value = target;
   modalHeader.value = target === 'register' ? 'Zarejestruj się' : 'Zaloguj się';
+};
+
+const handleLogout = async () => {
+  await logout();
+  isLoggedIn.value = false;
 };
 </script>
 <template>
@@ -66,11 +77,20 @@ const handleToggle = (target) => {
           </span>
         </div>
         <ButtonComponent
+          v-if="!isLoggedIn"
           width="189px"
           title="Logowanie i rejestracja"
           background-color="var(--pink)"
           background-color-hover="var(--dark-pink)"
           @handle-click="isModalOpen = true"
+        />
+        <ButtonComponent
+          v-else
+          width="120px"
+          title="Wyloguj się"
+          background-color="var(--pink)"
+          background-color-hover="var(--dark-pink)"
+          @handle-click="handleLogout"
         />
         <Modal v-model:isOpen="isModalOpen" :header="modalHeader" width="600px">
           <template #content>
