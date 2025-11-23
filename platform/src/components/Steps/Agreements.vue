@@ -177,7 +177,7 @@ onMounted(async () => {
                   "
                 />
                 <span class="agreement-label"
-                  >{{ item.label }}
+                  >{{ item.title }}
                   <span
                     v-if="item.is_required"
                     class="required-star"
@@ -229,7 +229,7 @@ onMounted(async () => {
                 class="agreement-description"
                 :id="`desc-${item.id}`"
               >
-                {{ item.description }}
+                {{ item.content }}
               </div>
             </transition>
           </div>

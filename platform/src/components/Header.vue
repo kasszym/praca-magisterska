@@ -6,13 +6,17 @@ import Registration from './common/Registration.vue';
 import Login from './common/Login.vue';
 import { ref } from 'vue';
 import { useAuth } from '../composables/auth';
+import { useRouter } from 'vue-router';
+import { User, ShoppingCart, SwitchButton } from '@element-plus/icons-vue';
 
 const { logout, isAuthenticated } = useAuth();
+const router = useRouter();
 
 const isModalOpen = ref(false);
 const view = ref('register');
 const modalHeader = ref('Zarejestruj się');
 const isLoggedIn = ref(isAuthenticated());
+const showProfileMenu = ref(false);
 
 const handleRegister = (user) => {
   isModalOpen.value = false;
@@ -32,6 +36,20 @@ const handleToggle = (target) => {
 const handleLogout = async () => {
   await logout();
   isLoggedIn.value = false;
+  showProfileMenu.value = false;
+};
+
+const toggleProfileMenu = () => {
+  showProfileMenu.value = !showProfileMenu.value;
+};
+
+const goToOrders = () => {
+  showProfileMenu.value = false;
+  router.push('/orders');
+};
+
+const goToHome = () => {
+  router.push('/');
 };
 
 const openLoginModal = () => {
@@ -51,7 +69,7 @@ defineExpose({
         class="d-flex align-items-center justify-content-between mx-auto gap-3"
         style="max-width: var(--app-width); height: 72px"
       >
-        <div class="logo-container">
+        <div class="logo-container" @click="goToHome">
           <div class="logo-icon">
             <svg
               width="28"
@@ -72,23 +90,42 @@ defineExpose({
           </div>
           <span class="logo-text">Aureon <span class="logo-light">Motors</span></span>
         </div>
-        <ButtonComponent
-          v-if="!isLoggedIn"
-          width="189px"
-          title="Logowanie i rejestracja"
-          background-color="var(--pink)"
-          background-color-hover="var(--dark-pink)"
-          @handle-click="isModalOpen = true"
-        />
-        <ButtonComponent
-          v-else
-          width="120px"
-          title="Wyloguj się"
-          background-color="var(--pink)"
-          background-color-hover="var(--dark-pink)"
-          @handle-click="handleLogout"
-        />
-        <Modal v-model:isOpen="isModalOpen" :header="modalHeader" width="600px">
+        <div v-if="!isLoggedIn">
+          <ButtonComponent
+            width="189px"
+            title="Logowanie i rejestracja"
+            background-color="var(--pink)"
+            background-color-hover="var(--dark-pink)"
+            @handle-click="isModalOpen = true"
+          />
+        </div>
+        <div v-else class="user-section">
+          <div class="profile-menu-container">
+            <button class="profile-button" @click="toggleProfileMenu">
+              <el-icon :size="20">
+                <User />
+              </el-icon>
+            </button>
+            
+            <transition name="dropdown">
+              <div v-if="showProfileMenu" class="profile-dropdown">
+                <button class="dropdown-item" @click="goToOrders">
+                  <el-icon :size="18">
+                    <ShoppingCart />
+                  </el-icon>
+                  <span>Twoje zamówienia</span>
+                </button>
+                <button class="dropdown-item logout-item" @click="handleLogout">
+                  <el-icon :size="18">
+                    <SwitchButton />
+                  </el-icon>
+                  <span>Wyloguj się</span>
+                </button>
+              </div>
+            </transition>
+          </div>
+        </div>
+        <Modal :isOpen="isModalOpen" @update:isOpen="isModalOpen = $event" :header="modalHeader" width="600px">
           <template #content>
             <Registration v-if="view === 'register'" @register="handleRegister" @toggle="handleToggle" />
             <Login v-else @login="handleLogin" @toggle="handleToggle" />
@@ -128,7 +165,7 @@ defineExpose({
 
 .logo-container:hover .logo-icon {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(255, 105, 180, 0.3);
+  box-shadow: 0 4px 12px rgba(247, 168, 208, 0.3);
 }
 
 .logo-text {
@@ -168,4 +205,104 @@ defineExpose({
     font-size: 18px;
   }
 }
+
+.user-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.profile-menu-container {
+  position: relative;
+}
+
+.profile-button {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(135deg, var(--main-color) 0%, var(--dark-pink) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  color: white;
+}
+
+.profile-button:hover {
+  transform: scale(1.08);
+}
+
+.profile-button:active {
+  transform: scale(0.98);
+}
+
+.profile-dropdown {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  min-width: 220px;
+  overflow: hidden;
+  z-index: 1000;
+  padding: 8px;
+}
+
+.dropdown-item {
+  width: 100%;
+  padding: 12px 16px;
+  border: none;
+  background: transparent;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--navy);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-radius: 10px;
+  margin-bottom: 4px;
+}
+
+.dropdown-item:last-child {
+  margin-bottom: 0;
+}
+
+.dropdown-item:hover {
+  color: var(--main-color);
+  transform: translateX(4px);
+}
+
+.logout-item {
+  color: #ff4444;
+}
+
+.logout-item:hover {
+  color: #ff4444;
+}
+
+.dropdown-enter-active,
+.dropdown-leave-active {
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: top right;
+}
+
+.dropdown-enter-from,
+.dropdown-leave-to {
+  opacity: 0;
+  transform: scale(0.9) translateY(-8px);
+}
+
+.dropdown-enter-to,
+.dropdown-leave-from {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
 </style>
+
