@@ -16,14 +16,15 @@ const version = ref(props.car.versions?.[0]?.id ?? null);
 const basePrice = computed(() => {
   const versions = props.car.versions || [];
   let v = versions.find((x) => x.id === version.value);
-  return v?.price ?? 0;
+  return Number(v?.price) || 0;
 });
 const selectedAddonIds = ref([]);
-const selectedAddons = computed(() =>
-  (props.car.additionals || []).filter((a) => selectedAddonIds.value.map((id) => Number(id)).includes(Number(a.id)))
-);
+const selectedAddons = computed(() => {
+  const ids = selectedAddonIds.value.map(id => Number(id));
+  return (props.car.additionals || []).filter((a) => ids.includes(Number(a.id)));
+});
 const addonsTotal = computed(() =>
-  selectedAddons.value.reduce((sum, a) => sum + (a.price ?? 0), 0)
+  selectedAddons.value.reduce((sum, a) => sum + (Number(a.price) || 0), 0)
 );
 const totalPrice = computed(() => basePrice.value + addonsTotal.value);
 const color = ref(props.car.colors?.[0]?.id ?? null);
