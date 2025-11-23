@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Order extends Model
 {
@@ -18,7 +19,6 @@ class Order extends Model
         'color_id',
         'color_name',
         'car_price',
-        'addons',
         'addons_total',
         'delivery_method',
         'delivery_method_label',
@@ -47,7 +47,6 @@ class Order extends Model
     ];
 
     protected $casts = [
-        'addons' => 'array',
         'car_price' => 'decimal:2',
         'addons_total' => 'decimal:2',
         'delivery_price' => 'decimal:2',
@@ -77,5 +76,15 @@ class Order extends Model
     public function color(): BelongsTo
     {
         return $this->belongsTo(Color::class);
+    }
+
+    /**
+     * Get the additionals (addons) associated with the order
+     */
+    public function additionals(): BelongsToMany
+    {
+        return $this->belongsToMany(Additional::class, 'order_has_addons', 'order_id', 'additional_id')
+            ->withPivot('price')
+            ->withTimestamps();
     }
 }

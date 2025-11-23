@@ -130,13 +130,13 @@ const submit = async () => {
   const selectedDelivery = deliveryOptions.find(opt => opt.id === deliveryMethod.value);
   const selectedVerification = verificationOptions.find(opt => opt.id === verificationMethod.value);
 
-  const deliveryPrice = selectedDelivery?.price || 0;
-  const verificationPrice = selectedVerification?.price || 0;
-  const carPrice = selectedCar.value.price || 0;
+  const deliveryPrice = Number(selectedDelivery?.price) || 0;
+  const verificationPrice = Number(selectedVerification?.price) || 0;
+  const carPrice = Number(selectedCar.value.price) || 0;
   
-  const addonsTotal = selectedCar.value.addons?.reduce((sum, addon) => sum + (addon.price || 0), 0) || 0;
+  const addonsTotal = Number(selectedCar.value.addons?.reduce((sum, addon) => sum + (Number(addon.price) || 0), 0)) || 0;
   
-  const totalPrice = carPrice + deliveryPrice + verificationPrice;
+  const totalPrice = Number(carPrice + deliveryPrice + verificationPrice);
 
   const orderData = {
     car_id: selectedCar.value.car_id,
@@ -144,9 +144,9 @@ const submit = async () => {
     car_version: selectedCar.value.version,
     color_id: selectedCar.value.color_id,
     color_name: selectedCar.value.color,
-    car_price: carPrice,
+    car_price: Number(carPrice),
     addons: selectedCar.value.addons || [],
-    addons_total: addonsTotal,
+    addons_total: Number(addonsTotal),
     
     first_name: personalData.value.firstName,
     last_name: personalData.value.lastName,

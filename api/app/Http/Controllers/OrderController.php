@@ -6,6 +6,7 @@ use App\Models\Order;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
@@ -22,7 +23,9 @@ class OrderController extends Controller
             'color_name' => 'nullable|string',
             'car_price' => 'required|numeric|min:0',
             'addons' => 'nullable|array',
-            'addons_total' => 'nullable|numeric|min:0',
+            'addons.*.id' => 'required|exists:additionals,id',
+            'addons.*.price' => 'required|numeric|min:0',
+            'addons_total' => 'required|numeric|min:0',
             'delivery_method' => 'required|string|in:inpost,fedex,poczta',
             'delivery_method_label' => 'nullable|string',
             'delivery_eta' => 'nullable|string',
@@ -48,15 +51,47 @@ class OrderController extends Controller
             'total_price' => 'required|numeric|min:0',
         ]);
 
+        // Extract addons before creating the order
+        $addons = $validated['addons'] ?? [];
+        unset($validated['addons']);
+
         $validated['user_id'] = Auth::id();
         $validated['status'] = 'pending';
 
-        $order = Order::create($validated);
+        // Use transaction to ensure data consistency
+        DB::beginTransaction();
+        try {
+            $order = Order::create($validated);
 
-        return response()->json([
-            'message' => 'Zamówienie zostało utworzone pomyślnie',
-            'order' => $order,
-        ], 201);
+            // Attach addons with their prices at the time of order
+            if (!empty($addons)) {
+                $addonData = [];
+                foreach ($addons as $addon) {
+                    $addonData[$addon['id']] = [
+                        'price' => $addon['price'],
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }
+                $order->additionals()->attach($addonData);
+            }
+
+            DB::commit();
+
+            // Load the relationships for the response
+            $order->load('additionals');
+
+            return response()->json([
+                'message' => 'Zamówienie zostało utworzone pomyślnie',
+                'order' => $order,
+            ], 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Wystąpił błąd podczas tworzenia zamówienia',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**
@@ -65,7 +100,7 @@ class OrderController extends Controller
     public function index(Request $request): JsonResponse
     {
         $orders = Order::where('user_id', Auth::id())
-            ->with(['car', 'color'])
+            ->with(['car', 'color', 'additionals'])
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -80,7 +115,7 @@ class OrderController extends Controller
     public function show(int $id): JsonResponse
     {
         $order = Order::where('user_id', Auth::id())
-            ->with(['car', 'color'])
+            ->with(['car', 'color', 'additionals'])
             ->findOrFail($id);
 
         return response()->json([
