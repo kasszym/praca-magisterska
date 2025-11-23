@@ -14,12 +14,12 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('car_id')->constrained()->onDelete('cascade');
+            $table->unsignedBigInteger('car_id'); // Remove constraint - cars table doesn't exist
 
             // Car configuration
             $table->string('car_name');
             $table->string('car_version');
-            $table->foreignId('color_id')->nullable()->constrained()->onDelete('set null');
+            $table->unsignedBigInteger('color_id')->nullable(); // Remove constraint - colors table doesn't exist
             $table->string('color_name')->nullable();
             $table->decimal('car_price', 10, 2);
 

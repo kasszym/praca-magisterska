@@ -127,80 +127,68 @@ const submit = async () => {
     return;
   }
 
-  // Get selected delivery and verification options (already saved to summary via watch)
   const selectedDelivery = deliveryOptions.find(opt => opt.id === deliveryMethod.value);
   const selectedVerification = verificationOptions.find(opt => opt.id === verificationMethod.value);
 
-  // Calculate final prices
   const deliveryPrice = selectedDelivery?.price || 0;
   const verificationPrice = selectedVerification?.price || 0;
   const carPrice = selectedCar.value.price || 0;
-  const finalPrice = carPrice + deliveryPrice + verificationPrice;
+  
+  const addonsTotal = selectedCar.value.addons?.reduce((sum, addon) => sum + (addon.price || 0), 0) || 0;
+  
+  const totalPrice = carPrice + deliveryPrice + verificationPrice;
 
-  // Prepare order data matching OrderController expectations
   const orderData = {
-    // Car information
     car_id: selectedCar.value.car_id,
     car_name: selectedCar.value.name,
     car_version: selectedCar.value.version,
     color_id: selectedCar.value.color_id,
     color_name: selectedCar.value.color,
-    addons: JSON.stringify(selectedCar.value.addons), // Convert to JSON string
-    addon_ids: selectedCar.value.addon_ids,
+    car_price: carPrice,
+    addons: selectedCar.value.addons || [],
+    addons_total: addonsTotal,
     
-    // Personal data
     first_name: personalData.value.firstName,
     last_name: personalData.value.lastName,
     pesel: personalData.value.pesel,
     email: personalData.value.email,
     phone: personalData.value.phone,
     
-    // Residential address
     street: personalData.value.street,
     house_number: personalData.value.houseNumber,
     apartment_number: personalData.value.apartmentNumber || null,
     post_code: personalData.value.postCode,
     city: personalData.value.city,
     
-    // Invoice email
-    invoice_email_option: personalData.value.invoiceEmailOption,
+
     invoice_email: personalData.value.invoiceEmailOption === 'different' 
       ? personalData.value.invoiceEmail 
       : personalData.value.email,
     
-    // Correspondence address
-    correspondence_address_option: personalData.value.correspondenceAddressOption,
     correspondence_street: personalData.value.correspondenceAddressOption === 'different' 
       ? personalData.value.correspondenceStreet 
-      : personalData.value.street,
+      : null,
     correspondence_house_number: personalData.value.correspondenceAddressOption === 'different' 
       ? personalData.value.correspondenceHouseNumber 
-      : personalData.value.houseNumber,
+      : null,
     correspondence_apartment_number: personalData.value.correspondenceAddressOption === 'different' 
       ? (personalData.value.correspondenceApartmentNumber || null) 
-      : (personalData.value.apartmentNumber || null),
+      : null,
     correspondence_post_code: personalData.value.correspondenceAddressOption === 'different' 
       ? personalData.value.correspondencePostCode 
-      : personalData.value.postCode,
+      : null,
     correspondence_city: personalData.value.correspondenceAddressOption === 'different' 
       ? personalData.value.correspondenceCity 
-      : personalData.value.city,
+      : null,
     
-    // Delivery and verification
     delivery_method: deliveryMethod.value,
-    delivery_label: selectedDelivery?.label,
+    delivery_method_label: selectedDelivery?.label,
     delivery_eta: selectedDelivery?.eta,
     delivery_price: deliveryPrice,
     verification_method: verificationMethod.value,
-    verification_label: selectedVerification?.label,
     verification_price: verificationPrice,
     
-    // Pricing
-    car_price: carPrice,
-    final_price: finalPrice,
-    
-    // Status
-    status: 'pending',
+    total_price: totalPrice,
   };
 
   try {
@@ -213,10 +201,6 @@ const submit = async () => {
         duration: 3000,
       });
       
-      // TODO: Redirect to payment or order confirmation page
-      console.log("Order created:", result);
-      
-      // Emit event for parent component
       emits("deliverySelected", {
         delivery: selectedDelivery,
         verification: selectedVerification,

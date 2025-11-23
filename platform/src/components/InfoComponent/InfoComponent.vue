@@ -18,7 +18,7 @@ onMounted(async () => {
       v-for="(info, index) in informationsList"
       :key="index"
       :title="info.title"
-      :description="info.description"
+      :description="info.content"
     />
   </div>
 </template>

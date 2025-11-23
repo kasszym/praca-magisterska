@@ -29,8 +29,12 @@ watch(
 );
 
 const select = (idx) => (i.value = idx);
-const next = () => (i.value = i.value + 1);
-const prev = () => (i.value = i.value - 1);
+const next = () => {
+  i.value = (i.value + 1) % props.images.length;
+}
+const prev = () => {
+  i.value = (i.value - 1 + props.images.length) % props.images.length;
+};
 
 const extractImageString = (img) => {
   if (!img) return "";
@@ -82,6 +86,7 @@ const placeholder = (() => {
     <div
       class="position-relative overflow-hidden main-image"
       style="border-radius: 8px"
+      tabindex="0"
       @keydown.left.prevent="prev"
       @keydown.right.prevent="next"
     >
