@@ -2,10 +2,13 @@
 import { ref, onMounted } from "vue";
 import ButtonComponent from "./ButtonComponent.vue";
 import { useAuth } from "../../composables/auth";
+import { useOAuth } from "../../composables/useOAuth";
+import { GOOGLE_CLIENT_ID } from "../../config/oauth";
 
 const emit = defineEmits(["login", "toggle"]);
 
-const { login, isLoading } = useAuth();
+const { login, isLoading, googleAuth } = useAuth();
+const { initializeGoogleButton, parseJwt } = useOAuth();
 
 const formRef = ref(null);
 const form = ref({ email: "", password: "" });
@@ -50,6 +53,16 @@ const submit = async () => {
   });
 };
 
+const handleGoogleCallback = async (response) => {
+  const userData = parseJwt(response.credential);
+  if (userData) {
+    const result = await googleAuth(userData);
+    if (result) {
+      emit("login", result.user);
+    }
+  }
+};
+
 onMounted(() => {
   const inputs = document.querySelectorAll('.login .el-input__inner');
   inputs.forEach((inp) => {
@@ -58,6 +71,13 @@ onMounted(() => {
       if (content && inp.value && inp.value.length > 0) content.classList.add('has-value');
     } catch (e) {}
   });
+
+  // Initialize Google Sign-In button
+  try {
+    initializeGoogleButton('google-login-btn', GOOGLE_CLIENT_ID, handleGoogleCallback);
+  } catch (error) {
+    console.error('Failed to initialize Google button:', error);
+  }
 });
 </script>
 
@@ -83,10 +103,7 @@ onMounted(() => {
       </div>
 
       <div class="oauth-section">
-        <button class="oauth-btn" type="button">
-          <img src="../../assets/google.png" alt="Google Logo" class="oauth-icon" />
-          <span>Kontynuuj z Google</span>
-        </button>
+        <div id="google-login-btn"></div>
       </div>
 
       <div class="submit-section">

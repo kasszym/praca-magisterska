@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Route;
 // Public authentication routes
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/auth/google', [AuthController::class, 'googleAuth']);
+
 
 // Protected authentication routes
 Route::middleware('auth:sanctum')->group(function () {

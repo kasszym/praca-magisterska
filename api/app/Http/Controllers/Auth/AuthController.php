@@ -77,5 +77,55 @@ class AuthController extends Controller
             'user' => $request->user(),
         ]);
     }
+
+    /**
+     * Handle Google OAuth login/register
+     * This accepts a verified Google user payload from the frontend
+     */
+    public function googleAuth(Request $request): JsonResponse
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'name' => 'required|string',
+            'google_id' => 'required|string',
+        ]);
+
+        try {
+            // Find or create user
+            $user = User::where('email', $request->email)->first();
+
+            if (!$user) {
+                // Create new user
+                $user = User::create([
+                    'name' => $request->name,
+                    'email' => $request->email,
+                    'password' => Hash::make(uniqid()), // Random password for OAuth users
+                    'google_id' => $request->google_id,
+                ]);
+
+                $message = 'Rejestracja przez Google zakończona pomyślnie';
+            } else {
+                // Update google_id if not set
+                if (!$user->google_id) {
+                    $user->update(['google_id' => $request->google_id]);
+                }
+
+                $message = 'Logowanie przez Google zakończone pomyślnie';
+            }
+
+            // Create token
+            $token = $user->createToken('auth-token')->plainTextToken;
+
+            return response()->json([
+                'message' => $message,
+                'user' => $user,
+                'token' => $token,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Błąd podczas uwierzytelniania przez Google: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
 }
 

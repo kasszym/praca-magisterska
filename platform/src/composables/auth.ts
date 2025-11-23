@@ -1,6 +1,7 @@
 import { ref } from "vue";
 import { ElMessage } from "element-plus";
 import API from "../config/api";
+import type { GoogleUser } from "./useOAuth";
 
 export interface LoginCredentials {
   email: string;
@@ -130,6 +131,39 @@ export const useAuth = () => {
     return localStorage.getItem("token");
   };
 
+  /**
+   * Login/Register with Google OAuth
+   */
+  const googleAuth = async (
+    googleUser: GoogleUser
+  ): Promise<AuthResponse | null> => {
+    isLoading.value = true;
+    try {
+      const response = await API.post<AuthResponse>("/auth/google", {
+        email: googleUser.email,
+        name: googleUser.name,
+        google_id: googleUser.sub,
+      });
+
+      // Store token in localStorage
+      localStorage.setItem("token", response.data.token);
+
+      // Show success message
+      ElMessage({
+        message: response.data.message || "Uwierzytelnianie przez Google zakończone pomyślnie",
+        type: "success",
+        duration: 3000,
+      });
+
+      return response.data;
+    } catch (error) {
+      // Error message will be shown by interceptor
+      return null;
+    } finally {
+      isLoading.value = false;
+    }
+  };
+
   return {
     isLoading,
     login,
@@ -137,5 +171,6 @@ export const useAuth = () => {
     logout,
     isAuthenticated,
     getToken,
+    googleAuth,
   };
 };
