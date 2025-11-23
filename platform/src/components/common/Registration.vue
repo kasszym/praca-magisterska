@@ -1,14 +1,14 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { ElMessage } from "element-plus";
 import ButtonComponent from "./ButtonComponent.vue";
-import API from "../../config/api";
+import { useAuth } from "../../composables/auth";
 
 const emit = defineEmits(["register", "toggle"]);
 
+const { register, isLoading } = useAuth();
+
 const formRef = ref(null);
 const form = ref({ name: "", email: "", password: "", confirmPassword: "" });
-const isLoading = ref(false);
 
 const validateConfirmPassword = (rule, value, callback) => {
   if (value !== form.value.password) {
@@ -48,41 +48,18 @@ function markHasValue(e) {
 const submit = async () => {
   formRef.value.validate(async (valid) => {
     if (valid) {
-      isLoading.value = true;
-      try {
-        const response = await API.post("/register", {
+      const result = await register(
+        {
           name: form.value.name,
           email: form.value.email,
           password: form.value.password,
           password_confirmation: form.value.confirmPassword,
-        });
+        },
+        formRef.value
+      );
 
-        localStorage.setItem("token", response.data.token);
-        
-        ElMessage({
-          message: response.data.message || "Rejestracja zakończona pomyślnie",
-          type: "success",
-          duration: 3000,
-        });
-
-        emit("register", response.data.user);
-      } catch (error) {
-        if (error.response?.data?.errors) {
-          const errors = error.response.data.errors;
-          Object.keys(errors).forEach((field) => {
-            const fieldName = field === "password_confirmation" ? "confirmPassword" : field;
-            if (formRef.value) {
-              formRef.value.setFields([
-                {
-                  prop: fieldName,
-                  errors: Array.isArray(errors[field]) ? errors[field] : [errors[field]],
-                },
-              ]);
-            }
-          });
-        }
-      } finally {
-        isLoading.value = false;
+      if (result) {
+        emit("register", result.user);
       }
     }
   });
