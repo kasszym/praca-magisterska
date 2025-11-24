@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import Header from "./components/Header.vue";
 import Footer from "./components/Footer.vue";
+import ChatWidget from "./components/ChatWidget.vue";
 
 const headerRef = ref(null);
 
@@ -17,6 +18,7 @@ const handleShowLoginModal = () => {
     <Header ref="headerRef" />
     <router-view @showLoginModal="handleShowLoginModal" />
     <Footer />
+    <ChatWidget />
   </div>
 </template>
 
