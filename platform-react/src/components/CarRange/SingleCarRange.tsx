@@ -1,0 +1,123 @@
+import React, { useMemo } from 'react';
+import ButtonComponent from '../common/ButtonComponent';
+import api from '../../config/api';
+
+interface Car {
+  id: number;
+  name: string;
+  drivetrain: string;
+  range: number;
+  main_image: string;
+  images: string[];
+  versions?: Array<{
+    id: number;
+    title: string;
+    price: number;
+  }>;
+  fk_type: number;
+  fk_drive: number;
+  acceleration_0_100_s?: string;
+  max_speed_kmh?: string;
+  charging?: string;
+  trunk_capacity?: string;
+  guarantee?: string;
+}
+
+interface SingleCarRangeProps {
+  car: Car;
+}
+
+const SingleCarRange: React.FC<SingleCarRangeProps> = ({ car }) => {
+  const formatPrice = (value: number) => {
+    const n = Number(value ?? 0) || 0;
+    return n.toLocaleString('pl-PL');
+  };
+
+  const extractImageString = (img: any): string => {
+    if (!img) return '';
+    if (typeof img === 'string') return img;
+    return '';
+  };
+
+  const getCarImage = () => {
+    const img = extractImageString(car?.main_image || '');
+    if (!img) return '';
+    if (/^(https?:)?\/\//.test(img)) return img;
+    if (img.includes('/storage/')) {
+      try {
+        const origin = String(api.defaults.baseURL).replace(/\/api\/?$/, '');
+        return img.startsWith('/') ? origin + img : origin + '/' + img;
+      } catch (e) {
+        return img;
+      }
+    }
+    try {
+      return new URL(`../../assets/${img}`, import.meta.url).href;
+    } catch (e) {
+      return img;
+    }
+  };
+
+  const selectedVersion = useMemo(
+    () => car.versions?.[0]?.id ?? '',
+    [car.versions]
+  );
+
+  const selectedPrice = useMemo(() => {
+    const v = car.versions?.find((x) => x.id === selectedVersion);
+    return v?.price ?? 0;
+  }, [car.versions, selectedVersion]);
+
+  const handleOpenDialog = () => {
+    // TODO: Implement modal opening
+    console.log('Open car modal for:', car.name);
+  };
+
+  return (
+    <div
+      className="card mx-auto w-100"
+      style={{
+        maxWidth: '368px',
+        border: '1px solid var(--grey)',
+        borderRadius: 'var(--border-radius)',
+      }}
+    >
+      <img
+        src={getCarImage()}
+        alt={car.name}
+        style={{ height: '200px', objectFit: 'cover' }}
+        className="card-img-top d-block img-fluid"
+      />
+      <div className="card-body p-3 d-flex flex-column" style={{ rowGap: '7px' }}>
+        <div
+          className="d-flex flex-column fw-bold"
+          style={{
+            color: 'var(--navy)',
+            fontSize: 'var(--fs-l)',
+            rowGap: '3px',
+          }}
+        >
+          <span>{car.name}</span>
+          <span>od {formatPrice(selectedPrice)} zł</span>
+        </div>
+        <div
+          className="d-flex justify-content-between align-items-center"
+          style={{ fontSize: 'var(--fs-xs)', color: 'var(--dark-grey)' }}
+        >
+          <span>
+            {car.drivetrain} • {car.range}km range
+          </span>
+          <ButtonComponent
+            title="Sprawdź"
+            width="88px"
+            height="22px"
+            fontSize="var(--fs-xxs)"
+            onClick={handleOpenDialog}
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default SingleCarRange;
