@@ -1,5 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { FaUser, FaShoppingCart, FaSignOutAlt, FaCar } from 'react-icons/fa';
+import Modal from './common/Modal';
+import Login from './common/Login';
+import Registration from './common/Registration';
 import './Header.css';
 
 interface HeaderProps {
@@ -113,6 +116,18 @@ const Header: React.FC<HeaderProps> = () => {
       </div>
 
       <div className="separator" />
+
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title={modalHeader}
+      >
+        {view === 'login' ? (
+          <Login onLogin={handleLogin} onToggle={handleToggle} />
+        ) : (
+          <Registration onRegister={handleRegister} onToggle={handleToggle} />
+        )}
+      </Modal>
     </header>
   );
 };

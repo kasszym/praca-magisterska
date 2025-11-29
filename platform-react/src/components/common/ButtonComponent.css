@@ -1,0 +1,11 @@
+.button-component {
+  border: none;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.button-component:active {
+  transform: scale(0.98);
+}

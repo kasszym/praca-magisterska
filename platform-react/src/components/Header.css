@@ -45,11 +45,6 @@
   transition: all 0.3s ease;
 }
 
-.logo-container:hover .logo-icon {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(247, 168, 208, 0.3);
-}
-
 .logo-text {
   font-size: 20px;
   font-weight: 800;
