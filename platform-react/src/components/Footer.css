@@ -1,0 +1,18 @@
+.footer {
+  background: white;
+}
+
+.footer-content {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin: 0 auto;
+  padding: 0;
+  max-width: var(--app-width);
+  height: 80px;
+}
+
+.footer-text {
+  color: var(--dark-grey);
+  font-size: var(--fs-s);
+}

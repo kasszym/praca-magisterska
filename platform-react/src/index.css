@@ -44,4 +44,10 @@ html, body {
   line-height: 1.2;
   margin: 0;
   padding: 0;
+  overflow-x: hidden;
+  width: 100%;
+}
+
+* {
+  box-sizing: border-box;
 }
