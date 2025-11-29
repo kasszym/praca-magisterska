@@ -1,0 +1,12 @@
+.info-component {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.info-component-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+}
