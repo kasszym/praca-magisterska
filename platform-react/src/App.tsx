@@ -2,6 +2,7 @@ import './App.css'
 import { Outlet } from 'react-router-dom'
 import Header from './components/Header'
 import Footer from './components/Footer'
+import ChatWidget from './components/ChatWidget/ChatWidget'
 
 function App() {
   return (
@@ -9,6 +10,7 @@ function App() {
       <Header />
       <Outlet />
       <Footer />
+      <ChatWidget />
     </>
   )
 }
