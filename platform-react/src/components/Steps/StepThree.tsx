@@ -1,5 +1,6 @@
 import React from 'react';
 import Summary from '../Summary/Summary';
+import Delivery from '../Delivery/Delivery';
 import SectionCard from '../common/SectionCard';
 import './StepThree.css';
 
@@ -7,8 +8,7 @@ const StepThree: React.FC = () => {
   return (
     <div className="step-three-container">
       <div className="step-three-delivery">
-        <h2>Dostawa i weryfikacja</h2>
-        <p>Delivery component coming soon...</p>
+        <Delivery />
       </div>
 
       <SectionCard className="step-three-summary">
