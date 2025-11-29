@@ -35,7 +35,6 @@ const Agreements = forwardRef<AgreementsRef, AgreementsProps>(({ title }, ref) =
 
   useEffect(() => {
     if (agreementsList && agreementsList.length > 0) {
-      // Check all by default
       const allLabels = agreementsList.map((item) => item.label);
       setCheckedValues(allLabels);
       setCheckAll(true);

@@ -1,0 +1,29 @@
+.step-three-container {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 24px;
+  align-items: start;
+}
+
+.step-three-summary {
+  min-width: 0;
+  position: sticky;
+  top: 1.5rem;
+  align-self: start;
+}
+
+.step-three-delivery {
+  min-width: 0;
+}
+
+@media (max-width: 1024px) {
+  .step-three-container {
+    grid-template-columns: 1fr;
+  }
+
+  .step-three-summary {
+    order: -1;
+    position: static;
+    top: auto;
+  }
+}
