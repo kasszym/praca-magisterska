@@ -11,4 +11,7 @@ corepack enable <br />
 yarn install <br />
 yarn dev 
 
+## Websockets
+php artisan websockets:serve
+
 # [Live Demo](https://kasszym.github.io/aureon/)

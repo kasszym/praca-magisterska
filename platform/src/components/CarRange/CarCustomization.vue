@@ -2,6 +2,7 @@
 import { ref, computed } from "vue";
 import ButtonComponent from "../common/ButtonComponent.vue";
 import { useSummary } from "../../composables/useSummary";
+const emit = defineEmits(["close"]);
 
 const props = defineProps({
   car: {
@@ -54,10 +55,10 @@ const saveToSummary = () => {
       price: totalPrice.value,
     };
     setSelectedCar(payload);
+    emit("close");
   }
 };
 
-defineExpose({ open, close });
 </script>
 
 <template>
@@ -116,7 +117,7 @@ defineExpose({ open, close });
       </div>
 
       <ButtonComponent
-        title="Znajdź punkt sprzedaży"
+        title="Wybierz"
         class="w-100 mt-2"
         background-color="var(--pink)"
         background-color-hover="var(--dark-pink)"

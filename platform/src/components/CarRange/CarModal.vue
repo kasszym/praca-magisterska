@@ -15,15 +15,12 @@ const props = defineProps({
   selectedImage: { type: String, default: "" },
 });
 const emit = defineEmits(["update:selectedImage"]);
-const carCustomizationRef = ref();
 const isDialogOpen = ref(false);
 
 const open = () => (isDialogOpen.value = true);
 const close = () => (isDialogOpen.value = false);
 defineExpose({ open, close });
-const savetoLocalStorage = () => {
-  carCustomizationRef.value?.savetoLocalStorage();
-};
+
 </script>
 <template>
   <Modal
@@ -39,8 +36,8 @@ const savetoLocalStorage = () => {
           <SectionCard padding="16px 14px">
             <template #content>
               <CarCustomization
-                ref="carCustomizationRef"
                 :car="car"
+                @close="close"
               />
             </template>
           </SectionCard>
@@ -57,25 +54,6 @@ const savetoLocalStorage = () => {
           </SectionCard>
         </div>
       </div>
-    </template>
-    <template #footer>
-      <ButtonComponent
-        title="Anuluj"
-        width="100px"
-        background-color="#fff"
-        color="var(--navy)"
-        @handle-click="close"
-        :font-weight="400"
-        border="1px solid var(--grey)"
-        background-color-hover="#fff"
-        color-hover="var(--navy)"
-        border-hover="1px solid var(--dark-grey)"
-      />
-      <ButtonComponent
-        title="Znajdź dealera"
-        width="134px"
-        @handle-click="savetoLocalStorage"
-      />
     </template>
   </Modal>
 </template>
