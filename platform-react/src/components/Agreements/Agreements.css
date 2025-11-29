@@ -1,0 +1,217 @@
+.Agreements {
+  display: block;
+}
+
+.Agreements__title {
+  font-weight: 600;
+  text-align: left;
+  margin-bottom: 0.625rem;
+  color: var(--black, #000);
+}
+
+.Agreements__actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin: 1rem 0;
+}
+
+.Agreements__actions-title {
+  font-size: var(--fs-s, 14px);
+  font-weight: 600;
+}
+
+.Agreements__actions input[type="checkbox"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 2px solid var(--black, #000);
+  border-radius: 3px;
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+  background: transparent;
+  transition: none;
+  cursor: pointer;
+}
+
+.Agreements__actions input[type="checkbox"]::after {
+  content: "";
+  position: absolute;
+  top: 0.15rem;
+  left: 0.5rem;
+  border-right: 3px solid #fff;
+  border-bottom: 3px solid #fff;
+  background: none;
+  width: 0.4rem;
+  height: 0.8rem;
+  transform: rotate(45deg) scale(0);
+  transition: transform 0.15s ease-in;
+}
+
+.Agreements__actions input[type="checkbox"]:checked {
+  background-color: var(--black, #000);
+  border: 1px solid var(--black, #000);
+}
+
+.Agreements__actions input[type="checkbox"]:checked::after {
+  transform: rotate(45deg) scale(1);
+}
+
+.Agreements__actions input[type="checkbox"]:checked + .Agreements__actions-title {
+  color: var(--black, #000);
+}
+
+.TheSeparator {
+  width: 100%;
+  height: 1px;
+  background-color: var(--grey, #dcdfe6);
+  margin: 1rem 0;
+}
+
+.Agreements__details {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-left: 2rem;
+}
+
+.agreement-item {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  cursor: pointer;
+}
+
+.agreement-item input[type="checkbox"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 2px solid var(--black, #000);
+  border-radius: 3px;
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+  background: transparent;
+  transition: none;
+  cursor: pointer;
+}
+
+.agreement-item input[type="checkbox"]::after {
+  content: "";
+  position: absolute;
+  top: 0.15rem;
+  left: 0.5rem;
+  border-right: 3px solid #fff;
+  border-bottom: 3px solid #fff;
+  background: none;
+  width: 0.4rem;
+  height: 0.8rem;
+  transform: rotate(45deg) scale(0);
+  transition: transform 0.15s ease-in;
+}
+
+.agreement-item input[type="checkbox"]:checked {
+  background-color: var(--black, #000);
+  border: 1px solid var(--black, #000);
+}
+
+.agreement-item input[type="checkbox"]:checked::after {
+  transform: rotate(45deg) scale(1);
+}
+
+.agreement-item input[type="checkbox"]:checked + .agreement-label {
+  color: var(--black, #000);
+}
+
+.agreement-label {
+  font-size: var(--fs-s, 14px);
+  color: var(--black, #000);
+  margin-left: 0.5rem;
+  white-space: pre-line;
+  text-align: left;
+}
+
+.required-star {
+  color: var(--dark-red, #f56c6c);
+  font-weight: 600;
+  margin-left: 6px;
+}
+
+.additional-info {
+  color: var(--navy, #303133);
+}
+
+.agreement-block {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.agreement-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.agreement-item {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+}
+
+.expand-toggle {
+  background: transparent;
+  border: none;
+  color: var(--navy, #303133);
+  font-size: var(--fs-s, 14px);
+  padding: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.agreement-description {
+  padding: 8px 0 12px 0;
+  color: var(--dark-grey, #909399);
+  font-size: var(--fs-s, 14px);
+  line-height: 1.4;
+  width: 100%;
+  margin-top: 8px;
+  animation: slideDown 200ms ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 500px;
+  }
+}
+
+@media (max-width: 768px) {
+  .agreement-item input[type="checkbox"] {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+  
+  .agreement-item input[type="checkbox"]::after {
+    top: 0.15rem;
+    left: 0.38rem;
+    width: 0.26rem;
+    height: 0.52rem;
+  }
+  
+  .agreement-block {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
