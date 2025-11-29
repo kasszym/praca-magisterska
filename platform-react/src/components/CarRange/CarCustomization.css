@@ -9,6 +9,7 @@
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 8px;
   width: 100%;
+  border: none !important;
 }
 
 .version-btn,
@@ -23,6 +24,7 @@
   padding: 0 12px;
   cursor: pointer;
   transition: all 0.2s;
+  width: 100%;
 }
 
 .version-btn:hover,

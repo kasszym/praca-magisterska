@@ -5,7 +5,7 @@ import './Agreements.css';
 interface Agreement {
   id: number;
   title: string;
-  label: string;
+  label?: string;
   content: string;
   is_required: boolean;
 }
@@ -25,30 +25,32 @@ const Agreements = forwardRef<AgreementsRef, AgreementsProps>(({ title }, ref) =
   const [checkedValues, setCheckedValues] = useState<string[]>([]);
   const [checkAll, setCheckAll] = useState(true);
   const [expandedMap, setExpandedMap] = useState<{ [key: number]: boolean }>({});
+  const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
-    const loadAgreements = async () => {
-      await getAgreementsList();
-    };
-    loadAgreements();
+    if (!agreementsList) {
+      getAgreementsList();
+    }
   }, []);
 
   useEffect(() => {
-    if (agreementsList && agreementsList.length > 0) {
-      const allLabels = agreementsList.map((item) => item.label);
+    if (agreementsList && agreementsList.length > 0 && !isInitialized) {
+      const allLabels = agreementsList.map((item) => item.label || item.title);
       setCheckedValues(allLabels);
       setCheckAll(true);
+      setIsInitialized(true);
     }
-  }, [agreementsList]);
+  }, [agreementsList?.length]); 
 
   const handleCheckAllChange = (checked: boolean) => {
     if (checked && agreementsList) {
-      const allLabels = agreementsList.map((item) => item.label);
+      const allLabels = agreementsList.map((item) => item.label || item.title);
       setCheckedValues(allLabels);
+      setCheckAll(true);
     } else {
       setCheckedValues([]);
+      setCheckAll(false);
     }
-    setCheckAll(checked);
   };
 
   const handleCheckboxChange = (label: string, checked: boolean) => {
@@ -59,7 +61,10 @@ const Agreements = forwardRef<AgreementsRef, AgreementsProps>(({ title }, ref) =
       newCheckedValues = checkedValues.filter((val) => val !== label);
     }
     setCheckedValues(newCheckedValues);
-    setCheckAll(agreementsList ? newCheckedValues.length === agreementsList.length : false);
+    
+    if (agreementsList) {
+      setCheckAll(newCheckedValues.length === agreementsList.length);
+    }
   };
 
   const toggleExpand = (id: number) => {
@@ -74,7 +79,7 @@ const Agreements = forwardRef<AgreementsRef, AgreementsProps>(({ title }, ref) =
 
     const requiredCheckboxesArray = agreementsList.filter((item) => item.is_required);
     const allRequiredChecked = requiredCheckboxesArray.every((item) =>
-      checkedValues.includes(item.label)
+      checkedValues.includes(item.label || item.title)
     );
 
     return allRequiredChecked;
@@ -82,7 +87,7 @@ const Agreements = forwardRef<AgreementsRef, AgreementsProps>(({ title }, ref) =
 
   const getFormValues = (): Agreement[] => {
     if (!agreementsList) return [];
-    return agreementsList.filter((item) => checkedValues.includes(item.label));
+    return agreementsList.filter((item) => checkedValues.includes(item.label || item.title));
   };
 
   useImperativeHandle(ref, () => ({
@@ -112,56 +117,58 @@ const Agreements = forwardRef<AgreementsRef, AgreementsProps>(({ title }, ref) =
       <div className="TheSeparator" />
 
       <div className="Agreements__details">
-        {agreementsList.map((item) => (
-          <div key={item.id} className="agreement-block">
-            <div className="agreement-row">
-              <label className="agreement-item">
-                <input
-                  type="checkbox"
-                  value={item.label}
-                  checked={checkedValues.includes(item.label)}
-                  onChange={(e) => handleCheckboxChange(item.label, e.target.checked)}
-                />
-                <span className="agreement-label">
-                  {item.title}
-                  {item.is_required && <span className="required-star">*</span>}
-                </span>
-              </label>
-              <button
-                className="expand-toggle"
-                onClick={() => toggleExpand(item.id)}
-                aria-expanded={!!expandedMap[item.id]}
-                aria-controls={`desc-${item.id}`}
-              >
-                <svg
-                  width="12"
-                  height="7"
-                  viewBox="0 0 12 7"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  style={{
-                    transition: 'transform 200ms ease',
-                    transform: expandedMap[item.id] ? 'rotate(180deg)' : 'rotate(0deg)',
-                    transformOrigin: 'center',
-                  }}
-                >
-                  <path
-                    d="M1 1L6 6L11 1"
-                    stroke="var(--black100)"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
+        {agreementsList.map((item) => {
+          const itemLabel = item.label || item.title;
+          return (
+            <div key={item.id} className="agreement-block">
+              <div className="agreement-row">
+                <label className="agreement-item">
+                  <input
+                    type="checkbox"
+                    checked={checkedValues.includes(itemLabel)}
+                    onChange={(e) => handleCheckboxChange(itemLabel, e.target.checked)}
                   />
-                </svg>
-              </button>
-            </div>
-            {expandedMap[item.id] && (
-              <div className="agreement-description" id={`desc-${item.id}`}>
-                {item.content}
+                  <span className="agreement-label">
+                    {item.title}
+                    {item.is_required && <span className="required-star">*</span>}
+                  </span>
+                </label>
+                <button
+                  className="expand-toggle"
+                  onClick={() => toggleExpand(item.id)}
+                  aria-expanded={!!expandedMap[item.id]}
+                  aria-controls={`desc-${item.id}`}
+                >
+                  <svg
+                    width="12"
+                    height="7"
+                    viewBox="0 0 12 7"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    style={{
+                      transition: 'transform 200ms ease',
+                      transform: expandedMap[item.id] ? 'rotate(180deg)' : 'rotate(0deg)',
+                      transformOrigin: 'center',
+                    }}
+                  >
+                    <path
+                      d="M1 1L6 6L11 1"
+                      stroke="var(--black100)"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </button>
               </div>
-            )}
-          </div>
-        ))}
+              {expandedMap[item.id] && (
+                <div className="agreement-description" id={`desc-${item.id}`}>
+                  {item.content}
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );

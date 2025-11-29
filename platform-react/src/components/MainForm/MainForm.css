@@ -88,10 +88,9 @@
   padding-top: 4px;
 }
 
-/* Version/Radio Button Group Styles */
 .version-group {
   display: inline-flex;
-  border-radius: 4px;
+  border-radius: 4px !important;
   overflow: hidden;
   border: 1px solid var(--grey, #dcdfe6);
 }
@@ -102,14 +101,11 @@
   padding: 12px 20px;
   font-size: var(--fs-s, 14px);
   color: var(--navy, #303133);
+  border: 1px solid var(--grey, #dcdfe6);
   cursor: pointer;
-  border-right: 1px solid var(--grey, #dcdfe6);
   transition: all 0.3s;
   white-space: nowrap;
-}
-
-.version-button:last-child {
-  border-right: none;
+  border-radius: 8px !important;
 }
 
 .version-button:hover {
@@ -117,7 +113,8 @@
 }
 
 .version-button.active {
-  background: var(--main-color, #409eff);
+  background: var(--main-color);
+  border: 1px solid var(--main-color);
   color: #fff;
 }
 
