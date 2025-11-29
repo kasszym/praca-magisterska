@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { FaUser, FaShoppingCart, FaSignOutAlt, FaCar } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 import Modal from './common/Modal';
 import Login from './common/Login';
 import Registration from './common/Registration';
@@ -9,6 +10,7 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = () => {
+  const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [view, setView] = useState<'register' | 'login'>('register');
   const [modalHeader, setModalHeader] = useState('Zarejestruj się');
@@ -58,9 +60,11 @@ const Header: React.FC<HeaderProps> = () => {
 
   const goToOrders = () => {
     setShowProfileMenu(false);
+    navigate('/orders');
   };
 
   const goToHome = () => {
+    navigate('/');
   };
 
   const openLoginModal = () => {
