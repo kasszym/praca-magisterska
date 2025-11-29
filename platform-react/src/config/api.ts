@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 const API_HEADERS = {
   'X-Requested-With': 'XMLHttpRequest',
@@ -11,7 +12,6 @@ const API = axios.create({
   timeout: 20000,
 });
 
-// Add authorization token to requests
 API.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {
@@ -20,11 +20,17 @@ API.interceptors.request.use((config) => {
   return config;
 });
 
-// Error interceptor
 API.interceptors.response.use(
   (response) => response,
   (error) => {
     console.error('API Error:', error);
+    
+    if (error.response?.data?.message && !error.response?.data?.errors) {
+      toast.error(error.response.data.message);
+    } else if (!error.response) {
+      toast.error('Błąd połączenia z serwerem');
+    }
+    
     return Promise.reject(error);
   }
 );

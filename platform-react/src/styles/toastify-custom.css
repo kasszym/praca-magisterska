@@ -1,0 +1,137 @@
+
+.Toastify__toast-container {
+  width: 330px;
+}
+
+.Toastify__toast {
+  font-family: inherit;
+  border-radius: 4px;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  padding: 14px 15px 14px 20px;
+  min-height: 60px;
+  background-color: #fff;
+  border-left: 4px solid;
+  color: #606266;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.Toastify__toast--success {
+  border-left-color: #67c23a;
+}
+
+.Toastify__toast--error {
+  border-left-color: #f56c6c;
+}
+
+.Toastify__toast--info {
+  border-left-color: #909399;
+}
+
+.Toastify__toast--warning {
+  border-left-color: #e6a23c;
+}
+
+.Toastify__toast-body {
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.Toastify__toast--success .Toastify__toast-icon,
+.Toastify__toast--error .Toastify__toast-icon,
+.Toastify__toast--info .Toastify__toast-icon,
+.Toastify__toast--warning .Toastify__toast-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.Toastify__toast--success .Toastify__toast-icon svg {
+  fill: #67c23a;
+}
+
+.Toastify__toast--error .Toastify__toast-icon svg {
+  fill: #f56c6c;
+}
+
+.Toastify__toast--info .Toastify__toast-icon svg {
+  fill: #909399;
+}
+
+.Toastify__toast--warning .Toastify__toast-icon svg {
+  fill: #e6a23c;
+}
+
+.Toastify__progress-bar {
+  height: 2px;
+  background: transparent;
+  opacity: 0.3;
+}
+
+.Toastify__progress-bar--success {
+  background: #67c23a;
+}
+
+.Toastify__progress-bar--error {
+  background: #f56c6c;
+}
+
+.Toastify__progress-bar--info {
+  background: #909399;
+}
+
+.Toastify__progress-bar--warning {
+  background: #e6a23c;
+}
+
+.Toastify__close-button {
+  opacity: 0.5;
+  color: #909399;
+  align-self: flex-start;
+  padding: 0;
+  margin: 0;
+}
+
+.Toastify__close-button:hover {
+  opacity: 0.8;
+  color: #606266;
+}
+
+.Toastify__close-button > svg {
+  width: 14px;
+  height: 14px;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translate3d(110%, 0, 0);
+    opacity: 0;
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+  to {
+    transform: translate3d(110%, 0, 0);
+    opacity: 0;
+  }
+}
+
+.Toastify__toast--top-right {
+  animation: slideInRight 0.3s ease-in-out;
+}
+
+.Toastify__toast--top-right.Toastify__toast--closing {
+  animation: slideOutRight 0.3s ease-in-out;
+}
+

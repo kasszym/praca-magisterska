@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { toast } from 'react-toastify';
 import api from '../config/api';
 import type { GoogleUser } from './useOAuth';
 
@@ -34,9 +35,9 @@ export const useAuth = () => {
 
   const showMessage = (message: string, type: 'success' | 'error' = 'success') => {
     if (type === 'success') {
-      alert(message);
+      toast.success(message);
     } else {
-      alert(`Error: ${message}`);
+      toast.error(message);
     }
   };
 

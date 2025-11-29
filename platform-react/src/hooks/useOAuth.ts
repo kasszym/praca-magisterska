@@ -89,10 +89,9 @@ export const useOAuth = () => {
         window.google!.accounts.id.renderButton(element, {
           theme: 'outline',
           size: 'large',
-          width: element.offsetWidth || 300,
+          width: '100%',
           text: 'continue_with',
-          shape: 'rectangular',
-          logo_alignment: 'left',
+          locale: 'pl',
         });
       }
     } catch (error) {
