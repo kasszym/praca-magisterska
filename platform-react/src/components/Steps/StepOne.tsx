@@ -1,10 +1,10 @@
 import React from 'react';
+import IntroComponent from '../MainPageComponents/IntroComponent';
 
 const StepOne: React.FC = () => {
   return (
     <div className="step-content">
-      <h2>Step 1</h2>
-      <p>Twój koszyk content goes here</p>
+      <IntroComponent />
     </div>
   );
 };
