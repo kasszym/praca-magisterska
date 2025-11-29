@@ -63,7 +63,7 @@ const MainForm = forwardRef<MainFormRef>((_props, ref) => {
 
   useEffect(() => {
     setPersonalData(formData);
-  }, [formData, setPersonalData]);
+  }, [formData.firstName, formData.lastName, formData.pesel, formData.email, formData.phone, formData.street, formData.houseNumber, formData.apartmentNumber, formData.postCode, formData.city]);
 
   useEffect(() => {
     if (formRef.current) {
