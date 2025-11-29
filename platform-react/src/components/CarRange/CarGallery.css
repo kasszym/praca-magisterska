@@ -1,0 +1,22 @@
+.main-image {
+  height: 372px;
+}
+
+.thumb-image {
+  width: 200px;
+  height: 120px;
+  object-fit: cover;
+}
+
+.images-wrap {
+  gap: 30px;
+}
+
+@media (max-width: 1120px) {
+  .main-image {
+    height: auto;
+  }
+  .images-wrap {
+    justify-content: space-between;
+  }
+}

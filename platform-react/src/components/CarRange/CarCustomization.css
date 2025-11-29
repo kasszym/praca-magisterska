@@ -1,0 +1,66 @@
+.car-customization-label {
+  color: var(--dark-grey);
+  font-size: var(--fs-s);
+}
+
+.version-group,
+.addon-group {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 8px;
+  width: 100%;
+}
+
+.version-btn,
+.addon-btn {
+  height: 32px;
+  font-size: var(--fs-xs);
+  color: var(--navy);
+  background: #fff;
+  border: 1px solid var(--grey);
+  border-radius: 8px;
+  font-weight: 400;
+  padding: 0 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.version-btn:hover,
+.addon-btn:hover {
+  border-color: var(--main-color);
+}
+
+.version-btn.active,
+.addon-btn.active {
+  background-color: var(--main-color);
+  border-color: var(--main-color);
+  color: #fff;
+  font-weight: 700;
+}
+
+.color-swatches {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.color-swatch {
+  cursor: pointer;
+  margin: 0;
+}
+
+.color-dot {
+  display: inline-block;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.color-swatch.checked .color-dot,
+.color-swatch:focus-within .color-dot {
+  box-shadow: 3px 3px 3px var(--dark-grey);
+  outline-offset: 2px;
+  border-radius: 8px;
+}

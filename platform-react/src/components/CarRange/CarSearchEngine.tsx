@@ -115,7 +115,7 @@ const CarSearchEngine: React.FC<CarSearchEngineProps> = ({
 
         <div className="btn-wrap me-3">
           <ButtonComponent
-            onClick={() => handleSubmit({} as React.FormEvent)}
+            type="submit"
             title="Filtruj"
             width="135px"
             backgroundColor="var(--pink)"

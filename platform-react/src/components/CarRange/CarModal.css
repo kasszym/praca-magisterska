@@ -1,0 +1,26 @@
+.car-modal {
+  display: flex;
+  gap: 36px;
+}
+
+.car-gallery {
+  width: 660px;
+  flex: 0 0 660px;
+}
+
+.car-modal > .d-flex.flex-column {
+  flex: 1;
+  min-width: 400px;
+}
+
+@media (max-width: 1120px) {
+  .car-modal {
+    flex-direction: column;
+  }
+  .car-gallery {
+    width: 100%;
+  }
+  .car-modal > .d-flex.flex-column {
+    min-width: auto;
+  }
+}

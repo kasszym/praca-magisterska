@@ -1,5 +1,7 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef } from 'react';
 import ButtonComponent from '../common/ButtonComponent';
+import CarModal from './CarModal';
+import type { CarModalRef } from './CarModal';
 import api from '../../config/api';
 
 interface Car {
@@ -28,6 +30,8 @@ interface SingleCarRangeProps {
 }
 
 const SingleCarRange: React.FC<SingleCarRangeProps> = ({ car }) => {
+  const carModalRef = useRef<CarModalRef>(null);
+
   const formatPrice = (value: number) => {
     const n = Number(value ?? 0) || 0;
     return n.toLocaleString('pl-PL');
@@ -69,8 +73,7 @@ const SingleCarRange: React.FC<SingleCarRangeProps> = ({ car }) => {
   }, [car.versions, selectedVersion]);
 
   const handleOpenDialog = () => {
-    // TODO: Implement modal opening
-    console.log('Open car modal for:', car.name);
+    carModalRef.current?.open();
   };
 
   return (
@@ -116,6 +119,7 @@ const SingleCarRange: React.FC<SingleCarRangeProps> = ({ car }) => {
           />
         </div>
       </div>
+      <CarModal ref={carModalRef} car={car} />
     </div>
   );
 };
