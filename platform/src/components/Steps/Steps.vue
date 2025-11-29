@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Check } from '@element-plus/icons-vue';
 import steps from "./steps";
 
 const props = defineProps({
@@ -54,10 +55,9 @@ const props = defineProps({
           <div class="TheSteps__box-wrapper">
             <div class="TheSteps__box" @click="$emit('update', step.id)">
               <span unselectable="on">
-                <img
-                  v-if="props.active > step.id"
-                  src="../../assets/check-white.svg"
-                />
+                <el-icon v-if="props.active > step.id" :size="16">
+                  <Check />
+                </el-icon>
                 <div v-else>{{ step.id }}</div>
               </span>
               <div class="TheSteps__title">

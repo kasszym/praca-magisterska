@@ -1,0 +1,121 @@
+.TheSteps {
+  min-height: 4.38rem;
+  max-width: 74rem;
+  margin: 0 auto;
+  position: relative;
+}
+
+.TheSteps__title {
+  position: absolute;
+  text-align: center;
+  width: 10rem;
+  bottom: -1.5rem;
+}
+
+.TheSteps__step-counter {
+  display: none;
+}
+
+.TheSteps__mobile {
+  display: none;
+}
+
+.TheSteps__steps {
+  display: flex;
+  justify-content: center;
+  max-width: 100%;
+  position: relative;
+  gap: 2rem;
+}
+
+.TheSteps__step {
+  color: var(--grey);
+  display: flex;
+  font-size: 0.88rem;
+  font-weight: 600;
+  position: relative;
+  align-items: center;
+  gap: 2rem;
+}
+
+.TheSteps__box {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  margin: 0 auto;
+  width: 2.5rem;
+  height: 2.5rem;
+  user-select: none;
+  border-radius: 0.5rem;
+  align-items: center;
+  justify-content: center;
+  border: 0.1rem solid var(--grey);
+  cursor: pointer;
+}
+
+.TheSteps__step--checked .TheSteps__box {
+  color: white;
+  border: 0.1rem solid var(--dark-pink);
+  background-color: var(--dark-pink);
+}
+
+.TheSteps__step--checked .TheSteps__title {
+  color: var(--dark-pink);
+}
+
+.TheSteps__step--active .TheSteps__box {
+  color: var(--main-color);
+  border: 0.1rem solid var(--main-color);
+}
+
+.TheSteps__step--active .TheSteps__title {
+  color: var(--main-color);
+}
+
+.TheSteps__content {
+  margin-top: 3rem;
+  min-height: 90vh;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .TheSteps__step-counter {
+    display: block;
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--main-color);
+    margin-bottom: 1rem;
+  }
+
+  .TheSteps__steps {
+    gap: 0.5rem;
+  }
+
+  .TheSteps__box-wrapper {
+    display: none;
+  }
+
+  .TheSteps__mobile {
+    display: block;
+  }
+
+  .TheSteps__mobile-container {
+    width: 100%;
+    height: 8px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .TheSteps__mobile-container-pink {
+    background-color: var(--main-color);
+  }
+
+  .TheSteps__mobile-container-grey {
+    background-color: var(--grey);
+  }
+
+  .TheSteps__step svg {
+    display: none;
+  }
+}
