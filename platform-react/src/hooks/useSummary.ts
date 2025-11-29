@@ -46,7 +46,6 @@ interface PersonalData {
   correspondenceCity: string;
 }
 
-// Global state (similar to Vue's ref outside the composable)
 let selectedCarState: SelectedCar | null = null;
 let deliveryInfoState: DeliveryInfo | null = null;
 let verificationInfoState: VerificationInfo | null = null;
