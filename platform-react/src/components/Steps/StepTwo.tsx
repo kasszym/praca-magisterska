@@ -1,10 +1,14 @@
-import React from 'react';
+import React, { useRef } from 'react';
+import MainForm from '../MainForm/MainForm';
+import type { MainFormRef } from '../MainForm/MainForm';
 
 const StepTwo: React.FC = () => {
+  const formRef = useRef<MainFormRef>(null);
+  
+
   return (
     <div className="step-content">
-      <h2>Step 2</h2>
-      <p>Dane i zgody content goes here</p>
+      <MainForm ref={formRef} />
     </div>
   );
 };
