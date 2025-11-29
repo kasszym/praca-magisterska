@@ -1,55 +1,19 @@
-.single-info {
-  border-radius: 12px;
-  transition: background-color 200ms ease;
+.transition-surface {
+  transition: background-color 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
 }
 
-.single-info.is-open {
-  background-color: #f9fafb;
+.focus-shadow-none:focus {
+  box-shadow: none;
 }
 
-.single-info.is-closed {
-  background-color: white;
+.is-open {
+  border: 1px solid var(--dark-grey);
+  background-color: #fff;
 }
 
-.single-info-button {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem;
-  border-radius: 12px;
-  border: none;
-  background: transparent;
-  gap: 1rem;
-  cursor: pointer;
-  text-align: left;
+.is-closed {
+  border: 1px solid var(--grey100);
+  background-color: var(--grey);
 }
 
-.single-info-button:focus {
-  outline: none;
-}
 
-.single-info-title {
-  font-weight: 600;
-  font-size: var(--fs-base, 16px);
-  color: var(--navy);
-}
-
-.single-info-icon {
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-}
-
-.single-info-content {
-  overflow: hidden;
-  transition: max-height 200ms ease, opacity 200ms ease;
-}
-
-.single-info-inner {
-  padding: 1rem;
-  padding-top: 0;
-  background: white;
-  border-bottom-left-radius: 12px;
-  border-bottom-right-radius: 12px;
-}

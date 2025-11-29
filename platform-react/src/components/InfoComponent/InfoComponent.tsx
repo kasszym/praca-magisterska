@@ -21,7 +21,7 @@ const InfoComponent: React.FC = () => {
   }
 
   return (
-    <div className="info-component">
+    <div className="d-flex flex-column gap-3">
       {informationsList?.map((info, index) => (
         <SingleInfo
           key={index}

@@ -15,16 +15,19 @@ const SingleInfo: React.FC<SingleInfoProps> = ({ title, description, open = fals
   };
 
   return (
-    <div className={`single-info ${isOpen ? 'is-open' : 'is-closed'}`}>
+    <div className={`rounded-3 transition-surface ${isOpen ? 'is-open' : 'is-closed'}`}>
       <button
         type="button"
-        className="single-info-button"
+        className="w-100 d-flex justify-content-between align-items-center px-3 py-3 pb-3 rounded-3 border-0 bg-transparent focus-shadow-none gap-3"
         onClick={toggle}
       >
-        <span className="single-info-title">
+        <span
+          className="fw-semibold text-start"
+          style={{ fontSize: 'var(--fs-base, 16px)' }}
+        >
           {title}
         </span>
-        <span className="single-info-icon">
+        <span className="flex-shrink-0 d-flex align-items-center">
           <svg
             width="12"
             height="7"
@@ -49,14 +52,14 @@ const SingleInfo: React.FC<SingleInfoProps> = ({ title, description, open = fals
       </button>
 
       <div
-        className="single-info-content"
+        className="overflow-hidden"
         style={{
           maxHeight: isOpen ? '1000px' : '0',
           opacity: isOpen ? '1' : '0',
           transition: 'all 200ms ease',
         }}
       >
-        <div className="single-info-inner">
+        <div className="px-3 pt-3 pb-3 bg-white rounded-bottom-3">
           <span style={{ color: 'var(--black100)' }}>{description}</span>
         </div>
       </div>
