@@ -1,11 +1,13 @@
 <script setup>
-import { ref, computed, watchEffect, onMounted, watch } from "vue";
+import { ref, computed, watchEffect, onMounted, onBeforeMount, watch } from "vue";
 import { useValidator } from "../../composables/validator";
 import { useSummary } from "../../composables/useSummary";
 
 const ruleFormRef = ref(null);
 const { peselValidator, postCodeValidator } = useValidator();
-const { setPersonalData } = useSummary();
+const { setPersonalData, personalData } = useSummary();
+
+const isDataLoadedFromCache = ref(false);
 
 const form = ref({
   firstName: "",
@@ -167,6 +169,25 @@ function markHasValue(e) {
   else content.classList.remove('has-value');
 }
 
+
+onBeforeMount(() => {
+  if (personalData.value) {
+    form.value = { ...personalData.value };
+    isDataLoadedFromCache.value = true;
+  } else {
+    try {
+      const savedFormData = localStorage.getItem('aureon_personal_form');
+      if (savedFormData) {
+        const parsedData = JSON.parse(savedFormData);
+        form.value = { ...form.value, ...parsedData };
+        isDataLoadedFromCache.value = true;
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+});
+
 onMounted(() => {
   const inputs = document.querySelectorAll('.step-two-content .el-input__inner');
   inputs.forEach((inp) => {
@@ -176,6 +197,14 @@ onMounted(() => {
     } catch (e) {}
   });
 });
+
+watch(form, (newForm) => {
+  try {
+    localStorage.setItem('aureon_personal_form', JSON.stringify(newForm));
+  } catch (error) {
+    console.error(error);
+  }
+}, { deep: true });
 </script>
 
 <template>

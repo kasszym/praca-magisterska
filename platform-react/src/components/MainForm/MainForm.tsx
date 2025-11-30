@@ -48,25 +48,62 @@ const MainForm = forwardRef<MainFormRef>((_props, ref) => {
   const { peselValidator, postCodeValidator } = useValidator();
   const formRef = useRef<HTMLDivElement>(null);
 
-  const [formData, setFormData] = useState<FormData>({
-    firstName: personalData?.firstName || '',
-    lastName: personalData?.lastName || '',
-    pesel: personalData?.pesel || '',
-    street: personalData?.street || '',
-    houseNumber: personalData?.houseNumber || '',
-    apartmentNumber: personalData?.apartmentNumber || '',
-    postCode: personalData?.postCode || '',
-    city: personalData?.city || '',
-    email: personalData?.email || '',
-    phone: personalData?.phone || '',
-    invoiceEmailOption: personalData?.invoiceEmailOption || 'same',
-    invoiceEmail: personalData?.invoiceEmail || '',
-    correspondenceAddressOption: personalData?.correspondenceAddressOption || 'same',
-    correspondenceStreet: personalData?.correspondenceStreet || '',
-    correspondenceHouseNumber: personalData?.correspondenceHouseNumber || '',
-    correspondenceApartmentNumber: personalData?.correspondenceApartmentNumber || '',
-    correspondencePostCode: personalData?.correspondencePostCode || '',
-    correspondenceCity: personalData?.correspondenceCity || '',
+  const [isDataLoadedFromCache, setIsDataLoadedFromCache] = useState(false);
+
+  const [formData, setFormData] = useState<FormData>(() => {
+    if (personalData) {
+      setIsDataLoadedFromCache(true);
+      return {
+        firstName: personalData.firstName || '',
+        lastName: personalData.lastName || '',
+        pesel: personalData.pesel || '',
+        street: personalData.street || '',
+        houseNumber: personalData.houseNumber || '',
+        apartmentNumber: personalData.apartmentNumber || '',
+        postCode: personalData.postCode || '',
+        city: personalData.city || '',
+        email: personalData.email || '',
+        phone: personalData.phone || '',
+        invoiceEmailOption: personalData.invoiceEmailOption || 'same',
+        invoiceEmail: personalData.invoiceEmail || '',
+        correspondenceAddressOption: personalData.correspondenceAddressOption || 'same',
+        correspondenceStreet: personalData.correspondenceStreet || '',
+        correspondenceHouseNumber: personalData.correspondenceHouseNumber || '',
+        correspondenceApartmentNumber: personalData.correspondenceApartmentNumber || '',
+        correspondencePostCode: personalData.correspondencePostCode || '',
+        correspondenceCity: personalData.correspondenceCity || '',
+      };
+    }
+    
+    try {
+      const savedFormData = localStorage.getItem('aureon_personal_form_react');
+      if (savedFormData) {
+        setIsDataLoadedFromCache(true);
+        return JSON.parse(savedFormData);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+    return {
+      firstName: '',
+      lastName: '',
+      pesel: '',
+      street: '',
+      houseNumber: '',
+      apartmentNumber: '',
+      postCode: '',
+      city: '',
+      email: '',
+      phone: '',
+      invoiceEmailOption: 'same',
+      invoiceEmail: '',
+      correspondenceAddressOption: 'same',
+      correspondenceStreet: '',
+      correspondenceHouseNumber: '',
+      correspondenceApartmentNumber: '',
+      correspondencePostCode: '',
+      correspondenceCity: '',
+    };
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
@@ -130,6 +167,14 @@ const MainForm = forwardRef<MainFormRef>((_props, ref) => {
     }),
     [formData.invoiceEmailOption, formData.correspondenceAddressOption, peselValidator, postCodeValidator]
   );
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('aureon_personal_form_react', JSON.stringify(formData));
+    } catch (error) {
+      console.error('Błąd zapisu do localStorage', error);
+    }
+  }, [formData]);
 
   useEffect(() => {
     setPersonalData(formData);
