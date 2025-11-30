@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FaLock, FaTruck, FaBox, FaEnvelope, FaShoppingCart } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 import { useSummary } from '../../hooks/useSummary';
 import { useAuth } from '../../hooks/useAuth';
 import { useOrder } from '../../hooks/useOrder';
@@ -28,6 +29,7 @@ interface DeliveryProps {
 }
 
 const Delivery: React.FC<DeliveryProps> = ({ onSubmit }) => {
+  const navigate = useNavigate();
   const { selectedCar, personalData, setDeliveryInfo, setVerificationInfo } = useSummary();
   const { isAuthenticated } = useAuth();
   const { createOrder, isLoading } = useOrder();
@@ -222,8 +224,13 @@ const Delivery: React.FC<DeliveryProps> = ({ onSubmit }) => {
 
       if (result) {
         toast.success('Zamówienie zostało złożone pomyślnie!', {
-          autoClose: 3000,
+          autoClose: 2000,
         });
+
+        // Navigate to order summary page
+        setTimeout(() => {
+          navigate('/order-summary');
+        }, 1000);
 
         if (onSubmit) {
           onSubmit();
@@ -339,7 +346,7 @@ const Delivery: React.FC<DeliveryProps> = ({ onSubmit }) => {
           onClick={handleSubmit}
           disabled={isLoading}
         >
-          {isLoading ? 'Przetwarzanie...' : 'Przejdź do płatności'}
+          {isLoading ? 'Przetwarzanie...' : 'Sfinalizuj zamówienie'}
         </button>
       </div>
     </div>

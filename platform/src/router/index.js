@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/Home.vue'
 import Orders from '../views/Orders.vue'
+import OrderSummary from '../views/OrderSummary.vue'
 
 const routes = [
   {
@@ -13,6 +14,11 @@ const routes = [
     name: 'Orders',
     component: Orders,
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/order-summary',
+    name: 'OrderSummary',
+    component: OrderSummary
   }
 ]
 

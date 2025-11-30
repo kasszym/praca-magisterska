@@ -1,5 +1,6 @@
 <script setup>
 import { ref, watch } from "vue";
+import { useRouter } from "vue-router";
 import ButtonComponent from "../common/ButtonComponent.vue";
 import { useSummary } from "../../composables/useSummary";
 import { useOrder } from "../../composables/order";
@@ -8,6 +9,7 @@ import { ElMessage } from "element-plus";
 import { Lock, Van, Box, Message, ShoppingCart } from '@element-plus/icons-vue';
 
 const emits = defineEmits(["deliverySelected", "showLoginModal"]);
+const router = useRouter();
 
 const { selectedCar, personalData, setDeliveryInfo, setVerificationInfo } = useSummary();
 const { createOrder, isLoading } = useOrder();
@@ -194,14 +196,13 @@ const submit = async () => {
       ElMessage({
         message: "Zamówienie zostało złożone pomyślnie!",
         type: "success",
-        duration: 3000,
+        duration: 2000,
       });
       
-      emits("deliverySelected", {
-        delivery: selectedDelivery,
-        verification: selectedVerification,
-        order: result,
-      });
+      // Navigate to order summary page
+      setTimeout(() => {
+        router.push('/order-summary');
+      }, 1000);
     }
   } catch (error) {
     ElMessage({
@@ -331,7 +332,7 @@ const selectVerification = (id) => {
 
     <div class="submit-section">
       <ButtonComponent
-        :title="isLoading ? 'Przetwarzanie...' : 'Przejdź do płatności'"
+        :title="isLoading ? 'Przetwarzanie...' : 'Sfinalizuj zamówienie'"
         @handle-click="submit"
         :disabled="isLoading"
       />
