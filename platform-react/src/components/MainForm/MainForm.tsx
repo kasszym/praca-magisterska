@@ -1,4 +1,4 @@
-import React, { useState, forwardRef, useImperativeHandle, useEffect, useRef } from 'react';
+import React, { useState, forwardRef, useImperativeHandle, useEffect, useRef, useMemo } from 'react';
 import { useSummary } from '../../hooks/useSummary';
 import { useValidator } from '../../hooks/useValidator';
 import './MainForm.css';
@@ -26,6 +26,17 @@ interface FormData {
 
 interface FormErrors {
   [key: string]: string | undefined;
+}
+
+interface ValidationRule {
+  required?: boolean;
+  message?: string;
+  pattern?: RegExp;
+  validator?: (value: string) => string | undefined;
+}
+
+interface ValidationRules {
+  [key: string]: ValidationRule | undefined;
 }
 
 export interface MainFormRef {
@@ -60,6 +71,65 @@ const MainForm = forwardRef<MainFormRef>((_props, ref) => {
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [touched, setTouched] = useState<Set<string>>(new Set());
+
+  const validationRules: ValidationRules = useMemo(
+    () => ({
+      firstName: { required: true, message: 'Imię jest wymagane' },
+      lastName: { required: true, message: 'Nazwisko jest wymagane' },
+      pesel: { 
+        required: true, 
+        message: 'PESEL jest wymagany',
+        validator: peselValidator
+      },
+      street: { required: true, message: 'Ulica jest wymagana' },
+      houseNumber: { required: true, message: 'Numer domu jest wymagany' },
+      apartmentNumber: undefined,
+      postCode: { 
+        required: true, 
+        message: 'Kod pocztowy jest wymagany',
+        validator: postCodeValidator
+      },
+      city: { required: true, message: 'Miejscowość jest wymagana' },
+      email: { 
+        required: true, 
+        message: 'E-mail jest wymagany',
+        pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      },
+      phone: { required: true, message: 'Telefon komórkowy jest wymagany' },
+      
+      invoiceEmail:
+        formData.invoiceEmailOption === 'different'
+          ? { 
+              required: true, 
+              message: 'E-mail do faktury jest wymagany',
+              pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+            }
+          : undefined,
+      
+      correspondenceStreet:
+        formData.correspondenceAddressOption === 'different'
+          ? { required: true, message: 'Ulica jest wymagana' }
+          : undefined,
+      correspondenceHouseNumber:
+        formData.correspondenceAddressOption === 'different'
+          ? { required: true, message: 'Numer domu jest wymagany' }
+          : undefined,
+      correspondenceApartmentNumber: undefined,
+      correspondencePostCode:
+        formData.correspondenceAddressOption === 'different'
+          ? { 
+              required: true, 
+              message: 'Kod pocztowy jest wymagany',
+              validator: postCodeValidator
+            }
+          : undefined,
+      correspondenceCity:
+        formData.correspondenceAddressOption === 'different'
+          ? { required: true, message: 'Miejscowość jest wymagana' }
+          : undefined,
+    }),
+    [formData.invoiceEmailOption, formData.correspondenceAddressOption, peselValidator, postCodeValidator]
+  );
 
   useEffect(() => {
     setPersonalData(formData);
@@ -136,67 +206,29 @@ const MainForm = forwardRef<MainFormRef>((_props, ref) => {
   const validateField = (name: string, value: string): string | undefined => {
     let error: string | undefined;
 
-    const requiredFields = [
-      'firstName',
-      'lastName',
-      'pesel',
-      'street',
-      'houseNumber',
-      'postCode',
-      'city',
-      'email',
-      'phone',
-    ];
+    const rule = validationRules[name as keyof ValidationRules];
+    
+    if (!rule) return undefined;
 
-    if (requiredFields.includes(name) && !value.trim()) {
-      error = `${getFieldLabel(name)} jest wymagane`;
+    if (rule.required && !value.trim()) {
+      error = rule.message || `${getFieldLabel(name)} jest wymagane`;
+      setErrors((prev) => ({ ...prev, [name]: error }));
+      return error;
     }
 
-    if (name === 'pesel' && value.trim()) {
-      error = peselValidator(value);
+    if (rule.pattern && value.trim() && !rule.pattern.test(value)) {
+      error = rule.message || 'Nieprawidłowy format';
+      setErrors((prev) => ({ ...prev, [name]: error }));
+      return error;
     }
 
-    if (name === 'postCode' && value.trim()) {
-      error = postCodeValidator(value);
+    if (rule.validator && value.trim()) {
+      error = rule.validator(value);
+      setErrors((prev) => ({ ...prev, [name]: error }));
+      return error;
     }
-
-    if (name === 'email' && value.trim()) {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(value)) {
-        error = 'Nieprawidłowy format e-mail';
-      }
-    }
-
-    if (name === 'invoiceEmail' && formData.invoiceEmailOption === 'different') {
-      if (!value.trim()) {
-        error = 'E-mail do faktury jest wymagany';
-      } else {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(value)) {
-          error = 'Nieprawidłowy format e-mail';
-        }
-      }
-    }
-
-    if (formData.correspondenceAddressOption === 'different') {
-      const correspondenceFields = [
-        'correspondenceStreet',
-        'correspondenceHouseNumber',
-        'correspondencePostCode',
-        'correspondenceCity',
-      ];
-      
-      if (correspondenceFields.includes(name) && !value.trim()) {
-        error = `${getFieldLabel(name)} jest wymagane`;
-      }
-
-      if (name === 'correspondencePostCode' && value.trim()) {
-        error = postCodeValidator(value);
-      }
-    }
-
-    setErrors((prev) => ({ ...prev, [name]: error }));
-    return error;
+    setErrors((prev) => ({ ...prev, [name]: undefined }));
+    return undefined;
   };
 
   const getFieldLabel = (name: string): string => {

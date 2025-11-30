@@ -134,7 +134,6 @@ const showCorrespondenceAddress = computed(
   () => form.value.correspondenceAddressOption === "different"
 );
 
-// Watch form changes and save to summary
 watch(
   form,
   (newForm) => {
@@ -142,8 +141,6 @@ watch(
   },
   { deep: true }
 );
-
-// Expose validation method for parent component
 const validateForm = async () => {
   if (!ruleFormRef.value) return false;
   try {

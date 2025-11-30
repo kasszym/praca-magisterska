@@ -12,14 +12,19 @@ const props = defineProps({
 </script>
 <template>
   <div
-    class="card border bg-white"
+    class="section-card"
     :style="{
       padding: padding,
-      borderColor: 'var(--grey)',
-      borderRadius: 'var(--border-radius)',
       maxWidth: maxWidth
     }"
   >
     <slot name="content" />
   </div>
 </template>
+<style scoped>
+.section-card {
+  background: white;
+  border: 1px solid var(--grey);
+  border-radius: var(--border-radius);
+}
+</style>
