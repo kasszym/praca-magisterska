@@ -227,7 +227,6 @@ const Delivery: React.FC<DeliveryProps> = ({ onSubmit }) => {
           autoClose: 2000,
         });
 
-        // Navigate to order summary page
         setTimeout(() => {
           navigate('/order-summary');
         }, 1000);

@@ -198,8 +198,7 @@ const submit = async () => {
         type: "success",
         duration: 2000,
       });
-      
-      // Navigate to order summary page
+
       setTimeout(() => {
         router.push('/order-summary');
       }, 1000);

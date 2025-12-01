@@ -18,7 +18,8 @@ const routes = [
   {
     path: '/order-summary',
     name: 'OrderSummary',
-    component: OrderSummary
+    component: OrderSummary,
+    meta: { requiresAuth: true }
   }
 ]
 

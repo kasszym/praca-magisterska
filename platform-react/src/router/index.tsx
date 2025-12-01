@@ -3,6 +3,7 @@ import App from '../App';
 import Home from '../views/Home';
 import Orders from '../views/Orders';
 import OrderSummary from '../views/OrderSummary';
+import ProtectedRoute from '../components/ProtectedRoute';
 
 export const router = createBrowserRouter([
   {
@@ -19,11 +20,19 @@ export const router = createBrowserRouter([
       },
       {
         path: '/orders',
-        element: <Orders />,
+        element: (
+          <ProtectedRoute>
+            <Orders />
+          </ProtectedRoute>
+        ),
       },
       {
         path: '/order-summary',
-        element: <OrderSummary />,
+        element: (
+          <ProtectedRoute>
+            <OrderSummary />
+          </ProtectedRoute>
+        ),
       },
     ],
   },
