@@ -2,6 +2,7 @@ import { ref } from "vue";
 import { ElMessage } from "element-plus";
 import API from "../config/api";
 import { useAuth } from "./auth";
+import type { Addon } from "../types";
 
 export interface OrderData {
   car_id: number;
@@ -46,7 +47,7 @@ export interface Order {
   color_id?: number;
   color_name?: string;
   car_price: number;
-  addons?: any[];
+  addons?: Addon[];
   addons_total: number;
   delivery_method: string;
   delivery_method_label?: string;

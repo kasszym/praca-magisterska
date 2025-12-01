@@ -1,14 +1,15 @@
 import { Ref, ref } from "vue";
 import API from "../config/api";
+import type { Car, CarImage, TypeItem, DriveItem } from "../types";
 
-const typesList = ref<any[] | null>(null);
-const drivesList = ref<any[] | null>(null);
-const carsList = ref<any[] | null>(null);
+const typesList = ref<TypeItem[] | null>(null);
+const drivesList = ref<DriveItem[] | null>(null);
+const carsList = ref<Car[] | null>(null);
 const isLoadingTypes = ref(false);
 const isLoadingDrives = ref(false);
 const isLoadingCars = ref(false);
 
-const pickImageString = (img: any) => {
+const pickImageString = (img: string | CarImage | null | undefined): string => {
   if (!img) return "";
   if (typeof img === "string") return img;
   if (typeof img === "object") {
@@ -19,12 +20,12 @@ const pickImageString = (img: any) => {
   return "";
 };
 
-const normalizeCar = (car: any) => {
-  const images = Array.isArray(car.images) ? car.images.map(pickImageString).filter(Boolean) : [];
-  const main_image = pickImageString(car.main_image);
+const normalizeCar = (car: any): Car => {
+  const images = Array.isArray(car.images) ? car.images.map((i: string | CarImage) => pickImageString(i)).filter(Boolean) : [];
+  const main_image = pickImageString(car.main_image as string | CarImage | null | undefined);
 
   const finalImages = images.length ? images : main_image ? [main_image] : [];
-  return { ...car, images: finalImages, main_image };
+  return { ...car, images: finalImages, main_image } as Car;
 };
 
 export const useCar = (): {
@@ -33,9 +34,9 @@ export const useCar = (): {
   isLoadingCars: Ref<boolean>;
   getCars: () => Promise<void>;
   getAll: () => Promise<void>;
-  typesList: Ref<any[] | null>;
-  drivesList: Ref<any[] | null>;
-  carsList: Ref<any[] | null>;
+  typesList: Ref<TypeItem[] | null>;
+  drivesList: Ref<DriveItem[] | null>;
+  carsList: Ref<Car[] | null>;
 } => {
   const getCars = async (): Promise<void> => {
     try {

@@ -3,6 +3,7 @@ import { useWebSocket } from './useWebSocket';
 import { useIntentMatcher } from './useIntentMatcher';
 import { useResponseGenerator } from './useResponseGenerator';
 import API from '../config/api';
+import type { ChatMessage } from '../types';
 
 interface Message {
   id: number;
@@ -40,11 +41,11 @@ export const useChatbot = () => {
       conversationId.value = response.data.conversation_id;
       
       if (response.data.messages && response.data.messages.length > 0) {
-        messages.value = response.data.messages.map((msg: any) => ({
-          id: msg.id,
+        messages.value = response.data.messages.map((msg: ChatMessage) => ({
+          id: msg.id as number,
           text: msg.message,
-          sender: msg.sender,
-          timestamp: new Date(msg.created_at),
+          sender: msg.sender as 'user' | 'bot',
+          timestamp: new Date((msg.created_at as string) || Date.now()),
         }));
       } else {
         addMessage('Witaj! Jestem konsultantem Aureon Motors. Jak mogę Ci pomóc?', 'bot');
@@ -56,7 +57,7 @@ export const useChatbot = () => {
     
     connect(sessionId.value);
 
-    on('MessageSent', (data: any) => {
+    on('MessageSent', (data: ChatMessage) => {
       if (data.sender === 'bot') {
         addMessage(data.message, 'bot');
         isTyping.value = false;

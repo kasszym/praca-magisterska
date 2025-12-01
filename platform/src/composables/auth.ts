@@ -2,6 +2,7 @@ import { ref } from "vue";
 import { ElMessage } from "element-plus";
 import API from "../config/api";
 import type { GoogleUser } from "./useOAuth";
+import type { User } from "../types";
 
 export interface LoginCredentials {
   email: string;
@@ -17,7 +18,7 @@ export interface RegisterCredentials {
 
 export interface AuthResponse {
   token: string;
-  user: any;
+  user: User;
   message?: string;
 }
 

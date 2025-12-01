@@ -1,13 +1,14 @@
 import { Ref, ref } from "vue";
 import API from "../config/api";
+import type { InformationItem } from "../types";
 
-const informationsList = ref<any[] | null>(null);
+const informationsList = ref<InformationItem[] | null>(null);
 const isLoadingInformationsList = ref(false);
 
 export const useInformations = (): {
   isLoadingInformationsList: Ref<boolean>;
   getInformationsList: () => Promise<void>;
-  informationsList: Ref<any[] | null>;
+  informationsList: Ref<InformationItem[] | null>;
 } => {
   const getInformationsList = async (): Promise<void> => {
     try {
