@@ -17,6 +17,7 @@
   color: var(--black, #000);
   margin-bottom: 20px;
   font-weight: 600;
+  border-bottom: none !important
 }
 
 .form-item {

@@ -6,11 +6,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormControl from '@mui/material/FormControl';
-import FormLabel from '@mui/material/FormLabel';
+
 import Box from '@mui/material/Box';
 import './MainForm.css';
 
@@ -148,11 +144,13 @@ const MainForm = forwardRef<MainFormRef>((_props, ref) => {
   }, [peselValidator, postCodeValidator]);
 
   const { control, handleSubmit, watch, trigger, reset } = useForm<FormData>({
-    // resolver typing can be incompatible with strict FormData generic; cast to any
     resolver: (yupResolver(schema) as unknown) as any,
     defaultValues,
     mode: 'onBlur',
   });
+
+  const invoiceOption = watch('invoiceEmailOption');
+  const correspondenceOption = watch('correspondenceAddressOption');
 
   const initializedFromPersonalData = useRef(false);
 
@@ -263,38 +261,78 @@ const MainForm = forwardRef<MainFormRef>((_props, ref) => {
 
         <Box className="form-section">
           <h3 className="section-title">E-mail do faktury</h3>
-          <Controller name="invoiceEmailOption" control={control} render={({ field }) => (
-            <FormControl>
-              <FormLabel>Opcja e-mail do faktury</FormLabel>
-              <RadioGroup row {...field}>
-                <FormControlLabel value="same" control={<Radio />} label="Taki sam jak adres e-mail" />
-                <FormControlLabel value="different" control={<Radio />} label="Inny" />
-              </RadioGroup>
-            </FormControl>
-          )} />
+          <Controller
+            name="invoiceEmailOption"
+            control={control}
+            render={({ field }) => (
+              <div>
+                <div className="version-group" role="tablist" aria-label="Opcja e-mail do faktury">
+                  <button
+                    type="button"
+                    className={`version-button ${field.value === 'same' ? 'active' : ''}`}
+                    onClick={() => field.onChange('same')}
+                  >
+                    Taki sam jak adres e-mail
+                  </button>
+                  <button
+                    type="button"
+                    className={`version-button ${field.value === 'different' ? 'active' : ''}`}
+                    onClick={() => field.onChange('different')}
+                  >
+                    Inny
+                  </button>
+                </div>
+              </div>
+            )}
+          />
 
-          <Controller name="invoiceEmail" control={control} render={({ field, fieldState }) => (
-            <TextField label="E-mail do faktury" {...field} fullWidth margin="normal" error={!!fieldState.error} helperText={fieldState.error?.message} />
-          )} />
+          {invoiceOption === 'different' && (
+            <Controller
+              name="invoiceEmail"
+              control={control}
+              render={({ field, fieldState }) => (
+                <TextField label="E-mail do faktury" {...field} fullWidth margin="normal" error={!!fieldState.error} helperText={fieldState.error?.message} />
+              )}
+            />
+          )}
         </Box>
 
         <Box className="form-section">
           <h3 className="section-title">Adres korespondencyjny</h3>
-          <Controller name="correspondenceAddressOption" control={control} render={({ field }) => (
-            <FormControl>
-              <FormLabel>Opcja adresu korespondencyjnego</FormLabel>
-              <RadioGroup row {...field}>
-                <FormControlLabel value="same" control={<Radio />} label="Taki sam jak zamieszkania" />
-                <FormControlLabel value="different" control={<Radio />} label="Inny" />
-              </RadioGroup>
-            </FormControl>
-          )} />
+          <Controller
+            name="correspondenceAddressOption"
+            control={control}
+            render={({ field }) => (
+              <div>
+                <div className="version-group" role="tablist" aria-label="Opcja adresu korespondencyjnego">
+                  <button
+                    type="button"
+                    className={`version-button ${field.value === 'same' ? 'active' : ''}`}
+                    onClick={() => field.onChange('same')}
+                  >
+                    Taki sam jak zamieszkania
+                  </button>
+                  <button
+                    type="button"
+                    className={`version-button ${field.value === 'different' ? 'active' : ''}`}
+                    onClick={() => field.onChange('different')}
+                  >
+                    Inny
+                  </button>
+                </div>
+              </div>
+            )}
+          />
 
-          <Controller name="correspondenceStreet" control={control} render={({ field, fieldState }) => <TextField label="Ulica" {...field} fullWidth margin="normal" error={!!fieldState.error} helperText={fieldState.error?.message} />} />
-          <Controller name="correspondenceHouseNumber" control={control} render={({ field, fieldState }) => <TextField label="Numer domu" {...field} fullWidth margin="normal" error={!!fieldState.error} helperText={fieldState.error?.message} />} />
-          <Controller name="correspondenceApartmentNumber" control={control} render={({ field }) => <TextField label="Numer mieszkania" {...field} fullWidth margin="normal" />} />
-          <Controller name="correspondencePostCode" control={control} render={({ field, fieldState }) => <TextField label="Kod pocztowy" {...field} fullWidth margin="normal" error={!!fieldState.error} helperText={fieldState.error?.message} />} />
-          <Controller name="correspondenceCity" control={control} render={({ field, fieldState }) => <TextField label="Miejscowość" {...field} fullWidth margin="normal" error={!!fieldState.error} helperText={fieldState.error?.message} />} />
+          {correspondenceOption === 'different' && (
+            <>
+              <Controller name="correspondenceStreet" control={control} render={({ field, fieldState }) => <TextField label="Ulica" {...field} fullWidth margin="normal" error={!!fieldState.error} helperText={fieldState.error?.message} />} />
+              <Controller name="correspondenceHouseNumber" control={control} render={({ field, fieldState }) => <TextField label="Numer domu" {...field} fullWidth margin="normal" error={!!fieldState.error} helperText={fieldState.error?.message} />} />
+              <Controller name="correspondenceApartmentNumber" control={control} render={({ field }) => <TextField label="Numer mieszkania" {...field} fullWidth margin="normal" />} />
+              <Controller name="correspondencePostCode" control={control} render={({ field, fieldState }) => <TextField label="Kod pocztowy" {...field} fullWidth margin="normal" error={!!fieldState.error} helperText={fieldState.error?.message} />} />
+              <Controller name="correspondenceCity" control={control} render={({ field, fieldState }) => <TextField label="Miejscowość" {...field} fullWidth margin="normal" error={!!fieldState.error} helperText={fieldState.error?.message} />} />
+            </>
+          )}
         </Box>
 
         <Box mt={2} display="flex" gap={2}>
