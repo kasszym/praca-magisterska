@@ -1,32 +1,37 @@
-<script setup>
+<script setup lang="ts">
 import { ref, watch } from "vue";
-import ButtonComponent from "../common/ButtonComponent.vue";
-import SectionCard from "../common/SectionCard.vue";
-import Modal from "../common/Modal.vue";
-import CarCustomization from "./CarCustomization.vue";
-import CarGallery from "./CarGallery.vue";
-import CarFeatures from "./CarFeatures.vue";
 
-const props = defineProps({
-  car: {
-    type: Object,
-    required: true,
-  },
-  selectedImage: { type: String, default: "" },
-});
-const emit = defineEmits(["update:selectedImage"]);
+import ButtonComponent from "../common/ButtonComponent.vue";
+
+import SectionCard from "../common/SectionCard.vue";
+
+import Modal from "../common/Modal.vue";
+
+import CarCustomization from "./CarCustomization.vue";
+
+import CarGallery from "./CarGallery.vue";
+
+import CarFeatures from "./CarFeatures.vue";
+import type { Car } from "../../types";
+
+const props = defineProps<{ car: Car; selectedImage?: string }>();
+const emit = defineEmits<["update:selectedImage"]>();
 const isDialogOpen = ref(false);
 
 const open = () => (isDialogOpen.value = true);
 const close = () => (isDialogOpen.value = false);
+const onUpdateIsOpen = (val: boolean) => {
+  isDialogOpen.value = val;
+};
 defineExpose({ open, close });
 
 </script>
 <template>
-  <Modal
-    v-model:is-open="isDialogOpen"
-    :header="car.name"
-  >
+    <Modal
+      :is-open="isDialogOpen"
+  @update:is-open="onUpdateIsOpen"
+      :header="car.name"
+    >
     <template #content>
       <div class="car-modal">
         <div class="car-gallery">

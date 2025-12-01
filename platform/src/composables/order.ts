@@ -81,11 +81,7 @@ export const useOrder = () => {
   const isLoading = ref(false);
   const { isAuthenticated } = useAuth();
 
-  /**
-   * Create a new order
-   */
   const createOrder = async (orderData: OrderData): Promise<Order | null> => {
-    // Check if user is authenticated
     if (!isAuthenticated()) {
       ElMessage({
         message: "Musisz być zalogowany, aby złożyć zamówienie",
@@ -107,7 +103,6 @@ export const useOrder = () => {
 
       return response.data.order;
     } catch (error: any) {
-      // Error message will be shown by interceptor
       if (error.response?.status === 401) {
         ElMessage({
           message: "Sesja wygasła. Zaloguj się ponownie.",
@@ -121,9 +116,7 @@ export const useOrder = () => {
     }
   };
 
-  /**
-   * Get all orders for current user
-   */
+
   const getOrders = async (): Promise<Order[]> => {
     if (!isAuthenticated()) {
       return [];
@@ -140,9 +133,6 @@ export const useOrder = () => {
     }
   };
 
-  /**
-   * Get a specific order by ID
-   */
   const getOrder = async (id: number): Promise<Order | null> => {
     if (!isAuthenticated()) {
       return null;

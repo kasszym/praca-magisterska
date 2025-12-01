@@ -1,54 +1,49 @@
-<script setup>
+<script setup lang="ts">
 import { ref, computed } from "vue";
+
 import ButtonComponent from "../common/ButtonComponent.vue";
 import { useSummary } from "../../composables/useSummary";
-const emit = defineEmits(["close"]);
+import type { Car, Addon, VersionData, ColorData } from "../../types";
+const emit = defineEmits<["close"]>();
 
-const props = defineProps({
-  car: {
-    type: Object,
-    required: true,
-  },
-});
+const props = defineProps<{ car: Car }>();
 
 const { setSelectedCar } = useSummary();
 
-const version = ref(props.car.versions?.[0]?.id ?? null);
+const version = ref<number | string | null>((props.car.versions?.[0] as VersionData | undefined)?.id ?? null);
 const basePrice = computed(() => {
-  const versions = props.car.versions || [];
-  let v = versions.find((x) => x.id === version.value);
+  const versions = (props.car.versions || []) as VersionData[];
+  const v = versions.find((x) => x.id === version.value);
   return Number(v?.price) || 0;
 });
-const selectedAddonIds = ref([]);
+const selectedAddonIds = ref<Array<number | string>>([]);
 const selectedAddons = computed(() => {
-  const ids = selectedAddonIds.value.map(id => Number(id));
-  return (props.car.additionals || []).filter((a) => ids.includes(Number(a.id)));
+  const ids = selectedAddonIds.value.map((id) => Number(id));
+  return (props.car.additionals || []).filter((a: any) => ids.includes(Number(a.id))) as Addon[];
 });
-const addonsTotal = computed(() =>
-  selectedAddons.value.reduce((sum, a) => sum + (Number(a.price) || 0), 0)
-);
+const addonsTotal = computed(() => selectedAddons.value.reduce((sum, a) => sum + (Number(a.price) || 0), 0));
 const totalPrice = computed(() => basePrice.value + addonsTotal.value);
-const color = ref(props.car.colors?.[0]?.id ?? null);
+const color = ref<number | string | null>((props.car.colors?.[0] as ColorData | undefined)?.id ?? null);
 
-const formatPrice = (value) => {
+const formatPrice = (value: number | string | null | undefined) => {
   const n = Number(value ?? 0) || 0;
   return n.toLocaleString("pl-PL");
 };
 
 const saveToSummary = () => {
   if (version.value != null && color.value != null) {
-    const versionLabel = props.car.versions?.find((x) => x.id === version.value)?.title || props.car.versions?.find((x) => x.id === version.value)?.titile || "";
-    const colorLabel = props.car.colors?.find((c) => c.id === color.value)?.name || "";
+    const versionLabel = (props.car.versions || []).find((x: any) => x.id === version.value)?.title || "";
+    const colorLabel = (props.car.colors || []).find((c: any) => c.id === color.value)?.name || "";
     const payload = {
-      car_id: props.car.id,
-      version_id: version.value,
-      color_id: color.value,
+      car_id: Number(props.car.id),
+      version_id: Number(version.value),
+      color_id: Number(color.value),
       addon_ids: selectedAddonIds.value.map((id) => Number(id)),
-      name: props.car.name,
-      version: versionLabel,
-      color: colorLabel,
+      name: String(props.car.name || ""),
+      version: String(versionLabel || ""),
+      color: String(colorLabel || ""),
       addons: selectedAddons.value.map((a) => ({
-        id: a.id,
+        id: Number(a.id),
         title: a.title,
         price: a.price ?? 0,
       })),

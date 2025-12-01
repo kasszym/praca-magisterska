@@ -1,26 +1,23 @@
-<script setup>
+<script setup lang="ts">
 import { ref, computed } from "vue";
 import ButtonComponent from "../common/ButtonComponent.vue";
 import CarModal from "./CarModal.vue";
+import type { Car, CarImage, VersionData } from "../../types";
 
-const props = defineProps({
-  car: {
-    type: Object,
-    required: true,
-  },
-});
-const formatPrice = (value) => {
+const props = defineProps<{ car: Car }>();
+const formatPrice = (value: number | string | null | undefined) => {
   const n = Number(value ?? 0) || 0;
   return n.toLocaleString("pl-PL");
 };
-const extractImageString = (img) => {
+const extractImageString = (img: string | CarImage | null | undefined): string => {
   if (!img) return "";
   if (typeof img === "string") return img;
+  return "";
 };
 
 import API from "../../config/api";
 
-const getCarImage = () => {
+const getCarImage = (): string => {
   const img = extractImageString(props.car?.main_image || "");
   if (!img) return "";
   if (/^(https?:)?\/\//.test(img)) return img;
@@ -39,12 +36,12 @@ const getCarImage = () => {
   }
 };
 
-const carModalRef = ref();
-const openDialog = () => carModalRef.value?.open();
-const selectedVersion = computed(() => props.car.versions?.[0]?.id ?? "");
+const carModalRef = ref<{ open?: () => void } | null>(null);
+const openDialog = () => carModalRef.value?.open?.();
+const selectedVersion = computed(() => (props.car.versions?.[0] as VersionData | undefined)?.id ?? "");
 
 const selectedPrice = computed(() => {
-  const v = props.car.versions?.find((x) => x.id === selectedVersion.value);
+  const v = (props.car.versions || []).find((x: any) => x.id === selectedVersion.value) as VersionData | undefined;
   return v?.price ?? 0;
 });
 </script>
