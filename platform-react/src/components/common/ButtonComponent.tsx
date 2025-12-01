@@ -20,7 +20,8 @@ interface ButtonComponentProps {
 const ButtonComponent: React.FC<ButtonComponentProps> = ({
   title,
   onClick,
-  backgroundColor = 'primary',
+  backgroundColor = 'var(--main-color)',
+  backgroundColorHover,
   width = '195px',
   height = '44px',
   fontSize = 'var(--fs-xs)',
@@ -53,17 +54,24 @@ const ButtonComponent: React.FC<ButtonComponentProps> = ({
                 try {
                   contrast = theme.palette.getContrastText(backgroundColor || '#000');
                 } catch (e) {
-   
                   contrast = undefined;
                 }
               }
+
+              const textColor = isCssVar ? '#FFFFFF' : contrast;
+              const hoverBg = (() => {
+                if (backgroundColorHover) return backgroundColorHover;
+                if (isCssVar) return `linear-gradient(0deg, rgba(0,0,0,0.06), rgba(0,0,0,0.06)), ${backgroundColor}`;
+                return backgroundColor;
+              })();
+
               return {
-             
                 backgroundColor: backgroundColor,
-                ...(contrast ? { color: contrast } : {}),
+                borderRadius: 3,
+                ...(textColor ? { color: textColor } : {}),
                 '&:hover': {
-                  backgroundColor: backgroundColor,
-                  opacity: 0.9,
+                  background: hoverBg,
+                  opacity: 0.98,
                 },
               };
             })()),
