@@ -4,7 +4,7 @@ export interface GoogleUser {
   email: string;
   name: string;
   picture?: string;
-  sub: string; // Google user ID
+  sub: string; 
 }
 
 export interface GoogleAuthResponse {
@@ -15,17 +15,12 @@ export const useOAuth = () => {
   const isLoading = ref(false);
   const googleScriptLoaded = ref(false);
 
-  /**
-   * Load Google OAuth Script
-   */
   const loadGoogleScript = (clientId: string): Promise<void> => {
     return new Promise((resolve, reject) => {
       if (googleScriptLoaded.value) {
         resolve();
         return;
       }
-
-      // Check if script already exists
       if (document.getElementById('google-oauth-script')) {
         googleScriptLoaded.value = true;
         resolve();
@@ -51,33 +46,19 @@ export const useOAuth = () => {
     });
   };
 
-  /**
-   * Initialize Google Sign-In button
-   */
   const initializeGoogleButton = async (
     elementId: string,
     clientId: string,
     callback: (response: GoogleAuthResponse) => void
   ): Promise<void> => {
     try {
-      // Validate Client ID
       if (!clientId || clientId === "" || clientId === "YOUR_GOOGLE_CLIENT_ID_HERE") {
-        console.error("❌ Google Client ID is not configured properly!");
-        const element = document.getElementById(elementId);
-        if (element) {
-          element.innerHTML = `
-            <div style="padding: 12px; background: #fee; border: 1px solid #fcc; border-radius: 8px; color: #c33;">
-              <strong>⚠️ Google OAuth nie jest skonfigurowany</strong><br/>
-              <small>Sprawdź plik .env i ustaw VITE_GOOGLE_CLIENT_ID</small>
-            </div>
-          `;
-        }
+        console.error('Invalid Google Client ID');
         return;
       }
 
       await loadGoogleScript(clientId);
 
-      // Wait for google object to be available
       await new Promise<void>((resolve) => {
         const checkGoogle = setInterval(() => {
           if (window.google?.accounts?.id) {
@@ -87,13 +68,11 @@ export const useOAuth = () => {
         }, 100);
       });
 
-      // Initialize Google Sign-In
       window.google!.accounts.id.initialize({
         client_id: clientId,
         callback: callback,
       });
 
-      // Render the button
       window.google!.accounts.id.renderButton(
         document.getElementById(elementId)!,
         {
@@ -110,9 +89,7 @@ export const useOAuth = () => {
     }
   };
 
-  /**
-   * Parse JWT token to get user info
-   */
+
   const parseJwt = (token: string): GoogleUser | null => {
     try {
       const base64Url = token.split('.')[1];
@@ -130,9 +107,6 @@ export const useOAuth = () => {
     }
   };
 
-  /**
-   * Trigger Google One Tap
-   */
   const showOneTap = async (
     clientId: string,
     callback: (response: GoogleAuthResponse) => void
@@ -140,7 +114,6 @@ export const useOAuth = () => {
     try {
       await loadGoogleScript(clientId);
 
-      // Wait for google object to be available
       await new Promise<void>((resolve) => {
         const checkGoogle = setInterval(() => {
           if (window.google?.accounts?.id) {
@@ -171,7 +144,6 @@ export const useOAuth = () => {
   };
 };
 
-// Extend Window interface for TypeScript
 declare global {
   interface Window {
     google?: {

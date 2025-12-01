@@ -131,9 +131,7 @@ export const useAuth = () => {
     return localStorage.getItem("token");
   };
 
-  /**
-   * Login/Register with Google OAuth
-   */
+ 
   const googleAuth = async (
     googleUser: GoogleUser
   ): Promise<AuthResponse | null> => {
@@ -145,10 +143,8 @@ export const useAuth = () => {
         google_id: googleUser.sub,
       });
 
-      // Store token in localStorage
       localStorage.setItem("token", response.data.token);
 
-      // Show success message
       ElMessage({
         message: response.data.message || "Uwierzytelnianie przez Google zakończone pomyślnie",
         type: "success",
@@ -157,7 +153,6 @@ export const useAuth = () => {
 
       return response.data;
     } catch (error) {
-      // Error message will be shown by interceptor
       return null;
     } finally {
       isLoading.value = false;
