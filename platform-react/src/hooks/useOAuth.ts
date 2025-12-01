@@ -30,7 +30,9 @@ export const useOAuth = () => {
 
 
   const loadGoogleScript = (clientId: string): Promise<void> => {
-    return new Promise((resolve, reject) => {
+    void setIsLoading; 
+      void clientId; 
+      return new Promise((resolve, reject) => {
       if (googleScriptLoaded) {
         resolve();
         return;

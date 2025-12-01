@@ -1,6 +1,17 @@
-import React, { useState, forwardRef, useImperativeHandle, useEffect, useRef, useMemo } from 'react';
+import { forwardRef, useImperativeHandle, useEffect, useMemo, useRef } from 'react';
 import { useSummary } from '../../hooks/useSummary';
 import { useValidator } from '../../hooks/useValidator';
+import { useForm, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
+import Box from '@mui/material/Box';
 import './MainForm.css';
 
 interface FormData {
@@ -14,9 +25,9 @@ interface FormData {
   city: string;
   email: string;
   phone: string;
-  invoiceEmailOption: string;
+  invoiceEmailOption: 'same' | 'different';
   invoiceEmail: string;
-  correspondenceAddressOption: string;
+  correspondenceAddressOption: 'same' | 'different';
   correspondenceStreet: string;
   correspondenceHouseNumber: string;
   correspondenceApartmentNumber: string;
@@ -24,35 +35,16 @@ interface FormData {
   correspondenceCity: string;
 }
 
-interface FormErrors {
-  [key: string]: string | undefined;
-}
-
-interface ValidationRule {
-  required?: boolean;
-  message?: string;
-  pattern?: RegExp;
-  validator?: (value: string) => string | undefined;
-}
-
-interface ValidationRules {
-  [key: string]: ValidationRule | undefined;
-}
-
 export interface MainFormRef {
-  validateForm: () => boolean;
+  validateForm: () => Promise<boolean>;
 }
 
 const MainForm = forwardRef<MainFormRef>((_props, ref) => {
   const { personalData, setPersonalData } = useSummary();
   const { peselValidator, postCodeValidator } = useValidator();
-  const formRef = useRef<HTMLDivElement>(null);
 
-  const [isDataLoadedFromCache, setIsDataLoadedFromCache] = useState(false);
-
-  const [formData, setFormData] = useState<FormData>(() => {
+  const defaultValues: FormData = useMemo(() => {
     if (personalData) {
-      setIsDataLoadedFromCache(true);
       return {
         firstName: personalData.firstName || '',
         lastName: personalData.lastName || '',
@@ -64,9 +56,9 @@ const MainForm = forwardRef<MainFormRef>((_props, ref) => {
         city: personalData.city || '',
         email: personalData.email || '',
         phone: personalData.phone || '',
-        invoiceEmailOption: personalData.invoiceEmailOption || 'same',
+        invoiceEmailOption: (personalData.invoiceEmailOption as any) || 'same',
         invoiceEmail: personalData.invoiceEmail || '',
-        correspondenceAddressOption: personalData.correspondenceAddressOption || 'same',
+        correspondenceAddressOption: (personalData.correspondenceAddressOption as any) || 'same',
         correspondenceStreet: personalData.correspondenceStreet || '',
         correspondenceHouseNumber: personalData.correspondenceHouseNumber || '',
         correspondenceApartmentNumber: personalData.correspondenceApartmentNumber || '',
@@ -74,16 +66,10 @@ const MainForm = forwardRef<MainFormRef>((_props, ref) => {
         correspondenceCity: personalData.correspondenceCity || '',
       };
     }
-    
     try {
-      const savedFormData = localStorage.getItem('aureon_personal_form_react');
-      if (savedFormData) {
-        setIsDataLoadedFromCache(true);
-        return JSON.parse(savedFormData);
-      }
-    } catch (error) {
-      console.error(error);
-    }
+      const saved = localStorage.getItem('aureon_personal_form_react');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {}
     return {
       firstName: '',
       lastName: '',
@@ -104,575 +90,218 @@ const MainForm = forwardRef<MainFormRef>((_props, ref) => {
       correspondencePostCode: '',
       correspondenceCity: '',
     };
+  }, [personalData]);
+
+  const schema = useMemo(() => {
+    return yup.object({
+      firstName: yup.string().required('Imię jest wymagane'),
+      lastName: yup.string().required('Nazwisko jest wymagane'),
+      pesel: yup.string().required('PESEL jest wymagany').test('pesel-valid', function (value) {
+        const err = peselValidator(value || '');
+        if (err) return this.createError({ message: err });
+        return true;
+      }),
+      street: yup.string().required('Ulica jest wymagana'),
+      houseNumber: yup.string().required('Numer domu jest wymagany'),
+      apartmentNumber: yup.string().notRequired(),
+      postCode: yup.string().required('Kod pocztowy jest wymagany').test('post-code', function (value) {
+        const err = postCodeValidator(value || '');
+        if (err) return this.createError({ message: err });
+        return true;
+      }),
+      city: yup.string().required('Miejscowość jest wymagana'),
+      email: yup.string().required('E-mail jest wymagany').email('Nieprawidłowy format e-mail'),
+      phone: yup.string().required('Telefon komórkowy jest wymagany'),
+      invoiceEmailOption: yup.string().oneOf(['same', 'different']).required(),
+      invoiceEmail: yup.string().when('invoiceEmailOption', {
+        is: 'different',
+        then: (schema) => schema.required('E-mail do faktury jest wymagany').email('Nieprawidłowy format e-mail'),
+        otherwise: (schema) => schema.notRequired(),
+      }),
+      correspondenceAddressOption: yup.string().oneOf(['same', 'different']).required(),
+      correspondenceStreet: yup.string().when('correspondenceAddressOption', {
+        is: 'different',
+        then: (schema) => schema.required('Ulica jest wymagana'),
+        otherwise: (schema) => schema.notRequired(),
+      }),
+      correspondenceHouseNumber: yup.string().when('correspondenceAddressOption', {
+        is: 'different',
+        then: (schema) => schema.required('Numer domu jest wymagany'),
+        otherwise: (schema) => schema.notRequired(),
+      }),
+      correspondenceApartmentNumber: yup.string().notRequired(),
+      correspondencePostCode: yup.string().when('correspondenceAddressOption', {
+        is: 'different',
+        then: (schema) => schema.required('Kod pocztowy jest wymagany').test('post-code-2', function (value) {
+          const err = postCodeValidator(value || '');
+          if (err) return this.createError({ message: err });
+          return true;
+        }),
+        otherwise: (schema) => schema.notRequired(),
+      }),
+      correspondenceCity: yup.string().when('correspondenceAddressOption', {
+        is: 'different',
+        then: (schema) => schema.required('Miejscowość jest wymagana'),
+        otherwise: (schema) => schema.notRequired(),
+      }),
+    });
+  }, [peselValidator, postCodeValidator]);
+
+  const { control, handleSubmit, watch, trigger, reset } = useForm<FormData>({
+    // resolver typing can be incompatible with strict FormData generic; cast to any
+    resolver: (yupResolver(schema) as unknown) as any,
+    defaultValues,
+    mode: 'onBlur',
   });
 
-  const [errors, setErrors] = useState<FormErrors>({});
-  const [touched, setTouched] = useState<Set<string>>(new Set());
-
-  const validationRules: ValidationRules = useMemo(
-    () => ({
-      firstName: { required: true, message: 'Imię jest wymagane' },
-      lastName: { required: true, message: 'Nazwisko jest wymagane' },
-      pesel: { 
-        required: true, 
-        message: 'PESEL jest wymagany',
-        validator: peselValidator
-      },
-      street: { required: true, message: 'Ulica jest wymagana' },
-      houseNumber: { required: true, message: 'Numer domu jest wymagany' },
-      apartmentNumber: undefined,
-      postCode: { 
-        required: true, 
-        message: 'Kod pocztowy jest wymagany',
-        validator: postCodeValidator
-      },
-      city: { required: true, message: 'Miejscowość jest wymagana' },
-      email: { 
-        required: true, 
-        message: 'E-mail jest wymagany',
-        pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-      },
-      phone: { required: true, message: 'Telefon komórkowy jest wymagany' },
-      
-      invoiceEmail:
-        formData.invoiceEmailOption === 'different'
-          ? { 
-              required: true, 
-              message: 'E-mail do faktury jest wymagany',
-              pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-            }
-          : undefined,
-      
-      correspondenceStreet:
-        formData.correspondenceAddressOption === 'different'
-          ? { required: true, message: 'Ulica jest wymagana' }
-          : undefined,
-      correspondenceHouseNumber:
-        formData.correspondenceAddressOption === 'different'
-          ? { required: true, message: 'Numer domu jest wymagany' }
-          : undefined,
-      correspondenceApartmentNumber: undefined,
-      correspondencePostCode:
-        formData.correspondenceAddressOption === 'different'
-          ? { 
-              required: true, 
-              message: 'Kod pocztowy jest wymagany',
-              validator: postCodeValidator
-            }
-          : undefined,
-      correspondenceCity:
-        formData.correspondenceAddressOption === 'different'
-          ? { required: true, message: 'Miejscowość jest wymagana' }
-          : undefined,
-    }),
-    [formData.invoiceEmailOption, formData.correspondenceAddressOption, peselValidator, postCodeValidator]
-  );
+  const initializedFromPersonalData = useRef(false);
 
   useEffect(() => {
-    try {
-      localStorage.setItem('aureon_personal_form_react', JSON.stringify(formData));
-    } catch (error) {
-      console.error('Błąd zapisu do localStorage', error);
-    }
-  }, [formData]);
+    const subscription = watch((values) => {
+      try {
+        localStorage.setItem('aureon_personal_form_react', JSON.stringify(values));
+      } catch (e) {}
 
-  useEffect(() => {
-    setPersonalData(formData);
-  }, [formData.firstName, formData.lastName, formData.pesel, formData.email, formData.phone, formData.street, formData.houseNumber, formData.apartmentNumber, formData.postCode, formData.city]);
+      const newPersonal = {
+        firstName: values.firstName,
+        lastName: values.lastName,
+        pesel: values.pesel,
+        email: values.email,
+        phone: values.phone,
+        street: values.street,
+        houseNumber: values.houseNumber,
+        apartmentNumber: values.apartmentNumber,
+        postCode: values.postCode,
+        city: values.city,
+        invoiceEmailOption: values.invoiceEmailOption,
+        invoiceEmail: values.invoiceEmail,
+        correspondenceAddressOption: values.correspondenceAddressOption,
+        correspondenceStreet: values.correspondenceStreet,
+        correspondenceHouseNumber: values.correspondenceHouseNumber,
+        correspondenceApartmentNumber: values.correspondenceApartmentNumber,
+        correspondencePostCode: values.correspondencePostCode,
+        correspondenceCity: values.correspondenceCity,
+      } as any;
 
-  useEffect(() => {
-    if (formRef.current) {
-      const inputs = formRef.current.querySelectorAll('.form-input');
-      inputs.forEach((input) => {
-        const htmlInput = input as HTMLInputElement;
-        const wrapper = htmlInput.closest('.input-wrapper');
-        if (wrapper && htmlInput.value && htmlInput.value.length > 0) {
-          wrapper.classList.add('has-value');
+      try {
+        const current = JSON.stringify(personalData || {});
+        const incoming = JSON.stringify(newPersonal || {});
+        if (current !== incoming) {
+          setPersonalData(newPersonal);
         }
-      });
-    }
-  }, []);
-
-  const markHasValue = (e: React.FocusEvent<HTMLInputElement> | React.ChangeEvent<HTMLInputElement>) => {
-    const target = e.target;
-    const wrapper = target.closest('.input-wrapper');
-    if (!wrapper) return;
-
-    if (e.type === 'focus') {
-      wrapper.classList.add('focused');
-    } else if (e.type === 'blur') {
-      wrapper.classList.remove('focused');
-    }
-
-    if (target.value && target.value.length > 0) {
-      wrapper.classList.add('has-value');
-    } else {
-      wrapper.classList.remove('has-value');
-    }
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    markHasValue(e);
-    
-    if (errors[name]) {
-      setErrors((prev) => ({ ...prev, [name]: undefined }));
-    }
-  };
-
-  const handlePeselChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/\D/g, '');
-    e.target.value = value;
-    setFormData((prev) => ({ ...prev, pesel: value }));
-    markHasValue(e);
-    if (errors.pesel) {
-      setErrors((prev) => ({ ...prev, pesel: undefined }));
-    }
-  };
-
-  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/\D/g, '');
-    e.target.value = value;
-    setFormData((prev) => ({ ...prev, phone: value }));
-    markHasValue(e);
-    if (errors.phone) {
-      setErrors((prev) => ({ ...prev, phone: undefined }));
-    }
-  };
-
-  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setTouched((prev) => new Set(prev).add(name));
-    validateField(name, value);
-    markHasValue(e);
-  };
-
-  const validateField = (name: string, value: string): string | undefined => {
-    let error: string | undefined;
-
-    const rule = validationRules[name as keyof ValidationRules];
-    
-    if (!rule) return undefined;
-
-    if (rule.required && !value.trim()) {
-      error = rule.message || `${getFieldLabel(name)} jest wymagane`;
-      setErrors((prev) => ({ ...prev, [name]: error }));
-      return error;
-    }
-
-    if (rule.pattern && value.trim() && !rule.pattern.test(value)) {
-      error = rule.message || 'Nieprawidłowy format';
-      setErrors((prev) => ({ ...prev, [name]: error }));
-      return error;
-    }
-
-    if (rule.validator && value.trim()) {
-      error = rule.validator(value);
-      setErrors((prev) => ({ ...prev, [name]: error }));
-      return error;
-    }
-    setErrors((prev) => ({ ...prev, [name]: undefined }));
-    return undefined;
-  };
-
-  const getFieldLabel = (name: string): string => {
-    const labels: Record<string, string> = {
-      firstName: 'Imię',
-      lastName: 'Nazwisko',
-      pesel: 'PESEL',
-      street: 'Ulica',
-      houseNumber: 'Numer domu',
-      postCode: 'Kod pocztowy',
-      city: 'Miejscowość',
-      email: 'E-mail',
-      phone: 'Telefon komórkowy',
-      correspondenceStreet: 'Ulica',
-      correspondenceHouseNumber: 'Numer domu',
-      correspondencePostCode: 'Kod pocztowy',
-      correspondenceCity: 'Miejscowość',
-    };
-    return labels[name] || name;
-  };
-
-  const validateAllFields = (): boolean => {
-    const newErrors: FormErrors = {};
-    let isValid = true;
-
-    Object.keys(formData).forEach((key) => {
-      const value = formData[key as keyof FormData];
-      const error = validateField(key, value);
-      if (error) {
-        newErrors[key] = error;
-        isValid = false;
+      } catch (e) {
+        // if stringify fails for some reason, fallback to setting
+        setPersonalData(newPersonal);
       }
     });
+    return () => subscription.unsubscribe();
+  }, [watch, setPersonalData, personalData]);
 
-    setErrors(newErrors);
-    setTouched(new Set(Object.keys(formData)));
-    return isValid;
-  };
+  useEffect(() => {
+    if (personalData && !initializedFromPersonalData.current) {
+      reset(defaultValues);
+      initializedFromPersonalData.current = true;
+    }
+  }, [personalData, reset, defaultValues]);
 
   useImperativeHandle(ref, () => ({
-    validateForm: () => {
-      const isValid = validateAllFields();
-      return isValid;
+    validateForm: async () => {
+      const valid = await trigger();
+      return valid as boolean;
     },
   }));
 
+  const onSubmit = (data: FormData) => {
+    console.log('MainForm submit', data);
+  };
+
   return (
-    <div className="step-two-content" ref={formRef}>
-      <div className="step-two-form">
-        <div className="form-section">
+    <Box className="step-two-content">
+      <form className="step-two-form" onSubmit={handleSubmit(onSubmit)}>
+        <Box className="form-section">
           <h3 className="section-title">Dane osobowe</h3>
-          
-          <div className="form-item">
-            <div className={`input-wrapper ${touched.has('firstName') && errors.firstName ? 'is-error' : ''}`}>
-              <label className="form-label">Imię</label>
-              <input
-                type="text"
-                className="form-input"
-                name="firstName"
-                value={formData.firstName}
-                onChange={handleChange}
-                onFocus={markHasValue}
-                onBlur={handleBlur}
-              />
-            </div>
-            {touched.has('firstName') && errors.firstName && (
-              <div className="error-message">{errors.firstName}</div>
-            )}
-          </div>
 
-          <div className="form-item">
-            <div className={`input-wrapper ${touched.has('lastName') && errors.lastName ? 'is-error' : ''}`}>
-              <label className="form-label">Nazwisko</label>
-              <input
-                type="text"
-                className="form-input"
-                name="lastName"
-                value={formData.lastName}
-                onChange={handleChange}
-                onFocus={markHasValue}
-                onBlur={handleBlur}
-              />
-            </div>
-            {touched.has('lastName') && errors.lastName && (
-              <div className="error-message">{errors.lastName}</div>
+          <Controller
+            name="firstName"
+            control={control}
+            render={({ field, fieldState }) => (
+              <TextField label="Imię" {...field} fullWidth margin="normal" error={!!fieldState.error} helperText={fieldState.error?.message} />
             )}
-          </div>
+          />
 
-          <div className="form-item">
-            <div className={`input-wrapper ${touched.has('pesel') && errors.pesel ? 'is-error' : ''}`}>
-              <label className="form-label">PESEL</label>
-              <input
-                type="text"
-                className="form-input"
-                name="pesel"
-                maxLength={11}
-                value={formData.pesel}
-                onChange={handlePeselChange}
-                onFocus={markHasValue}
-                onBlur={handleBlur}
-              />
-            </div>
-            {touched.has('pesel') && errors.pesel && (
-              <div className="error-message">{errors.pesel}</div>
+          <Controller
+            name="lastName"
+            control={control}
+            render={({ field, fieldState }) => (
+              <TextField label="Nazwisko" {...field} fullWidth margin="normal" error={!!fieldState.error} helperText={fieldState.error?.message} />
             )}
-          </div>
-        </div>
+          />
 
-        <div className="form-section">
+          <Controller
+            name="pesel"
+            control={control}
+            render={({ field, fieldState }) => (
+              <TextField label="PESEL" {...field} inputProps={{ maxLength: 11 }} fullWidth margin="normal" error={!!fieldState.error} helperText={fieldState.error?.message} />
+            )}
+          />
+        </Box>
+
+        <Box className="form-section">
           <h3 className="section-title">Adres zamieszkania</h3>
-          
-          <div className="form-item">
-            <div className={`input-wrapper ${touched.has('street') && errors.street ? 'is-error' : ''}`}>
-              <label className="form-label">Ulica</label>
-              <input
-                type="text"
-                className="form-input"
-                name="street"
-                value={formData.street}
-                onChange={handleChange}
-                onFocus={markHasValue}
-                onBlur={handleBlur}
-              />
-            </div>
-            {touched.has('street') && errors.street && (
-              <div className="error-message">{errors.street}</div>
-            )}
-          </div>
+          <Controller name="street" control={control} render={({ field, fieldState }) => <TextField label="Ulica" {...field} fullWidth margin="normal" error={!!fieldState.error} helperText={fieldState.error?.message} />} />
+          <Controller name="houseNumber" control={control} render={({ field, fieldState }) => <TextField label="Numer domu" {...field} fullWidth margin="normal" error={!!fieldState.error} helperText={fieldState.error?.message} />} />
+          <Controller name="apartmentNumber" control={control} render={({ field }) => <TextField label="Numer mieszkania" {...field} fullWidth margin="normal" />} />
+          <Controller name="postCode" control={control} render={({ field, fieldState }) => <TextField label="Kod pocztowy" {...field} fullWidth margin="normal" error={!!fieldState.error} helperText={fieldState.error?.message} />} />
+          <Controller name="city" control={control} render={({ field, fieldState }) => <TextField label="Miejscowość" {...field} fullWidth margin="normal" error={!!fieldState.error} helperText={fieldState.error?.message} />} />
+        </Box>
 
-          <div className="form-item">
-            <div className={`input-wrapper ${touched.has('houseNumber') && errors.houseNumber ? 'is-error' : ''}`}>
-              <label className="form-label">Numer domu</label>
-              <input
-                type="text"
-                className="form-input"
-                name="houseNumber"
-                value={formData.houseNumber}
-                onChange={handleChange}
-                onFocus={markHasValue}
-                onBlur={handleBlur}
-              />
-            </div>
-            {touched.has('houseNumber') && errors.houseNumber && (
-              <div className="error-message">{errors.houseNumber}</div>
-            )}
-          </div>
-
-          <div className="form-item">
-            <div className="input-wrapper">
-              <label className="form-label">Numer mieszkania</label>
-              <input
-                type="text"
-                className="form-input"
-                name="apartmentNumber"
-                value={formData.apartmentNumber}
-                onChange={handleChange}
-                onFocus={markHasValue}
-                onBlur={markHasValue}
-              />
-            </div>
-          </div>
-
-          <div className="form-item">
-            <div className={`input-wrapper ${touched.has('postCode') && errors.postCode ? 'is-error' : ''}`}>
-              <label className="form-label">00-000</label>
-              <input
-                type="text"
-                className="form-input"
-                name="postCode"
-                maxLength={6}
-                value={formData.postCode}
-                onChange={handleChange}
-                onFocus={markHasValue}
-                onBlur={handleBlur}
-              />
-            </div>
-            {touched.has('postCode') && errors.postCode && (
-              <div className="error-message">{errors.postCode}</div>
-            )}
-          </div>
-
-          <div className="form-item">
-            <div className={`input-wrapper ${touched.has('city') && errors.city ? 'is-error' : ''}`}>
-              <label className="form-label">Miejscowość</label>
-              <input
-                type="text"
-                className="form-input"
-                name="city"
-                value={formData.city}
-                onChange={handleChange}
-                onFocus={markHasValue}
-                onBlur={handleBlur}
-              />
-            </div>
-            {touched.has('city') && errors.city && (
-              <div className="error-message">{errors.city}</div>
-            )}
-          </div>
-        </div>
-
-        <div className="form-section">
+        <Box className="form-section">
           <h3 className="section-title">Kontakt</h3>
-          
-          <div className="form-item">
-            <div className={`input-wrapper ${touched.has('email') && errors.email ? 'is-error' : ''}`}>
-              <label className="form-label">E-mail</label>
-              <input
-                type="email"
-                className="form-input"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                onFocus={markHasValue}
-                onBlur={handleBlur}
-              />
-            </div>
-            {touched.has('email') && errors.email && (
-              <div className="error-message">{errors.email}</div>
-            )}
-          </div>
+          <Controller name="email" control={control} render={({ field, fieldState }) => <TextField label="E-mail" {...field} type="email" fullWidth margin="normal" error={!!fieldState.error} helperText={fieldState.error?.message} />} />
+          <Controller name="phone" control={control} render={({ field, fieldState }) => <TextField label="Telefon komórkowy" {...field} type="tel" fullWidth margin="normal" error={!!fieldState.error} helperText={fieldState.error?.message} />} />
+        </Box>
 
-          <div className="form-item">
-            <div className={`input-wrapper ${touched.has('phone') && errors.phone ? 'is-error' : ''}`}>
-              <label className="form-label">Telefon komórkowy</label>
-              <input
-                type="tel"
-                className="form-input"
-                name="phone"
-                value={formData.phone}
-                onChange={handlePhoneChange}
-                onFocus={markHasValue}
-                onBlur={handleBlur}
-              />
-            </div>
-            {touched.has('phone') && errors.phone && (
-              <div className="error-message">{errors.phone}</div>
-            )}
-          </div>
-        </div>
-
-        <div className="form-section">
+        <Box className="form-section">
           <h3 className="section-title">E-mail do faktury</h3>
-          
-          <div className="form-item">
-            <div className="version-group">
-              <button
-                type="button"
-                className={`version-button ${formData.invoiceEmailOption === 'same' ? 'active' : ''}`}
-                onClick={() => setFormData(prev => ({ ...prev, invoiceEmailOption: 'same' }))}
-              >
-                Taki sam jak adres e-mail
-              </button>
-              <button
-                type="button"
-                className={`version-button ${formData.invoiceEmailOption === 'different' ? 'active' : ''}`}
-                onClick={() => setFormData(prev => ({ ...prev, invoiceEmailOption: 'different' }))}
-              >
-                Inny
-              </button>
-            </div>
-          </div>
+          <Controller name="invoiceEmailOption" control={control} render={({ field }) => (
+            <FormControl>
+              <FormLabel>Opcja e-mail do faktury</FormLabel>
+              <RadioGroup row {...field}>
+                <FormControlLabel value="same" control={<Radio />} label="Taki sam jak adres e-mail" />
+                <FormControlLabel value="different" control={<Radio />} label="Inny" />
+              </RadioGroup>
+            </FormControl>
+          )} />
 
-          {formData.invoiceEmailOption === 'different' && (
-            <div className="form-item">
-              <div className={`input-wrapper ${touched.has('invoiceEmail') && errors.invoiceEmail ? 'is-error' : ''}`}>
-                <label className="form-label">E-mail do faktury</label>
-                <input
-                  type="email"
-                  className="form-input"
-                  name="invoiceEmail"
-                  value={formData.invoiceEmail}
-                  onChange={handleChange}
-                  onFocus={markHasValue}
-                  onBlur={handleBlur}
-                />
-              </div>
-              {touched.has('invoiceEmail') && errors.invoiceEmail && (
-                <div className="error-message">{errors.invoiceEmail}</div>
-              )}
-            </div>
-          )}
-        </div>
+          <Controller name="invoiceEmail" control={control} render={({ field, fieldState }) => (
+            <TextField label="E-mail do faktury" {...field} fullWidth margin="normal" error={!!fieldState.error} helperText={fieldState.error?.message} />
+          )} />
+        </Box>
 
-        <div className="form-section">
+        <Box className="form-section">
           <h3 className="section-title">Adres korespondencyjny</h3>
-          
-          <div className="form-item">
-            <div className="version-group">
-              <button
-                type="button"
-                className={`version-button ${formData.correspondenceAddressOption === 'same' ? 'active' : ''}`}
-                onClick={() => setFormData(prev => ({ ...prev, correspondenceAddressOption: 'same' }))}
-              >
-                Taki sam jak zamieszkania
-              </button>
-              <button
-                type="button"
-                className={`version-button ${formData.correspondenceAddressOption === 'different' ? 'active' : ''}`}
-                onClick={() => setFormData(prev => ({ ...prev, correspondenceAddressOption: 'different' }))}
-              >
-                Inny
-              </button>
-            </div>
-          </div>
+          <Controller name="correspondenceAddressOption" control={control} render={({ field }) => (
+            <FormControl>
+              <FormLabel>Opcja adresu korespondencyjnego</FormLabel>
+              <RadioGroup row {...field}>
+                <FormControlLabel value="same" control={<Radio />} label="Taki sam jak zamieszkania" />
+                <FormControlLabel value="different" control={<Radio />} label="Inny" />
+              </RadioGroup>
+            </FormControl>
+          )} />
 
-          {formData.correspondenceAddressOption === 'different' && (
-            <>
-              <div className="form-item">
-                <div className={`input-wrapper ${touched.has('correspondenceStreet') && errors.correspondenceStreet ? 'is-error' : ''}`}>
-                  <label className="form-label">Ulica</label>
-                  <input
-                    type="text"
-                    className="form-input"
-                    name="correspondenceStreet"
-                    value={formData.correspondenceStreet}
-                    onChange={handleChange}
-                    onFocus={markHasValue}
-                    onBlur={handleBlur}
-                  />
-                </div>
-                {touched.has('correspondenceStreet') && errors.correspondenceStreet && (
-                  <div className="error-message">{errors.correspondenceStreet}</div>
-                )}
-              </div>
+          <Controller name="correspondenceStreet" control={control} render={({ field, fieldState }) => <TextField label="Ulica" {...field} fullWidth margin="normal" error={!!fieldState.error} helperText={fieldState.error?.message} />} />
+          <Controller name="correspondenceHouseNumber" control={control} render={({ field, fieldState }) => <TextField label="Numer domu" {...field} fullWidth margin="normal" error={!!fieldState.error} helperText={fieldState.error?.message} />} />
+          <Controller name="correspondenceApartmentNumber" control={control} render={({ field }) => <TextField label="Numer mieszkania" {...field} fullWidth margin="normal" />} />
+          <Controller name="correspondencePostCode" control={control} render={({ field, fieldState }) => <TextField label="Kod pocztowy" {...field} fullWidth margin="normal" error={!!fieldState.error} helperText={fieldState.error?.message} />} />
+          <Controller name="correspondenceCity" control={control} render={({ field, fieldState }) => <TextField label="Miejscowość" {...field} fullWidth margin="normal" error={!!fieldState.error} helperText={fieldState.error?.message} />} />
+        </Box>
 
-              <div className="form-item">
-                <div className={`input-wrapper ${touched.has('correspondenceHouseNumber') && errors.correspondenceHouseNumber ? 'is-error' : ''}`}>
-                  <label className="form-label">Numer domu</label>
-                  <input
-                    type="text"
-                    className="form-input"
-                    name="correspondenceHouseNumber"
-                    value={formData.correspondenceHouseNumber}
-                    onChange={handleChange}
-                    onFocus={markHasValue}
-                    onBlur={handleBlur}
-                  />
-                </div>
-                {touched.has('correspondenceHouseNumber') && errors.correspondenceHouseNumber && (
-                  <div className="error-message">{errors.correspondenceHouseNumber}</div>
-                )}
-              </div>
-
-              <div className="form-item">
-                <div className="input-wrapper">
-                  <label className="form-label">Numer mieszkania</label>
-                  <input
-                    type="text"
-                    className="form-input"
-                    name="correspondenceApartmentNumber"
-                    value={formData.correspondenceApartmentNumber}
-                    onChange={handleChange}
-                    onFocus={markHasValue}
-                    onBlur={markHasValue}
-                  />
-                </div>
-              </div>
-
-              <div className="form-item">
-                <div className={`input-wrapper ${touched.has('correspondencePostCode') && errors.correspondencePostCode ? 'is-error' : ''}`}>
-                  <label className="form-label">Kod pocztowy</label>
-                  <input
-                    type="text"
-                    className="form-input"
-                    name="correspondencePostCode"
-                    maxLength={6}
-                    value={formData.correspondencePostCode}
-                    onChange={handleChange}
-                    onFocus={markHasValue}
-                    onBlur={handleBlur}
-                  />
-                </div>
-                {touched.has('correspondencePostCode') && errors.correspondencePostCode && (
-                  <div className="error-message">{errors.correspondencePostCode}</div>
-                )}
-              </div>
-
-              <div className="form-item">
-                <div className={`input-wrapper ${touched.has('correspondenceCity') && errors.correspondenceCity ? 'is-error' : ''}`}>
-                  <label className="form-label">Miejscowość</label>
-                  <input
-                    type="text"
-                    className="form-input"
-                    name="correspondenceCity"
-                    value={formData.correspondenceCity}
-                    onChange={handleChange}
-                    onFocus={markHasValue}
-                    onBlur={handleBlur}
-                  />
-                </div>
-                {touched.has('correspondenceCity') && errors.correspondenceCity && (
-                  <div className="error-message">{errors.correspondenceCity}</div>
-                )}
-              </div>
-            </>
-          )}
-        </div>
-      </div>
-    </div>
+        <Box mt={2} display="flex" gap={2}>
+          <Button type="submit" variant="contained" color="primary">Dalej</Button>
+        </Box>
+      </form>
+    </Box>
   );
 });
 

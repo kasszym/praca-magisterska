@@ -13,7 +13,6 @@ export interface Message {
 export const useChatbot = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [conversationId, setConversationId] = useState<number | null>(null);
-  const [sessionId, setSessionId] = useState<string>('');
   const [isTyping, setIsTyping] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -29,7 +28,6 @@ export const useChatbot = () => {
 
   const initChat = async () => {
     const newSessionId = `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    setSessionId(newSessionId);
 
     try {
       const response = await api.post('/chatbot/conversation', {

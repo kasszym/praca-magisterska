@@ -34,12 +34,14 @@ const Header: React.FC<HeaderProps> = () => {
     };
   }, [showProfileMenu]);
 
-  const handleRegister = (user: any) => {
+  const handleRegister = (_user: any) => {
+    void _user;
     setIsModalOpen(false);
     setIsLoggedIn(true);
   };
 
-  const handleLogin = (user: any) => {
+  const handleLogin = (_user: any) => {
+    void _user;
     setIsModalOpen(false);
     setIsLoggedIn(true);
   };
@@ -67,11 +69,6 @@ const Header: React.FC<HeaderProps> = () => {
     navigate('/');
   };
 
-  const openLoginModal = () => {
-    setView('login');
-    setModalHeader('Zaloguj się');
-    setIsModalOpen(true);
-  };
 
   return (
     <header className="header">

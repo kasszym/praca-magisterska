@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { FaGem, FaTimes, FaPaperPlane, FaComments } from 'react-icons/fa';
 import { useChatbot } from '../../hooks/useChatbot';
-import type { Message } from '../../hooks/useChatbot';
 import './ChatWidget.css';
 
 const ChatWidget: React.FC = () => {
