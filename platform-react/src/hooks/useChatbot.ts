@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import api from '../config/api';
 import { useIntentMatcher } from './useIntentMatcher';
 import { useResponseGenerator } from './useResponseGenerator';
+import type { ChatMessage } from '../types';
 
 export interface Message {
   id: number;
@@ -38,11 +39,11 @@ export const useChatbot = () => {
 
       if (response.data.messages && response.data.messages.length > 0) {
         setMessages(
-          response.data.messages.map((msg: any) => ({
-            id: msg.id,
+          (response.data.messages as ChatMessage[]).map((msg) => ({
+            id: Number(msg.id),
             text: msg.message,
-            sender: msg.sender,
-            timestamp: new Date(msg.created_at),
+            sender: msg.sender as 'user' | 'bot',
+            timestamp: new Date(msg.created_at || Date.now()),
           }))
         );
       } else {

@@ -1,24 +1,6 @@
 import { useState } from 'react';
 import api from '../config/api';
-
-interface CarData {
-  id: number;
-  name: string;
-  type: string;
-  drive: string;
-  range?: number;
-  battery_capacity?: number;
-  power?: number;
-  price?: number;
-  versions?: any[];
-  colors?: any[];
-}
-
-interface ColorData {
-  id: number;
-  name: string;
-  hex: string;
-}
+import type { CarData, ColorData } from '../types';
 
 export const useResponseGenerator = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -52,10 +34,10 @@ export const useResponseGenerator = () => {
     const cars: CarData[] = res.data;
 
     if (carName) {
-      const car = cars.find((c) => c.name.toLowerCase().includes(carName.toLowerCase()));
-      if (car && car.versions && car.versions.length > 0) {
+      const car = cars.find((c) => (c.name || '').toLowerCase().includes(carName.toLowerCase()));
+      if (car && Array.isArray(car.versions) && car.versions.length > 0) {
         const priceList = car.versions
-          .map((v) => `${v.name}: ${v.price.toLocaleString('pl-PL')} zł`)
+          .map((v) => `${v.name || 'wersja'}: ${(v.price ?? 0).toLocaleString('pl-PL')} zł`)
           .join(', ');
         return `${car.name} jest dostępny w następujących wersjach: ${priceList}`;
       }
@@ -64,9 +46,10 @@ export const useResponseGenerator = () => {
 
     const allPrices = cars
       .map((car) => {
-        const minPrice =
-          car.versions && car.versions.length > 0 ? Math.min(...car.versions.map((v) => v.price)) : 0;
-        return `${car.name} od ${minPrice.toLocaleString('pl-PL')} zł`;
+        const versions = Array.isArray(car.versions) ? car.versions : [];
+        const prices = versions.map((v) => v.price ?? 0);
+        const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
+        return `${car.name || 'Model'} od ${minPrice.toLocaleString('pl-PL')} zł`;
       })
       .join(', ');
 
@@ -78,9 +61,9 @@ export const useResponseGenerator = () => {
     const cars: CarData[] = res.data;
 
     if (carName) {
-      const car = cars.find((c) => c.name.toLowerCase().includes(carName.toLowerCase()));
+      const car = cars.find((c) => (c.name || '').toLowerCase().includes(carName.toLowerCase()));
       if (car) {
-        return `${car.name} ma zasięg ${car.range} km z baterią ${car.battery_capacity} kWh.`;
+        return `${car.name} ma zasięg ${car.range ?? '—'} km z baterią ${car.battery_capacity ?? '—'} kWh.`;
       }
       return `Nie znalazłem informacji o zasięgu dla ${carName}. Sprawdź nazwę modelu.`;
     }
@@ -102,9 +85,9 @@ export const useResponseGenerator = () => {
     const cars: CarData[] = res.data;
 
     if (carName) {
-      const car = cars.find((c) => c.name.toLowerCase().includes(carName.toLowerCase()));
+      const car = cars.find((c) => (c.name || '').toLowerCase().includes(carName.toLowerCase()));
       if (car) {
-        return `${car.name} - Typ: ${car.type}, Napęd: ${car.drive}, Zasięg: ${car.range} km, Bateria: ${car.battery_capacity} kWh, Moc: ${car.power} KM`;
+        return `${car.name || 'Model'} - Typ: ${car.type}, Napęd: ${car.drive}, Zasięg: ${car.range ?? '—'} km, Bateria: ${car.battery_capacity ?? '—'} kWh, Moc: ${car.power ?? '—'} KM`;
       }
       return `Nie znalazłem specyfikacji dla ${carName}. Sprawdź nazwę modelu.`;
     }
