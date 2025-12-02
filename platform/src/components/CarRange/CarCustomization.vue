@@ -4,7 +4,7 @@ import { ref, computed } from "vue";
 import ButtonComponent from "../common/ButtonComponent.vue";
 import { useSummary } from "../../composables/useSummary";
 import type { Car, Addon, VersionData, ColorData } from "../../types";
-const emit = defineEmits<["close"]>();
+const emit = defineEmits(["close"]);
 
 const props = defineProps<{ car: Car }>();
 

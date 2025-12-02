@@ -15,7 +15,7 @@ import CarFeatures from "./CarFeatures.vue";
 import type { Car } from "../../types";
 
 const props = defineProps<{ car: Car; selectedImage?: string }>();
-const emit = defineEmits<["update:selectedImage"]>();
+const emit = defineEmits(["update:selectedImage"]);
 const isDialogOpen = ref(false);
 
 const open = () => (isDialogOpen.value = true);
