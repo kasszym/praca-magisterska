@@ -17,6 +17,10 @@ services:
       DB_DATABASE: ${DB_DATABASE}
       DB_USERNAME: ${DB_USERNAME}
       DB_PASSWORD: ${DB_PASSWORD}
+      # ensure Laravel points to the websockets service on the internal docker network
+      PUSHER_HOST: websockets
+      PUSHER_PORT: 6001
+      PUSHER_SCHEME: http
       # other envs from your .env if needed
     volumes:
       - ..:/var/www/html:delegated
@@ -42,6 +46,11 @@ services:
     restart: unless-stopped
     env_file:
       - ../api/.env
+    environment:
+      # make sure the websockets process advertises the same host when invoked internally
+      PUSHER_HOST: websockets
+      PUSHER_PORT: 6001
+      PUSHER_SCHEME: http
     volumes:
       - ..:/var/www/html:delegated
     command: php artisan websockets:run --host=0.0.0.0 --port=6001
