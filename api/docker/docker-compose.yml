@@ -34,4 +34,20 @@ services:
     depends_on:
       - api
 
+  websockets:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: aureon_websockets
+    restart: unless-stopped
+    env_file:
+      - ../api/.env
+    volumes:
+      - ..:/var/www/html:delegated
+    command: php artisan websockets:run --host=0.0.0.0 --port=6001
+    ports:
+      - "6001:6001"
+    depends_on:
+      - api
+
 # Note: DB is external. Ensure the DB_* environment variables are set in .env or exported before running compose.
