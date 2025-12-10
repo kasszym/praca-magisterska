@@ -16,6 +16,12 @@ export interface Addon {
   price: number;
 }
 
+export interface VersionData {
+  id: number | string;
+  title?: string;
+  price?: number;
+}
+
 export interface Car {
   id: number | string;
   name?: string;
@@ -24,19 +30,28 @@ export interface Car {
   price?: number;
   images?: string[];
   main_image?: string;
-  [key: string]: any;
+  drivetrain?: string;
+  range?: number;
+  fk_type?: number | string;
+  fk_drive?: number | string;
+  versions?: VersionData[];
+  acceleration_0_100_s?: string;
+  max_speed_kmh?: string;
+  charging?: string;
+  trunk_capacity?: string;
+  guarantee?: string;
+  colors?: Array<{ id: number | string; name?: string; value?: string }>;
+  additionals?: Array<{ id: number | string; title?: string; price?: number }>;
 }
 
 export interface TypeItem {
   id: number | string;
   name?: string;
-  [key: string]: any;
 }
 
 export interface DriveItem {
   id: number | string;
   name?: string;
-  [key: string]: any;
 }
 
 export interface InformationItem {
@@ -67,13 +82,6 @@ export interface Intent {
   keywords: string[];
   response_template: string;
   requires_data: boolean;
-}
-
-export interface VersionData {
-  id: number | string;
-  name?: string;
-  price?: number;
-  [key: string]: any;
 }
 
 export interface ColorData {

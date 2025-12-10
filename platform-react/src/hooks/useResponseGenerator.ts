@@ -35,9 +35,9 @@ export const useResponseGenerator = () => {
 
     if (carName) {
       const car = cars.find((c) => (c.name || '').toLowerCase().includes(carName.toLowerCase()));
-      if (car && Array.isArray(car.versions) && car.versions.length > 0) {
+        if (car && Array.isArray(car.versions) && car.versions.length > 0) {
         const priceList = car.versions
-          .map((v) => `${v.name || 'wersja'}: ${(v.price ?? 0).toLocaleString('pl-PL')} zł`)
+          .map((v) => `${v.title || 'wersja'}: ${(v.price ?? 0).toLocaleString('pl-PL')} zł`)
           .join(', ');
         return `${car.name} jest dostępny w następujących wersjach: ${priceList}`;
       }

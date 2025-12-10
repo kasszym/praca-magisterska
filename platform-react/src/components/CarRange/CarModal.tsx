@@ -6,37 +6,7 @@ import CarCustomization from './CarCustomization';
 import CarFeatures from './CarFeatures';
 import './CarGallery.css';
 import './CarModal.css';
-
-interface Car {
-  id: number;
-  name: string;
-  drivetrain: string;
-  range: number;
-  main_image: string;
-  images: string[];
-  versions?: Array<{
-    id: number;
-    title: string;
-    price: number;
-  }>;
-  colors?: Array<{
-    id: number;
-    name: string;
-    value: string;
-  }>;
-  additionals?: Array<{
-    id: number;
-    title: string;
-    price: number;
-  }>;
-  fk_type: number;
-  fk_drive: number;
-  acceleration_0_100_s?: string;
-  max_speed_kmh?: string;
-  charging?: string;
-  trunk_capacity?: string;
-  guarantee?: string;
-}
+import type { Car } from '../../types';
 
 interface CarModalProps {
   car: Car;
@@ -59,10 +29,10 @@ const CarModal = forwardRef<CarModalRef, CarModalProps>(({ car }, ref) => {
   }));
 
   return (
-    <Modal isOpen={isDialogOpen} onClose={close} title={car.name}>
+    <Modal isOpen={isDialogOpen} onClose={close} title={car.name ?? ''}>
       <div className="car-modal">
         <div className="car-gallery">
-          <CarGallery images={car.images} />
+          <CarGallery images={car.images ?? []} />
         </div>
         <div className="d-flex flex-column gap-3">
           <SectionCard padding="16px 14px">

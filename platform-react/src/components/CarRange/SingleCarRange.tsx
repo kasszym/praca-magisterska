@@ -3,27 +3,7 @@ import ButtonComponent from '../common/ButtonComponent';
 import CarModal from './CarModal';
 import type { CarModalRef } from './CarModal';
 import api from '../../config/api';
-
-interface Car {
-  id: number;
-  name: string;
-  drivetrain: string;
-  range: number;
-  main_image: string;
-  images: string[];
-  versions?: Array<{
-    id: number;
-    title: string;
-    price: number;
-  }>;
-  fk_type: number;
-  fk_drive: number;
-  acceleration_0_100_s?: string;
-  max_speed_kmh?: string;
-  charging?: string;
-  trunk_capacity?: string;
-  guarantee?: string;
-}
+import type { Car, VersionData } from '../../types';
 
 interface SingleCarRangeProps {
   car: Car;
@@ -62,13 +42,13 @@ const SingleCarRange: React.FC<SingleCarRangeProps> = ({ car }) => {
     }
   };
 
-  const selectedVersion = useMemo(
-    () => car.versions?.[0]?.id ?? '',
-    [car.versions]
-  );
+  const selectedVersion = useMemo(() => {
+    return (car.versions && car.versions.length > 0 && car.versions[0].id) ?? '';
+  }, [car.versions]);
 
   const selectedPrice = useMemo(() => {
-    const v = car.versions?.find((x) => x.id === selectedVersion);
+    if (!car.versions || car.versions.length === 0) return 0;
+    const v = car.versions.find((x: VersionData | any) => String(x.id) === String(selectedVersion));
     return v?.price ?? 0;
   }, [car.versions, selectedVersion]);
 

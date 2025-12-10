@@ -1,0 +1,95 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+
+actor Guest
+actor "Registered User" as User
+actor Admin
+actor "Chatbot System" as Bot
+actor "OAuth Provider" as OAuth
+
+rectangle "Aureon Car Configurator" {
+  package "Browsing" {
+    usecase "Browse Cars" as UC_Browse
+    usecase "Search & Filter Cars" as UC_Search
+    usecase "View Car Details" as UC_View
+    usecase "Gallery / Media Viewer" as UC_Gallery
+  }
+
+  package "Account" {
+    usecase "Register (frontend)" as UC_Register
+    usecase "Login (local / OAuth)" as UC_Login
+    usecase "Authenticate (API)" as UC_Auth
+  }
+
+  package "Ordering / Configuration" {
+    usecase "Start Order" as UC_Start
+    usecase "Select Trim & Options" as UC_Select
+    usecase "Configure Color & Accessories" as UC_Color
+    usecase "Review Summary" as UC_Review
+    usecase "Submit Order" as UC_Submit
+    usecase "Validate Order Data" as UC_Validate
+    usecase "Store Order (DB)" as UC_Store
+    usecase "Send Confirmation (email)" as UC_Email
+  }
+
+  package "Orders" {
+    usecase "View Order Summary" as UC_ViewSummary
+    usecase "List User Orders" as UC_ListOrders
+  }
+
+  package "Chat / Realtime" {
+    usecase "Open Chat Widget" as UC_OpenChat
+    usecase "Send Chat Message" as UC_SendChat
+    usecase "Process Message (AI/Intent)" as UC_ProcessChat
+    usecase "Push/Receive via WebSocket" as UC_WebSocket
+  }
+
+  package "Admin" {
+    usecase "Manage Offers" as UC_Manage
+    usecase "Upload Media / Images" as UC_UploadMedia
+    usecase "Review Orders (admin)" as UC_AdminOrders
+  }
+
+  package "Integrations" {
+    usecase "OAuth Login Flow" as UC_OAuth
+    usecase "Echo / Broadcasting" as UC_Echo
+  }
+}
+
+Guest --> UC_Browse
+Guest --> UC_Search
+Guest --> UC_View
+Guest --> UC_Gallery
+Guest --> UC_OpenChat
+Guest --> UC_Register
+Guest --> UC_Login
+
+User --> UC_Start
+User --> UC_Select
+User --> UC_Color
+User --> UC_Review
+User --> UC_ViewSummary
+User --> UC_SendChat
+
+Admin --> UC_Manage
+Admin --> UC_UploadMedia
+Admin --> UC_AdminOrders
+
+Bot <-- UC_ProcessChat
+UC_WebSocket ..> UC_ProcessChat : uses
+OAuth <-- UC_OAuth
+
+UC_Submit .> UC_Validate : <<include>>
+UC_Submit .> UC_Store : <<include>>
+UC_Submit .> UC_Email : <<include>>
+UC_Validate .> UC_Auth : <<include>>
+
+UC_View .> UC_OpenChat : <<extend>>
+UC_OpenChat .> UC_SendChat : <<include>>
+UC_SendChat .> UC_ProcessChat : <<include>>
+UC_ListOrders .> UC_Auth : <<include>>
+
+note bottom of UC_Start : Steps: StepOne, StepTwo, StepThree, Summary
+
+@enduml

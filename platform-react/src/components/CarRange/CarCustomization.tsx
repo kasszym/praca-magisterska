@@ -2,50 +2,27 @@ import React, { useState, useMemo } from 'react';
 import ButtonComponent from '../common/ButtonComponent';
 import { useSummary } from '../../hooks/useSummary';
 import './CarCustomization.css';
-
-interface CarVersion {
-  id: number;
-  title?: string;
-  titile?: string;
-  name?: string;
-  price: number;
-}
-
-interface CarColor {
-  id: number;
-  name: string;
-  value: string;
-}
-
-interface CarAdditional {
-  id: number;
-  title: string;
-  price: number;
-}
-
-interface Car {
-  id: number;
-  name: string;
-  versions?: CarVersion[];
-  colors?: CarColor[];
-  additionals?: CarAdditional[];
-}
+import type { Car as SharedCar } from '../../types';
 
 interface CarCustomizationProps {
-  car: Car;
+  car: SharedCar;
   onClose: () => void;
 }
 
 const CarCustomization: React.FC<CarCustomizationProps> = ({ car, onClose }) => {
   const { setSelectedCar } = useSummary();
 
-  const [version, setVersion] = useState<number | null>(car.versions?.[0]?.id ?? null);
+  const [version, setVersion] = useState<number | string | null>(
+    car.versions && car.versions.length > 0 ? car.versions[0].id : null
+  );
   const [selectedAddonIds, setSelectedAddonIds] = useState<number[]>([]);
-  const [color, setColor] = useState<number | null>(car.colors?.[0]?.id ?? null);
+  const [color, setColor] = useState<number | string | null>(
+    car.colors && car.colors.length > 0 ? car.colors[0].id : null
+  );
 
   const basePrice = useMemo(() => {
     const versions = car.versions || [];
-    const v = versions.find((x) => x.id === version);
+    const v = versions.find((x) => String(x.id) === String(version));
     return Number(v?.price) || 0;
   }, [car.versions, version]);
 
@@ -66,30 +43,28 @@ const CarCustomization: React.FC<CarCustomizationProps> = ({ car, onClose }) => 
     return n.toLocaleString('pl-PL');
   };
 
-  const toggleAddon = (addonId: number) => {
+  const toggleAddon = (addonId: number | string) => {
+    const idNum = Number(addonId);
     setSelectedAddonIds((prev) =>
-      prev.includes(addonId) ? prev.filter((id) => id !== addonId) : [...prev, addonId]
+      prev.includes(idNum) ? prev.filter((id) => id !== idNum) : [...prev, idNum]
     );
   };
 
   const saveToSummary = () => {
     if (version != null && color != null) {
-      const versionLabel =
-        car.versions?.find((x) => x.id === version)?.title ||
-        car.versions?.find((x) => x.id === version)?.titile ||
-        '';
-      const colorLabel = car.colors?.find((c) => c.id === color)?.name || '';
+      const versionLabel = car.versions?.find((x) => String(x.id) === String(version))?.title || '';
+      const colorLabel = car.colors?.find((c) => String(c.id) === String(color))?.name || '';
       const payload = {
-        car_id: car.id,
-        version_id: version,
-        color_id: color,
+        car_id: Number(car.id),
+        version_id: Number(version),
+        color_id: Number(color),
         addon_ids: selectedAddonIds.map((id) => Number(id)),
-        name: car.name,
+        name: car.name || '',
         version: versionLabel,
         color: colorLabel,
         addons: selectedAddons.map((a) => ({
-          id: a.id,
-          title: a.title,
+          id: Number(a.id),
+          title: a.title || '',
           price: a.price ?? 0,
         })),
         price: totalPrice,
@@ -111,7 +86,7 @@ const CarCustomization: React.FC<CarCustomizationProps> = ({ car, onClose }) => 
               className={`version-btn ${version === v.id ? 'active' : ''}`}
               onClick={() => setVersion(v.id)}
             >
-              {v.title || v.titile || v.name}
+              {v.title}
             </button>
           ))}
         </div>
@@ -148,7 +123,7 @@ const CarCustomization: React.FC<CarCustomizationProps> = ({ car, onClose }) => 
             <button
               key={a.id}
               type="button"
-              className={`addon-btn ${selectedAddonIds.includes(a.id) ? 'active' : ''}`}
+              className={`addon-btn ${selectedAddonIds.includes(Number(a.id)) ? 'active' : ''}`}
               onClick={() => toggleAddon(a.id)}
             >
               {a.title}

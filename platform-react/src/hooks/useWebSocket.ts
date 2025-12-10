@@ -11,7 +11,7 @@ interface UseWebSocketReturn {
 }
 
 export const useWebSocket = (): UseWebSocketReturn => {
-  const pusherRef = useRef<Pusher | null>(null);
+  const pusherRef = useRef<any | null>(null);
   const channelRef = useRef<any>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [connectionError, setConnectionError] = useState<string | null>(null);

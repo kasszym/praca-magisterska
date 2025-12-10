@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import SectionCard from '../common/SectionCard';
 import ButtonComponent from '../common/ButtonComponent';
+import type { TypeItem, DriveItem } from '../../types';
 
 interface CarSearchEngineProps {
-  typesList: Array<{ id: number; name: string }> | null;
-  drivesList: Array<{ id: number; titile: string }> | null;
+  typesList: TypeItem[] | null;
+  drivesList: DriveItem[] | null;
   isLoadingTypes: boolean;
   isLoadingDrives: boolean;
   onFilter: (filters: {
@@ -79,7 +80,7 @@ const CarSearchEngine: React.FC<CarSearchEngineProps> = ({
               <option value="">Wybierz</option>
               {drivesList?.map((d) => (
                 <option key={d.id} value={d.id}>
-                  {d.titile}
+                  {d.name}
                 </option>
               ))}
             </select>
