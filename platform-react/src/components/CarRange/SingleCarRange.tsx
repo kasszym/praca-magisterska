@@ -70,6 +70,7 @@ const SingleCarRange: React.FC<SingleCarRangeProps> = ({ car }) => {
         alt={car.name}
         style={{ height: '200px', objectFit: 'cover' }}
         className="card-img-top d-block img-fluid"
+        loading="lazy"
       />
       <div className="card-body p-3 d-flex flex-column" style={{ rowGap: '7px' }}>
         <div

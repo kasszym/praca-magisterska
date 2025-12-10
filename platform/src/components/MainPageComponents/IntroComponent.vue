@@ -44,6 +44,7 @@ import ButtonComponent from "../common/ButtonComponent.vue";
               src="../../assets/car.png"
               alt="car"
               class="img-fluid d-block w-100"
+              loading="lazy"
             />
           </div>
         </div>

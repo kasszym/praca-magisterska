@@ -40,6 +40,7 @@ const IntroComponent: React.FC = () => {
               src={carImage}
               alt="car"
               className="car-image"
+              loading="lazy"
             />
           </div>
         </div>

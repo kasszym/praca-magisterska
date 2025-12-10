@@ -8,6 +8,7 @@
       alt="volutra car"
       class="position-absolute top-0 start-0 w-100 h-100 d-block z-0"
       style="opacity: 0.2; object-fit: cover; object-position: 78% 74%"
+      loading="lazy"
     />
 
     <span class="position-relative z-1 fw-bold fs-2 px-3">

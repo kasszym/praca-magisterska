@@ -60,6 +60,7 @@ const selectedPrice = computed(() => {
       :alt="car.name"
       style="height: 200px; object-fit: cover"
       class="card-img-top d-block img-fluid"
+      loading="lazy"
     />
     <div
       class="card-body p-3 d-flex flex-column"

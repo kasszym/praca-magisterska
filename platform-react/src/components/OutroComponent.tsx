@@ -9,6 +9,7 @@ const OutroComponent: React.FC = () => {
         src={outroImage}
         alt="volutra car"
         className="outro-image"
+        loading="lazy"
       />
 
       <span className="outro-text">
