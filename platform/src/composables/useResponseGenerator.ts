@@ -31,8 +31,12 @@ export const useResponseGenerator = () => {
   };
 
   const generatePriceResponse = async (carName: string | null): Promise<string> => {
-    const res = await API.get('/chatbot/car-data');
-    const cars: CarData[] = res.data;
+    const res = carName
+      ? await API.get('/chatbot/car-data', { params: { car_name: carName } })
+      : await API.get('/chatbot/car-data');
+
+    const data = res.data;
+    const cars: CarData[] = Array.isArray(data) ? data : [data];
 
     if (carName) {
       const car = cars.find(c => (c.name || '').toLowerCase().includes(carName.toLowerCase()));
@@ -56,8 +60,12 @@ export const useResponseGenerator = () => {
   };
 
   const generateRangeResponse = async (carName: string | null): Promise<string> => {
-    const res = await API.get('/chatbot/car-data');
-    const cars: CarData[] = res.data;
+    const res = carName
+      ? await API.get('/chatbot/car-data', { params: { car_name: carName } })
+      : await API.get('/chatbot/car-data');
+
+    const data = res.data;
+    const cars: CarData[] = Array.isArray(data) ? data : [data];
 
     if (carName) {
   const car = cars.find(c => (c.name || '').toLowerCase().includes(carName.toLowerCase()));
@@ -80,8 +88,12 @@ export const useResponseGenerator = () => {
   };
 
   const generateSpecsResponse = async (carName: string | null): Promise<string> => {
-    const res = await API.get('/chatbot/car-data');
-    const cars: CarData[] = res.data;
+    const res = carName
+      ? await API.get('/chatbot/car-data', { params: { car_name: carName } })
+      : await API.get('/chatbot/car-data');
+
+    const data = res.data;
+    const cars: CarData[] = Array.isArray(data) ? data : [data];
 
     if (carName) {
       const car = cars.find(c => (c.name || '').toLowerCase().includes(carName.toLowerCase()));

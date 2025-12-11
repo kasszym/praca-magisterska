@@ -59,7 +59,6 @@ class ChatbotController extends Controller
 
         $message = ChatbotMessage::create($validated);
 
-        // Broadcast the message via WebSocket
         broadcast(new ChatbotMessageSent($validated['conversation_id'], $message))->toOthers();
 
         return response()->json($message);
@@ -78,47 +77,85 @@ class ChatbotController extends Controller
      */
     public function getCarData(Request $request)
     {
-        $carName = $request->input('car_name');
-        $carId = $request->input('car_id');
+        try {
+            $carName = $request->input('car_name');
+            $carId = $request->input('car_id');
+            $query = Car::with(['type', 'versions', 'colors', 'drive']);
 
-        $query = Car::with(['types.versions.colors', 'types.versions.drives']);
+            if ($carId) {
+                $car = $query->find($carId);
 
-        if ($carId) {
-            $car = $query->find($carId);
-        } else {
-            $car = $query->where('name', 'like', "%{$carName}%")->first();
-        }
+                if (!$car) {
+                    return response()->json(['error' => 'Car not found'], 404);
+                }
 
-        if (!$car) {
-            return response()->json(['error' => 'Car not found'], 404);
-        }
-
-        return response()->json([
-            'id' => $car->id,
-            'name' => $car->name,
-            'base_price' => $car->price,
-            'types' => $car->types->map(function ($type) {
-                return [
-                    'id' => $type->id,
-                    'name' => $type->name,
-                    'price' => $type->price,
-                    'versions' => $type->versions->map(function ($version) {
+                return response()->json([
+                    'id' => $car->id,
+                    'name' => $car->name,
+                    'base_price' => $car->price ?? null,
+                    'type' => $car->type ? ['id' => $car->type->id, 'name' => $car->type->name] : null,
+                    'versions' => $car->versions->map(function ($version) use ($car) {
                         return [
                             'id' => $version->id,
-                            'name' => $version->name,
-                            'price' => $version->price,
-                            'range' => $version->range,
-                            'power' => $version->power,
-                            'acceleration' => $version->acceleration,
-                            'top_speed' => $version->top_speed,
-                            'battery' => $version->battery,
-                            'colors' => $version->colors->pluck('name'),
-                            'drives' => $version->drives->pluck('name'),
+                            'name' => $version->title ?? $version->name ?? null,
+                            'price' => $version->price ?? null,
+                            'range' => $car->range ?? null,
                         ];
                     }),
+                    'colors' => $car->colors->pluck('name'),
+                    'drive' => $car->drive ? $car->drive->name : ($car->drivetrain ?? null),
+                ]);
+            }
+
+            if ($carName) {
+                $car = $query->where('name', 'like', "%{$carName}%")->first();
+
+                if (!$car) {
+                    return response()->json(['error' => 'Car not found'], 404);
+                }
+
+                return response()->json([
+                    'id' => $car->id,
+                    'name' => $car->name,
+                    'base_price' => $car->price ?? null,
+                    'type' => $car->type ? ['id' => $car->type->id, 'name' => $car->type->name] : null,
+                    'versions' => $car->versions->map(function ($version) use ($car) {
+                        return [
+                            'id' => $version->id,
+                            'name' => $version->title ?? $version->name ?? null,
+                            'price' => $version->price ?? null,
+                            'range' => $car->range ?? null,
+                        ];
+                    }),
+                    'colors' => $car->colors->pluck('name'),
+                    'drive' => $car->drive ? $car->drive->name : ($car->drivetrain ?? null),
+                ]);
+            }
+            $cars = Car::with(['type', 'versions'])->get();
+            $result = $cars->map(function ($car) {
+                $versions = [];
+                foreach ($car->versions as $version) {
+                    $versions[] = [
+                        'id' => $version->id,
+                        'name' => $version->title ?? $version->name ?? null,
+                        'price' => $version->price ?? null,
+                        'range' => $car->range ?? null,
+                        'type' => $car->type ? $car->type->name : null,
+                    ];
+                }
+
+                return [
+                    'id' => $car->id,
+                    'name' => $car->name,
+                    'price' => $car->price,
+                    'versions' => $versions,
                 ];
-            }),
-        ]);
+            });
+
+            return response()->json($result);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -126,7 +163,7 @@ class ChatbotController extends Controller
      */
     public function getColors()
     {
-        return response()->json(Color::all(['id', 'name', 'price', 'color_code']));
+        return response()->json(Color::all(['id', 'name']));
     }
 
     /**
