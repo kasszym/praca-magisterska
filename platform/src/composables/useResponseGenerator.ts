@@ -84,7 +84,7 @@ export const useResponseGenerator = () => {
     const colors: ColorData[] = res.data;
 
     const colorList = colors.map(c => c.name).join(', ');
-    return `Dostępne kolory: ${colorList}. Każdy kolor dodaje wyjątkowego charakteru Twojemu Aureon!`;
+    return `Dostępne kolory: ${colorList}.`;
   };
 
   const generateSpecsResponse = async (carName: string | null): Promise<string> => {
